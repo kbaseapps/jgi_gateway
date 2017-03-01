@@ -45,6 +45,10 @@ class jgi_gateway:
             (user, passwd) = os.environ['JGI_TOKEN'].split(':')
             self.user = user
             self.passwd = passwd
+        self.jgi_host = 'https://jgi-kbase.nersc.gov'
+        if 'jgi-host' in config:
+            self.jgi_host = config['jgi-host']
+        print "Using %s for queries" % (self.jgi_host)
         #END_CONSTRUCTOR
 
     def search_jgi(self, ctx, search_string):
@@ -61,7 +65,7 @@ class jgi_gateway:
         #BEGIN search_jgi
         header = {'Content-Type': 'application/json'}
         query = json.dumps({"query": search_string})
-        ret = requests.post('https://jgi-kbase.nersc.gov/query', data=query,
+        ret = requests.post(self.jgi_host + '/query', data=query,
                             auth=(self.user, self.passwd),
                             headers=header)
         if ret.status_code == 200:
