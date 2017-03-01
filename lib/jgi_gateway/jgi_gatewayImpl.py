@@ -5,6 +5,8 @@ JGI Gateway Service
 """
 
 import os
+import requests
+import json
 #END_HEADER
 
 
@@ -36,10 +38,14 @@ class jgi_gateway:
         """
         default constructor
         """
+
+        self.user = None
+        self.passwd = None
         if 'JGI_TOKEN' in os.environ:
-            self.token = os.environ['JGI_TOKEN']
+            (user, passwd) = os.environ['JGI_TOKEN'].split(':')
+            self.user = user
+            self.passwd = passwd
         #END_CONSTRUCTOR
-        pass
 
     def search_jgi(self, ctx, search_string):
         """
@@ -53,17 +59,16 @@ class jgi_gateway:
         # ctx is the context object
         # return variables are: output
         #BEGIN search_jgi
-        output = dict()
-        output['doc_data'] = [
-            {
-                "id": "id.0001",
-                "name": "genome1"
-            },
-            {
-                "id": "id.0002",
-                "name": "genome2"
-            },
-        ]
+        header = {'Content-Type': 'application/json'}
+        query = json.dumps({"query": search_string})
+        ret = requests.post('https://jgi-kbase.nersc.gov/query', data=query,
+                            auth=(self.user, self.passwd),
+                            headers=header)
+        if ret.status_code == 200:
+            output = ret.json()
+        else:
+            raise ValueError('Bad Response from JGI search service (%d)' %
+                             ret.status_code)
         #END search_jgi
 
         # At some point might do deeper type checking...
