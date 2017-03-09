@@ -19,7 +19,7 @@ module jgi_gateway {
     */
     typedef structure {
         string search_string;
-        int size;
+        int limit;
         int page;
     } SearchInput;
 

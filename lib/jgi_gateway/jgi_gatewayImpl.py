@@ -27,7 +27,7 @@ class jgi_gateway:
     ######################################### noqa
     VERSION = "0.0.1"
     GIT_URL = "git@github.com:scanon/jgi_gateway.git"
-    GIT_COMMIT_HASH = "7fe6c118729d00cadf15d76811d442e68d067654"
+    GIT_COMMIT_HASH = "9650f3c97ef61be854682e23d0401ec8edbb2d9b"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER
@@ -78,8 +78,9 @@ class jgi_gateway:
             query['size'] = input['limit']
         if 'page' in input:
             query['page'] = input['page']
-        query = json.dumps({"query": input['search_string']})
-        ret = requests.post(self.jgi_host + '/query', data=query,
+        print query
+        queryjson = json.dumps(query)
+        ret = requests.post(self.jgi_host + '/query', data=queryjson,
                             auth=(self.user, self.passwd),
                             headers=header)
         if ret.status_code == 200:
