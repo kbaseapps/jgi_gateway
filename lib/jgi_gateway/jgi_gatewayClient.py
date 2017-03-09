@@ -33,17 +33,22 @@ class jgi_gateway(object):
             trust_all_ssl_certificates=trust_all_ssl_certificates,
             auth_svc=auth_svc)
 
-    def search_jgi(self, search_string, context=None):
+    def search_jgi(self, input, context=None):
         """
-        The search_jgi function takes a search string and returns a list of documents.
-        :param search_string: instance of String
+        The search_jgi function takes a search string and returns a list of
+        documents.
+        :param input: instance of type "SearchInput" (search_jgi searches the
+           JGI service for matches against the search_string Other parameters
+           @optional limit @optional page) -> structure: parameter
+           "search_string" of String, parameter "limit" of Long, parameter
+           "page" of Long
         :returns: instance of type "SearchResults" -> structure: parameter
            "doc_data" of list of type "docdata" -> mapping from String to
            String
         """
         return self._client.call_method(
             'jgi_gateway.search_jgi',
-            [search_string], self._service_ver, context)
+            [input], self._service_ver, context)
 
     def stage_objects(self, input, context=None):
         """

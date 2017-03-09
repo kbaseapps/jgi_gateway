@@ -111,7 +111,7 @@ sub new
 
 =head2 search_jgi
 
-  $output = $obj->search_jgi($search_string)
+  $output = $obj->search_jgi($input)
 
 =over 4
 
@@ -120,8 +120,12 @@ sub new
 =begin html
 
 <pre>
-$search_string is a string
+$input is a jgi_gateway.SearchInput
 $output is a jgi_gateway.SearchResults
+SearchInput is a reference to a hash where the following keys are defined:
+	search_string has a value which is a string
+	limit has a value which is an int
+	page has a value which is an int
 SearchResults is a reference to a hash where the following keys are defined:
 	doc_data has a value which is a reference to a list where each element is a jgi_gateway.docdata
 docdata is a reference to a hash where the key is a string and the value is a string
@@ -132,8 +136,12 @@ docdata is a reference to a hash where the key is a string and the value is a st
 
 =begin text
 
-$search_string is a string
+$input is a jgi_gateway.SearchInput
 $output is a jgi_gateway.SearchResults
+SearchInput is a reference to a hash where the following keys are defined:
+	search_string has a value which is a string
+	limit has a value which is an int
+	page has a value which is an int
 SearchResults is a reference to a hash where the following keys are defined:
 	doc_data has a value which is a reference to a list where each element is a jgi_gateway.docdata
 docdata is a reference to a hash where the key is a string and the value is a string
@@ -143,7 +151,8 @@ docdata is a reference to a hash where the key is a string and the value is a st
 
 =item Description
 
-The search_jgi function takes a search string and returns a list of documents.
+The search_jgi function takes a search string and returns a list of
+documents.
 
 =back
 
@@ -161,10 +170,10 @@ The search_jgi function takes a search string and returns a list of documents.
 							       "Invalid argument count for function search_jgi (received $n, expecting 1)");
     }
     {
-	my($search_string) = @args;
+	my($input) = @args;
 
 	my @_bad_arguments;
-        (!ref($search_string)) or push(@_bad_arguments, "Invalid type for argument 1 \"search_string\" (value was \"$search_string\")");
+        (ref($input) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"input\" (value was \"$input\")");
         if (@_bad_arguments) {
 	    my $msg = "Invalid arguments passed to search_jgi:\n" . join("", map { "\t$_\n" } @_bad_arguments);
 	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
@@ -396,6 +405,50 @@ an int
 =begin text
 
 an int
+
+=end text
+
+=back
+
+
+
+=head2 SearchInput
+
+=over 4
+
+
+
+=item Description
+
+search_jgi searches the JGI service for matches against the
+search_string
+
+Other parameters
+@optional limit
+@optional page
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+search_string has a value which is a string
+limit has a value which is an int
+page has a value which is an int
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+search_string has a value which is a string
+limit has a value which is an int
+page has a value which is an int
+
 
 =end text
 

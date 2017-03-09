@@ -8,17 +8,32 @@ module jgi_gateway {
         a bool defined as int
     */
     typedef int bool;
-    typedef mapping<string, string> docdata;
 
+    /*
+        search_jgi searches the JGI service for matches against the
+        search_string
+
+        Other parameters
+        @optional limit
+        @optional page
+    */
+    typedef structure {
+        string search_string;
+        int size;
+        int page;
+    } SearchInput;
+
+    typedef mapping<string, string> docdata;
     typedef structure {
        list<docdata> doc_data;
     } SearchResults;
 
 
     /*
-        The search_jgi function takes a search string and returns a list of documents.
+        The search_jgi function takes a search string and returns a list of
+        documents.
     */
-    funcdef search_jgi(string search_string) returns (SearchResults output) authentication required;
+    funcdef search_jgi(SearchInput input) returns (SearchResults output) authentication required;
 
     typedef structure {
        list<string> ids;

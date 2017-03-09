@@ -165,16 +165,17 @@ public class JgiGatewayClient {
     /**
      * <p>Original spec-file function name: search_jgi</p>
      * <pre>
-     * The search_jgi function takes a search string and returns a list of documents.
+     * The search_jgi function takes a search string and returns a list of
+     * documents.
      * </pre>
-     * @param   searchString   instance of String
+     * @param   input   instance of type {@link us.kbase.jgigateway.SearchInput SearchInput}
      * @return   parameter "output" of type {@link us.kbase.jgigateway.SearchResults SearchResults}
      * @throws IOException if an IO exception occurs
      * @throws JsonClientException if a JSON RPC exception occurs
      */
-    public SearchResults searchJgi(String searchString, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+    public SearchResults searchJgi(SearchInput input, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
-        args.add(searchString);
+        args.add(input);
         TypeReference<List<SearchResults>> retType = new TypeReference<List<SearchResults>>() {};
         List<SearchResults> res = caller.jsonrpcCall("jgi_gateway.search_jgi", args, retType, true, true, jsonRpcContext, this.serviceVersion);
         return res.get(0);

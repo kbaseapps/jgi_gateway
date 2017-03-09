@@ -19,14 +19,15 @@ class jgi_gateway:
     A KBase module: jgi_gateway
     '''
 
-    # WARNING FOR GEVENT USERS ####### noqa
+    ######## WARNING FOR GEVENT USERS ####### noqa
     # Since asynchronous IO can lead to methods - even the same method -
     # interrupting each other, you must be *very* careful when using global
     # state. A method could easily clobber the state set by another while
     # the latter method is running.
+    ######################################### noqa
     VERSION = "0.0.1"
-    GIT_URL = ""
-    GIT_COMMIT_HASH = ""
+    GIT_URL = "git@github.com:scanon/jgi_gateway.git"
+    GIT_COMMIT_HASH = "7fe6c118729d00cadf15d76811d442e68d067654"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER
@@ -50,12 +51,18 @@ class jgi_gateway:
             self.jgi_host = config['jgi-host']
         print "Using %s for queries" % (self.jgi_host)
         #END_CONSTRUCTOR
+        pass
 
-    def search_jgi(self, ctx, search_string):
+
+    def search_jgi(self, ctx, input):
         """
         The search_jgi function takes a search string and returns a list of
         documents.
-        :param search_string: instance of String
+        :param input: instance of type "SearchInput" (search_jgi searches the
+           JGI service for matches against the search_string Other parameters
+           @optional limit @optional page) -> structure: parameter
+           "search_string" of String, parameter "limit" of Long, parameter
+           "page" of Long
         :returns: instance of type "SearchResults" -> structure: parameter
            "doc_data" of list of type "docdata" -> mapping from String to
            String
@@ -64,7 +71,14 @@ class jgi_gateway:
         # return variables are: output
         #BEGIN search_jgi
         header = {'Content-Type': 'application/json'}
-        query = json.dumps({"query": search_string})
+        if 'search_string' not in input:
+            raise(ValueError("missing required parameter search_string"))
+        query = {"query": input['search_string']}
+        if 'limit' in input:
+            query['size'] = input['limit']
+        if 'page' in input:
+            query['page'] = input['page']
+        query = json.dumps({"query": input['search_string']})
         ret = requests.post(self.jgi_host + '/query', data=query,
                             auth=(self.user, self.passwd),
                             headers=header)
@@ -103,7 +117,6 @@ class jgi_gateway:
                              'results is not type dict as required.')
         # return the results
         return [results]
-
     def status(self, ctx):
         #BEGIN_STATUS
         returnVal = {'state': "OK",

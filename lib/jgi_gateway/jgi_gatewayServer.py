@@ -335,7 +335,7 @@ class Application(object):
         self.method_authentication = dict()
         self.rpc_service.add(impl_jgi_gateway.search_jgi,
                              name='jgi_gateway.search_jgi',
-                             types=[basestring])
+                             types=[dict])
         self.method_authentication['jgi_gateway.search_jgi'] = 'required'  # noqa
         self.rpc_service.add(impl_jgi_gateway.stage_objects,
                              name='jgi_gateway.stage_objects',
