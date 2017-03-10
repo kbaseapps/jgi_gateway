@@ -7,6 +7,7 @@ JGI Gateway Service
 import os
 import requests
 import json
+import sys
 #END_HEADER
 
 
@@ -111,12 +112,15 @@ class jgi_gateway:
         request = {"ids": ','.join(input),
                    "path": "/data/%s" % (ctx['user_id'])}
         requestjson = json.dumps(request)
+        print "Debug: " + requestjson
         pid = os.fork()
         if pid == 0:
             ret = requests.post(self.jgi_host + '/fetch', data=requestjson,
                                 auth=(self.user, self.passwd),
                                 headers=header)
+            ret.raise_for_status()
             print ret.status_code
+            sys.exit(0)
             # TODO Add some logging
         for id in input:
             results[id] = "STAGED"
