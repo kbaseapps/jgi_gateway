@@ -109,7 +109,7 @@ class jgi_gateway:
         #BEGIN stage_objects
         results = dict()
         header = {'Content-Type': 'application/json'}
-        request = {"ids": ','.join(input),
+        request = {"ids": ','.join(input['ids']),
                    "path": "/data/%s" % (ctx['user_id'])}
         requestjson = json.dumps(request)
         print "Debug: " + requestjson
