@@ -78,7 +78,6 @@ class jgi_gateway:
             query['size'] = input['limit']
         if 'page' in input:
             query['page'] = input['page']
-        print query
         queryjson = json.dumps(query)
         ret = requests.post(self.jgi_host + '/query', data=queryjson,
                             auth=(self.user, self.passwd),
@@ -108,8 +107,19 @@ class jgi_gateway:
         # return variables are: results
         #BEGIN stage_objects
         results = dict()
-        for item in input:
-            results[item] = 'SUBMITED'
+        header = {'Content-Type': 'application/json'}
+        request = {"ids": ','.join(input),
+                   "path": "/data/%s" % (ctx['user_id'])}
+        requestjson = json.dumps(request)
+        pid = os.fork()
+        if pid == 0:
+            ret = requests.post(self.jgi_host + '/fetch', data=requestjson,
+                                auth=(self.user, self.passwd),
+                                headers=header)
+            print ret.status_code
+            # TODO Add some logging
+        for id in input:
+            results[id] = "STAGED"
         #END stage_objects
 
         # At some point might do deeper type checking...
