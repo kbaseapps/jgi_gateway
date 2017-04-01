@@ -43,8 +43,8 @@ class jgi_gateway:
 
         self.user = None
         self.passwd = None
-        if 'JGI_TOKEN' in os.environ:
-            (user, passwd) = os.environ['JGI_TOKEN'].split(':')
+        if 'jgi-token' in config:
+            (user, passwd) = config['jgi-token'].split(':')
             self.user = user
             self.passwd = passwd
         self.jgi_host = 'https://jgi-kbase.nersc.gov'

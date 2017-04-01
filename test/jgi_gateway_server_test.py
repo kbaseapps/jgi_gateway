@@ -92,6 +92,6 @@ class jgi_gatewayTest(unittest.TestCase):
         self.assertEquals(len(ret['hits']), 20)
 
     def test_staging(self):
-        ids = ['51d4fa27067c014cd6ed1a90', '51d4fa27067c014cd6ed1a96']
-        ret = self.getImpl().stage_objects(self.getContext(), ids)[0]
+        req = {'ids': ['51d4fa27067c014cd6ed1a90', '51d4fa27067c014cd6ed1a96']}
+        ret = self.getImpl().stage_objects(self.getContext(), req)[0]
         self.assertIsNotNone(ret)

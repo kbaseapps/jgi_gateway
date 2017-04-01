@@ -59,7 +59,7 @@ build-test-script:
 	chmod +x $(TEST_DIR)/$(TEST_SCRIPT_NAME)
 
 test:
-	if [ ! -f /kb/module/work/token ]; then echo -e '\nOutside a docker container please run "kb-sdk test" rather than "make test"\n' && exit 1; fi
+	@if [ ! -f /kb/module/work/token ]; then echo -e '\nOutside a docker container please run "kb-sdk test" rather than "make test"\n' && exit 1; fi
 	bash $(TEST_DIR)/$(TEST_SCRIPT_NAME)
 
 clean:

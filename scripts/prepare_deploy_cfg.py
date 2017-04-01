@@ -17,13 +17,26 @@ if __name__ == "__main__":
     config = ConfigParser()
     if os.path.isfile(sys.argv[2]):
         config.read(sys.argv[2])
+        # Pick up secure keys mainly for tests
+        for key in os.environ:
+            if key.startswith('KBASE_SECURE_CONFIG_PARAM_'):
+                param_name = key[len('KBASE_SECURE_CONFIG_PARAM_'):]
+                config.set('global', param_name, os.environ.get(key))
     elif "KBASE_ENDPOINT" in os.environ:
         kbase_endpoint = os.environ.get("KBASE_ENDPOINT")
         props = "[global]\n" + \
+                "kbase_endpoint = " + kbase_endpoint + "\n" + \
                 "job_service_url = " + kbase_endpoint + "/userandjobstate\n" + \
                 "workspace_url = " + kbase_endpoint + "/ws\n" + \
                 "shock_url = " + kbase_endpoint + "/shock-api\n" + \
-                "kbase_endpoint = " + kbase_endpoint + "\n"
+                "handle_url = " + kbase_endpoint + "/handle_service\n" + \
+                "srv_wiz_url = " + kbase_endpoint + "/service_wizard\n" + \
+                "njsw_url = " + kbase_endpoint + "/njs_wrapper\n"
+
+        for key in os.environ:
+            if key.startswith('KBASE_SECURE_CONFIG_PARAM_'):
+                param_name = key[len('KBASE_SECURE_CONFIG_PARAM_'):]
+                props += param_name + " = " + os.environ.get(key) + "\n"
         config.readfp(StringIO.StringIO(props))
     else:
         raise ValueError('Neither ' + sys.argv[2] + ' file nor KBASE_ENDPOINT env-variable found')
