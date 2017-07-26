@@ -16,11 +16,11 @@ from biokbase import log
 import requests as _requests
 import random as _random
 import os
-from jgi_gateway.authclient import KBaseAuth as _KBaseAuth
+from jgi_gateway_eap.authclient import KBaseAuth as _KBaseAuth
 
 DEPLOY = 'KB_DEPLOYMENT_CONFIG'
 SERVICE = 'KB_SERVICE_NAME'
-AUTH = 'auth-server-url'
+AUTH = 'auth-service-url'
 
 # Note that the error fields do not match the 2.0 JSONRPC spec
 
@@ -39,14 +39,14 @@ def get_config():
     retconfig = {}
     config = ConfigParser()
     config.read(get_config_file())
-    for nameval in config.items(get_service_name() or 'jgi_gateway'):
+    for nameval in config.items(get_service_name() or 'jgi_gateway_eap'):
         retconfig[nameval[0]] = nameval[1]
     return retconfig
 
 config = get_config()
 
-from jgi_gateway.jgi_gatewayImpl import jgi_gateway  # noqa @IgnorePep8
-impl_jgi_gateway = jgi_gateway(config)
+from jgi_gateway_eap.jgi_gateway_eapImpl import jgi_gateway_eap  # noqa @IgnorePep8
+impl_jgi_gateway_eap = jgi_gateway_eap(config)
 
 
 class JSONObjectEncoder(json.JSONEncoder):
@@ -322,7 +322,7 @@ class Application(object):
                                    context['method'], context['call_id'])
 
     def __init__(self):
-        submod = get_service_name() or 'jgi_gateway'
+        submod = get_service_name() or 'jgi_gateway_eap'
         self.userlog = log.log(
             submod, ip_address=True, authuser=True, module=True, method=True,
             call_id=True, changecallback=self.logcallback,
@@ -333,16 +333,16 @@ class Application(object):
         self.serverlog.set_log_level(6)
         self.rpc_service = JSONRPCServiceCustom()
         self.method_authentication = dict()
-        self.rpc_service.add(impl_jgi_gateway.search_jgi,
-                             name='jgi_gateway.search_jgi',
+        self.rpc_service.add(impl_jgi_gateway_eap.search_jgi,
+                             name='jgi_gateway_eap.search_jgi',
                              types=[dict])
-        self.method_authentication['jgi_gateway.search_jgi'] = 'required'  # noqa
-        self.rpc_service.add(impl_jgi_gateway.stage_objects,
-                             name='jgi_gateway.stage_objects',
+        self.method_authentication['jgi_gateway_eap.search_jgi'] = 'required'  # noqa
+        self.rpc_service.add(impl_jgi_gateway_eap.stage_objects,
+                             name='jgi_gateway_eap.stage_objects',
                              types=[dict])
-        self.method_authentication['jgi_gateway.stage_objects'] = 'required'  # noqa
-        self.rpc_service.add(impl_jgi_gateway.status,
-                             name='jgi_gateway.status',
+        self.method_authentication['jgi_gateway_eap.stage_objects'] = 'required'  # noqa
+        self.rpc_service.add(impl_jgi_gateway_eap.status,
+                             name='jgi_gateway_eap.status',
                              types=[dict])
         authurl = config.get(AUTH) if config else None
         self.auth_client = _KBaseAuth(authurl)
@@ -397,7 +397,7 @@ class Application(object):
                             err = JSONServerError()
                             err.data = (
                                 'Authentication required for ' +
-                                'jgi_gateway ' +
+                                'jgi_gateway_eap ' +
                                 'but no authentication header was passed')
                             raise err
                         elif token is None and auth_req == 'optional':

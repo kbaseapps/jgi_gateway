@@ -17,7 +17,7 @@ except:
     from baseclient import BaseClient as _BaseClient  # @Reimport
 
 
-class jgi_gateway(object):
+class jgi_gateway_eap(object):
 
     def __init__(
             self, url=None, timeout=30 * 60, user_id=None,
@@ -47,7 +47,7 @@ class jgi_gateway(object):
            String
         """
         return self._client.call_method(
-            'jgi_gateway.search_jgi',
+            'jgi_gateway_eap.search_jgi',
             [input], self._service_ver, context)
 
     def stage_objects(self, input, context=None):
@@ -58,9 +58,9 @@ class jgi_gateway(object):
            String
         """
         return self._client.call_method(
-            'jgi_gateway.stage_objects',
+            'jgi_gateway_eap.stage_objects',
             [input], self._service_ver, context)
 
     def status(self, context=None):
-        return self._client.call_method('jgi_gateway.status',
+        return self._client.call_method('jgi_gateway_eap.status',
                                         [], self._service_ver, context)

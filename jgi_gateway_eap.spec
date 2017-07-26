@@ -2,7 +2,7 @@
 A KBase module: jgi_gateway
 */
 
-module jgi_gateway {
+module jgi_gateway_eap {
 
     /*
         a bool defined as int

@@ -1,7 +1,7 @@
-SERVICE = jgi_gateway
-SERVICE_CAPS = jgi_gateway
-SPEC_FILE = jgi_gateway.spec
-URL = https://kbase.us/services/jgi_gateway
+SERVICE = jgi_gateway_eap
+SERVICE_CAPS = jgi_gateway_eap
+SPEC_FILE = jgi_gateway_eap.spec
+URL = https://kbase.us/services/jgi_gateway_eap
 DIR = $(shell pwd)
 LIB_DIR = lib
 SCRIPTS_DIR = scripts
