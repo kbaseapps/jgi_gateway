@@ -41,8 +41,8 @@ class jgi_gateway_eap:
         default constructor
         """
 
-        print "DEBUG - config:"
-        print json.dumps(config)
+        #print "DEBUG - config:"
+        #print json.dumps(config)
 
         self.config = config
         self.user = None
