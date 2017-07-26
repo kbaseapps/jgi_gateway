@@ -28,7 +28,7 @@ class jgi_gateway_eap:
     ######################################### noqa
     VERSION = "0.0.1"
     GIT_URL = "git@github.com:eapearson/jgi_gateway.git"
-    GIT_COMMIT_HASH = "bb2fa78729bb865c24c5801c0ebf61848fe43c29"
+    GIT_COMMIT_HASH = "0ba677c1eac8d4de52d51edccd4a456451ae328c"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER
@@ -105,14 +105,7 @@ class jgi_gateway_eap:
         """
         :param input: instance of type "StageInput" -> structure: parameter
            "ids" of list of String
-        :returns: instance of type "StagingResults" (StagingResults returns a
-           map entry for each id submitted in the stage_objects request. The
-           map key is the _id property returned in a SearchResults item (not
-           described here but probably should be), the value is a string
-           describing the result of the staging request. At time of writing,
-           the value is always "staging" since the request to the jgi gateway
-           jgi service and the call to stage_objects in the jgi gateway kbase
-           service are in different processes.) -> mapping from String to
+        :returns: instance of type "StagingResults" -> mapping from String to
            String
         """
         # ctx is the context object

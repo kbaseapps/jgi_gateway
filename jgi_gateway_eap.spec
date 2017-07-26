@@ -39,6 +39,13 @@ module jgi_gateway_eap {
        list<string> ids;
     } StageInput;
 
+    /*
+        StagingResults returns a map entry for each id submitted in the stage_objects request.
+        The map key is the _id property returned in a SearchResults item (not described here but probably 
+        should be), the value is a string describing the result of the staging request.
+        At time of writing, the value is always "staging" since the request to the jgi gateway jgi service
+        and the call to stage_objects in the jgi gateway kbase service are in different processes.
+    */
     typedef mapping<string, string> StagingResults;
 
     funcdef stage_objects(StageInput input) returns (StagingResults results) authentication required;

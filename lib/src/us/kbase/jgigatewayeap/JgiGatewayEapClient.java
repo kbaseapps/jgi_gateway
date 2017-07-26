@@ -186,7 +186,7 @@ public class JgiGatewayEapClient {
      * <pre>
      * </pre>
      * @param   input   instance of type {@link us.kbase.jgigatewayeap.StageInput StageInput}
-     * @return   parameter "results" of original type "StagingResults" &rarr; mapping from String to String
+     * @return   parameter "results" of original type "StagingResults" (StagingResults returns a map entry for each id submitted in the stage_objects request. The map key is the _id property returned in a SearchResults item (not described here but probably should be), the value is a string describing the result of the staging request. At time of writing, the value is always "staging" since the request to the jgi gateway jgi service and the call to stage_objects in the jgi gateway kbase service are in different processes.) &rarr; mapping from String to String
      * @throws IOException if an IO exception occurs
      * @throws JsonClientException if a JSON RPC exception occurs
      */
