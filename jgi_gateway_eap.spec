@@ -1,5 +1,5 @@
 /*
-A KBase module: jgi_gateway
+A KBase module: jgi_gateway_eap
 */
 
 module jgi_gateway_eap {
@@ -42,4 +42,10 @@ module jgi_gateway_eap {
     typedef mapping<string, string> StagingResults;
 
     funcdef stage_objects(StageInput input) returns (StagingResults results) authentication required;
+
+    typedef structure {
+        string config; 
+    } DebugResults;
+
+    funcdef debug() returns (DebugResults results) authentication required;
 };

@@ -16,7 +16,7 @@ import us.kbase.common.service.UnauthorizedException;
 /**
  * <p>Original spec-file module name: jgi_gateway_eap</p>
  * <pre>
- * A KBase module: jgi_gateway
+ * A KBase module: jgi_gateway_eap
  * </pre>
  */
 public class JgiGatewayEapClient {
@@ -195,6 +195,21 @@ public class JgiGatewayEapClient {
         args.add(input);
         TypeReference<List<Map<String,String>>> retType = new TypeReference<List<Map<String,String>>>() {};
         List<Map<String,String>> res = caller.jsonrpcCall("jgi_gateway_eap.stage_objects", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        return res.get(0);
+    }
+
+    /**
+     * <p>Original spec-file function name: debug</p>
+     * <pre>
+     * </pre>
+     * @return   parameter "results" of type {@link us.kbase.jgigatewayeap.DebugResults DebugResults}
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public DebugResults debug(RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        List<Object> args = new ArrayList<Object>();
+        TypeReference<List<DebugResults>> retType = new TypeReference<List<DebugResults>>() {};
+        List<DebugResults> res = caller.jsonrpcCall("jgi_gateway_eap.debug", args, retType, true, true, jsonRpcContext, this.serviceVersion);
         return res.get(0);
     }
 

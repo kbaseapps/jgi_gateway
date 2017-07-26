@@ -11,10 +11,10 @@ import sys
 #END_HEADER
 
 
-class jgi_gateway:
+class jgi_gateway_eap:
     '''
     Module Name:
-    jgi_gateway
+    jgi_gateway_eap
 
     Module Description:
     A KBase module: jgi_gateway
@@ -27,8 +27,8 @@ class jgi_gateway:
     # the latter method is running.
     ######################################### noqa
     VERSION = "0.0.1"
-    GIT_URL = "git@github.com:scanon/jgi_gateway.git"
-    GIT_COMMIT_HASH = "9650f3c97ef61be854682e23d0401ec8edbb2d9b"
+    GIT_URL = "git@github.com:eapearson/jgi_gateway.git"
+    GIT_COMMIT_HASH = "01bb1215d8afd8bc92862cafb38e64f4485321ec"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER

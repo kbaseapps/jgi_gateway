@@ -26,7 +26,7 @@ jgi_gateway_eap::jgi_gateway_eapClient
 =head1 DESCRIPTION
 
 
-A KBase module: jgi_gateway
+A KBase module: jgi_gateway_eap
 
 
 =cut
@@ -291,6 +291,79 @@ StagingResults is a reference to a hash where the key is a string and the value 
     }
 }
  
+
+
+=head2 debug
+
+  $results = $obj->debug()
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$results is a jgi_gateway_eap.DebugResults
+DebugResults is a reference to a hash where the following keys are defined:
+	config has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+$results is a jgi_gateway_eap.DebugResults
+DebugResults is a reference to a hash where the following keys are defined:
+	config has a value which is a string
+
+
+=end text
+
+=item Description
+
+
+
+=back
+
+=cut
+
+ sub debug
+{
+    my($self, @args) = @_;
+
+# Authentication: required
+
+    if ((my $n = @args) != 0)
+    {
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
+							       "Invalid argument count for function debug (received $n, expecting 0)");
+    }
+
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "jgi_gateway_eap.debug",
+	    params => \@args,
+    });
+    if ($result) {
+	if ($result->is_error) {
+	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
+					       code => $result->content->{error}->{code},
+					       method_name => 'debug',
+					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
+					      );
+	} else {
+	    return wantarray ? @{$result->result} : $result->result->[0];
+	}
+    } else {
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method debug",
+					    status_line => $self->{client}->status_line,
+					    method_name => 'debug',
+				       );
+    }
+}
+ 
   
 sub status
 {
@@ -334,16 +407,16 @@ sub version {
             Bio::KBase::Exceptions::JSONRPC->throw(
                 error => $result->error_message,
                 code => $result->content->{code},
-                method_name => 'stage_objects',
+                method_name => 'debug',
             );
         } else {
             return wantarray ? @{$result->result} : $result->result->[0];
         }
     } else {
         Bio::KBase::Exceptions::HTTP->throw(
-            error => "Error invoking method stage_objects",
+            error => "Error invoking method debug",
             status_line => $self->{client}->status_line,
-            method_name => 'stage_objects',
+            method_name => 'debug',
         );
     }
 }
@@ -560,6 +633,36 @@ a reference to a hash where the key is a string and the value is a string
 =begin text
 
 a reference to a hash where the key is a string and the value is a string
+
+=end text
+
+=back
+
+
+
+=head2 DebugResults
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+config has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+config has a value which is a string
+
 
 =end text
 
