@@ -124,18 +124,21 @@ class jgi_gateway_eap:
                    "path": "/data/%s" % (ctx['user_id'])}
         requestjson = json.dumps(request)
         #print "Debug: " + requestjson
-        pid = os.fork()
-        if pid == 0:
-            resp = requests.post(self.jgi_host + '/fetch', data=requestjson,
-                                auth=(self.user, self.passwd),
-                                headers=header)
-            resp.raise_for_status()
-            print "jgi gateway data fetch (staging) request status: %d" % (resp.status_code)
-            print resp.text
-            sys.exit(0)
-            # TODO Add some logging
+        #pid = os.fork()
+        #if pid == 0:
+        resp = requests.post(self.jgi_host + '/fetch', data=requestjson,
+                            auth=(self.user, self.passwd),
+                            headers=header)
+        # TODO: Just bail or return error object?
+        resp.raise_for_status()
+        print "jgi gateway data fetch (staging) request status: %d" % (resp.status_code)
+        print resp.text
+        # TODO: handle parsing errors
+        responsejson = json.loads(resp.text)
+        #sys.exit(0)
+        #    # TODO Add some logging
         for id in input['ids']:
-            results[id] = "staging"
+            results[id] = responsejson
         #END stage_objects
 
         # At some point might do deeper type checking...
