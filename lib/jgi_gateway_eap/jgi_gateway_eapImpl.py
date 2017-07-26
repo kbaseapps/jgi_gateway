@@ -126,7 +126,7 @@ class jgi_gateway_eap:
             print ret.status_code
             sys.exit(0)
             # TODO Add some logging
-        for id in input:
+        for id in input['ids']:
             results[id] = "STAGED"
         #END stage_objects
 
