@@ -123,7 +123,7 @@ class jgi_gateway_eap:
         request = {"ids": ','.join(input['ids']),
                    "path": "/data/%s" % (ctx['user_id'])}
         requestjson = json.dumps(request)
-        #print "Debug: " + requestjson
+        print "Fetch request: " + requestjson
         #pid = os.fork()
         #if pid == 0:
         resp = requests.post(self.jgi_host + '/fetch', data=requestjson,
