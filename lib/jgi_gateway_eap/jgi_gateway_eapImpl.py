@@ -77,6 +77,7 @@ class jgi_gateway_eap:
         # ctx is the context object
         # return variables are: output
         #BEGIN search_jgi
+        print "python version %s" % sys.version
         header = {'Content-Type': 'application/json'}
         if 'search_string' not in input:
             raise(ValueError("missing required parameter search_string"))
@@ -97,8 +98,8 @@ class jgi_gateway_eap:
             output['results'] = ret.json()
             tqueryend = time.clock()
             search_elapsed_time = int(round(tqueryend - tquerystart) * 1000)
-            print "search start %d" % tquerystart
-            print "search end %d" % tqueryend
+            print "search start %f" % tquerystart
+            print "search end %f" % tqueryend
             print "search elapsed time: %d" % search_elapsed_time
             output['search_elapsed_time'] = search_elapsed_time
         else:
