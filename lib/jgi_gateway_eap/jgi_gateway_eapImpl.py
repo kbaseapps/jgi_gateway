@@ -92,7 +92,7 @@ class jgi_gateway_eap:
                             headers=header)
         tqueryend = time.time()
         search_elapsed_time = int(round(tqueryend - tquerystart) * 1000)
-        print "search elapsed time: %d" search_elapsed_time
+        print "search elapsed time: %d" % search_elapsed_time
 
         if ret.status_code == 200:
             output = dict()
