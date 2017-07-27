@@ -29,7 +29,7 @@ class jgi_gateway_eap:
     ######################################### noqa
     VERSION = "0.0.1"
     GIT_URL = "git@github.com:eapearson/jgi_gateway.git"
-    GIT_COMMIT_HASH = "1f0fbd734f7d0096b8c812eb7abfdf9d09c8abb6"
+    GIT_COMMIT_HASH = "5d1a1fa215fac06c04a57d92d3b7e7efd4ce00ce"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER
