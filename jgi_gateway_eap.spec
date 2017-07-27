@@ -34,7 +34,7 @@ module jgi_gateway_eap {
     typedef list<UnspecifiedObject> SearchQueryResult;
 
     typedef structure {
-       SearchQueryResult results;
+       SearchQueryResult search_result;
        int search_elapsed_time;
     } SearchResults;
 

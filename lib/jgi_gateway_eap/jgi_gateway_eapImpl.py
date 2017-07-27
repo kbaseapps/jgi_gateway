@@ -86,17 +86,20 @@ class jgi_gateway_eap:
         if 'page' in input:
             query['page'] = input['page']
         queryjson = json.dumps(query)
-        tquerystart = time.time()
+        tquerystart = time.clock()
         ret = requests.post(self.jgi_host + '/query', data=queryjson,
                             auth=(self.user, self.passwd),
                             headers=header)
-        tqueryend = time.time()
-        search_elapsed_time = int(round(tqueryend - tquerystart) * 1000)
-        print "search elapsed time: %d" % search_elapsed_time
+       
 
         if ret.status_code == 200:
             output = dict()
             output['results'] = ret.json()
+            tqueryend = time.clock()
+            search_elapsed_time = int(round(tqueryend - tquerystart) * 1000)
+            print "search start %d" % tquerystart
+            print "search end %d" % tqueryend
+            print "search elapsed time: %d" % search_elapsed_time
             output['search_elapsed_time'] = search_elapsed_time
         else:
             raise ValueError('Bad Response from JGI search service (%d)' %
