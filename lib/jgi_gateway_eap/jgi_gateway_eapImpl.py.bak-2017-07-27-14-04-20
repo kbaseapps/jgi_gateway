@@ -29,7 +29,7 @@ class jgi_gateway_eap:
     ######################################### noqa
     VERSION = "0.0.1"
     GIT_URL = "git@github.com:eapearson/jgi_gateway.git"
-    GIT_COMMIT_HASH = "5d1a1fa215fac06c04a57d92d3b7e7efd4ce00ce"
+    GIT_COMMIT_HASH = "3bf70cff6647420e00f14ebe25956437f80e0398"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER
@@ -70,10 +70,10 @@ class jgi_gateway_eap:
            "search_string" of String, parameter "limit" of Long, parameter
            "page" of Long
         :returns: instance of type "SearchResults" -> structure: parameter
-           "results" of type "SearchQueryResult" (typedef mapping<string,
-           string> docdata;) -> list of unspecified object, parameter
-           "search_elapsed_time" of Long
+           "doc_data" of list of type "docdata" -> mapping from String to
+           String
         """
+        tstart = time.time()
         # ctx is the context object
         # return variables are: output
         #BEGIN search_jgi
@@ -91,13 +91,10 @@ class jgi_gateway_eap:
                             auth=(self.user, self.passwd),
                             headers=header)
         tqueryend = time.time()
-        search_elapsed_time = int(round(tqueryend - tquerystart) * 1000))
-        print "search elapsed time: %d" search_elapsed_time
-
+        print "search timeing - prep: %d" int(round(tquerystart - tstart) * 1000))
+        print "search timeing - call: %d" int(round(tqueryend - tquerystart) * 1000))
         if ret.status_code == 200:
-            output = dict()
-            output['results'] = ret.json()
-            output['search_elapsed_time', search_elapsed_time]
+            output = ret.json()
         else:
             raise ValueError('Bad Response from JGI search service (%d)' %
                              ret.status_code)

@@ -23,9 +23,19 @@ module jgi_gateway_eap {
         int page;
     } SearchInput;
 
-    typedef mapping<string, string> docdata;
+
+    /*
+      SearchQueryResult holds the actual json returned by the 
+      backend search api.
+      TODO: the data returned is not really a string,string map, although
+      python doesn't care.
+    */
+    /* typedef mapping<string, string> docdata; */
+    typedef list<UnspecifiedObject> SearchQueryResult;
+
     typedef structure {
-       list<docdata> doc_data;
+       SearchQueryResult results;
+       int search_elapsed_time;
     } SearchResults;
 
 

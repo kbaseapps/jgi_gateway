@@ -126,8 +126,9 @@ SearchInput is a reference to a hash where the following keys are defined:
 	limit has a value which is an int
 	page has a value which is an int
 SearchResults is a reference to a hash where the following keys are defined:
-	doc_data has a value which is a reference to a list where each element is a jgi_gateway_eap.docdata
-docdata is a reference to a hash where the key is a string and the value is a string
+	results has a value which is a jgi_gateway_eap.SearchQueryResult
+	search_elapsed_time has a value which is an int
+SearchQueryResult is a reference to a list where each element is an UnspecifiedObject, which can hold any non-null object
 
 </pre>
 
@@ -142,8 +143,9 @@ SearchInput is a reference to a hash where the following keys are defined:
 	limit has a value which is an int
 	page has a value which is an int
 SearchResults is a reference to a hash where the following keys are defined:
-	doc_data has a value which is a reference to a list where each element is a jgi_gateway_eap.docdata
-docdata is a reference to a hash where the key is a string and the value is a string
+	results has a value which is a jgi_gateway_eap.SearchQueryResult
+	search_elapsed_time has a value which is an int
+SearchQueryResult is a reference to a list where each element is an UnspecifiedObject, which can hold any non-null object
 
 
 =end text
@@ -528,10 +530,15 @@ page has a value which is an int
 
 
 
-=head2 docdata
+=head2 SearchQueryResult
 
 =over 4
 
+
+
+=item Description
+
+typedef mapping<string, string> docdata;
 
 
 =item Definition
@@ -539,14 +546,14 @@ page has a value which is an int
 =begin html
 
 <pre>
-a reference to a hash where the key is a string and the value is a string
+a reference to a list where each element is an UnspecifiedObject, which can hold any non-null object
 </pre>
 
 =end html
 
 =begin text
 
-a reference to a hash where the key is a string and the value is a string
+a reference to a list where each element is an UnspecifiedObject, which can hold any non-null object
 
 =end text
 
@@ -566,7 +573,8 @@ a reference to a hash where the key is a string and the value is a string
 
 <pre>
 a reference to a hash where the following keys are defined:
-doc_data has a value which is a reference to a list where each element is a jgi_gateway_eap.docdata
+results has a value which is a jgi_gateway_eap.SearchQueryResult
+search_elapsed_time has a value which is an int
 
 </pre>
 
@@ -575,7 +583,8 @@ doc_data has a value which is a reference to a list where each element is a jgi_
 =begin text
 
 a reference to a hash where the following keys are defined:
-doc_data has a value which is a reference to a list where each element is a jgi_gateway_eap.docdata
+results has a value which is a jgi_gateway_eap.SearchQueryResult
+search_elapsed_time has a value which is an int
 
 
 =end text

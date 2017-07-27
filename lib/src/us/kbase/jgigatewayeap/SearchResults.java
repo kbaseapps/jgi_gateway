@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import us.kbase.common.service.UObject;
 
 
 /**
@@ -20,42 +21,60 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
-    "doc_data"
+    "results",
+    "search_elapsed_time"
 })
 public class SearchResults {
 
-    @JsonProperty("doc_data")
-    private List<Map<String, String>> docData;
-    private Map<java.lang.String, Object> additionalProperties = new HashMap<java.lang.String, Object>();
+    @JsonProperty("results")
+    private List<UObject> results;
+    @JsonProperty("search_elapsed_time")
+    private Long searchElapsedTime;
+    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    @JsonProperty("doc_data")
-    public List<Map<String, String>> getDocData() {
-        return docData;
+    @JsonProperty("results")
+    public List<UObject> getResults() {
+        return results;
     }
 
-    @JsonProperty("doc_data")
-    public void setDocData(List<Map<String, String>> docData) {
-        this.docData = docData;
+    @JsonProperty("results")
+    public void setResults(List<UObject> results) {
+        this.results = results;
     }
 
-    public SearchResults withDocData(List<Map<String, String>> docData) {
-        this.docData = docData;
+    public SearchResults withResults(List<UObject> results) {
+        this.results = results;
+        return this;
+    }
+
+    @JsonProperty("search_elapsed_time")
+    public Long getSearchElapsedTime() {
+        return searchElapsedTime;
+    }
+
+    @JsonProperty("search_elapsed_time")
+    public void setSearchElapsedTime(Long searchElapsedTime) {
+        this.searchElapsedTime = searchElapsedTime;
+    }
+
+    public SearchResults withSearchElapsedTime(Long searchElapsedTime) {
+        this.searchElapsedTime = searchElapsedTime;
         return this;
     }
 
     @JsonAnyGetter
-    public Map<java.lang.String, Object> getAdditionalProperties() {
+    public Map<String, Object> getAdditionalProperties() {
         return this.additionalProperties;
     }
 
     @JsonAnySetter
-    public void setAdditionalProperties(java.lang.String name, Object value) {
+    public void setAdditionalProperties(String name, Object value) {
         this.additionalProperties.put(name, value);
     }
 
     @Override
-    public java.lang.String toString() {
-        return ((((("SearchResults"+" [docData=")+ docData)+", additionalProperties=")+ additionalProperties)+"]");
+    public String toString() {
+        return ((((((("SearchResults"+" [results=")+ results)+", searchElapsedTime=")+ searchElapsedTime)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }
