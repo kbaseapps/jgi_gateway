@@ -126,7 +126,7 @@ SearchInput is a reference to a hash where the following keys are defined:
 	limit has a value which is an int
 	page has a value which is an int
 SearchResults is a reference to a hash where the following keys are defined:
-	results has a value which is a jgi_gateway_eap.SearchQueryResult
+	search_result has a value which is a jgi_gateway_eap.SearchQueryResult
 	search_elapsed_time has a value which is an int
 SearchQueryResult is a reference to a list where each element is an UnspecifiedObject, which can hold any non-null object
 
@@ -143,7 +143,7 @@ SearchInput is a reference to a hash where the following keys are defined:
 	limit has a value which is an int
 	page has a value which is an int
 SearchResults is a reference to a hash where the following keys are defined:
-	results has a value which is a jgi_gateway_eap.SearchQueryResult
+	search_result has a value which is a jgi_gateway_eap.SearchQueryResult
 	search_elapsed_time has a value which is an int
 SearchQueryResult is a reference to a list where each element is an UnspecifiedObject, which can hold any non-null object
 
@@ -573,7 +573,7 @@ a reference to a list where each element is an UnspecifiedObject, which can hold
 
 <pre>
 a reference to a hash where the following keys are defined:
-results has a value which is a jgi_gateway_eap.SearchQueryResult
+search_result has a value which is a jgi_gateway_eap.SearchQueryResult
 search_elapsed_time has a value which is an int
 
 </pre>
@@ -583,7 +583,7 @@ search_elapsed_time has a value which is an int
 =begin text
 
 a reference to a hash where the following keys are defined:
-results has a value which is a jgi_gateway_eap.SearchQueryResult
+search_result has a value which is a jgi_gateway_eap.SearchQueryResult
 search_elapsed_time has a value which is an int
 
 

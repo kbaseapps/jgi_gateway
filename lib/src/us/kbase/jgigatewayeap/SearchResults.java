@@ -21,29 +21,29 @@ import us.kbase.common.service.UObject;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
-    "results",
+    "search_result",
     "search_elapsed_time"
 })
 public class SearchResults {
 
-    @JsonProperty("results")
-    private List<UObject> results;
+    @JsonProperty("search_result")
+    private List<UObject> searchResult;
     @JsonProperty("search_elapsed_time")
     private Long searchElapsedTime;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    @JsonProperty("results")
-    public List<UObject> getResults() {
-        return results;
+    @JsonProperty("search_result")
+    public List<UObject> getSearchResult() {
+        return searchResult;
     }
 
-    @JsonProperty("results")
-    public void setResults(List<UObject> results) {
-        this.results = results;
+    @JsonProperty("search_result")
+    public void setSearchResult(List<UObject> searchResult) {
+        this.searchResult = searchResult;
     }
 
-    public SearchResults withResults(List<UObject> results) {
-        this.results = results;
+    public SearchResults withSearchResult(List<UObject> searchResult) {
+        this.searchResult = searchResult;
         return this;
     }
 
@@ -74,7 +74,7 @@ public class SearchResults {
 
     @Override
     public String toString() {
-        return ((((((("SearchResults"+" [results=")+ results)+", searchElapsedTime=")+ searchElapsedTime)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((("SearchResults"+" [searchResult=")+ searchResult)+", searchElapsedTime=")+ searchElapsedTime)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

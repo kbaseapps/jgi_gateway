@@ -43,9 +43,9 @@ class jgi_gateway_eap(object):
            "search_string" of String, parameter "limit" of Long, parameter
            "page" of Long
         :returns: instance of type "SearchResults" -> structure: parameter
-           "results" of type "SearchQueryResult" (typedef mapping<string,
-           string> docdata;) -> list of unspecified object, parameter
-           "search_elapsed_time" of Long
+           "search_result" of type "SearchQueryResult" (typedef
+           mapping<string, string> docdata;) -> list of unspecified object,
+           parameter "search_elapsed_time" of Long
         """
         return self._client.call_method(
             'jgi_gateway_eap.search_jgi',
