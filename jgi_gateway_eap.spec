@@ -60,8 +60,10 @@ module jgi_gateway_eap {
 
     funcdef stage_objects(StageInput input) returns (StagingResults results) authentication required;
 
+    /* REMOVE ME */
     typedef structure {
         string config; 
+        string config_properties;
     } DebugResults;
 
     funcdef debug() returns (DebugResults results) authentication required;

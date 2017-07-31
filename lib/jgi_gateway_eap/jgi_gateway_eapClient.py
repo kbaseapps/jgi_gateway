@@ -71,8 +71,9 @@ class jgi_gateway_eap(object):
 
     def debug(self, context=None):
         """
-        :returns: instance of type "DebugResults" -> structure: parameter
-           "config" of String
+        :returns: instance of type "DebugResults" (REMOVE ME) -> structure:
+           parameter "config" of String, parameter "config_properties" of
+           String
         """
         return self._client.call_method(
             'jgi_gateway_eap.debug',

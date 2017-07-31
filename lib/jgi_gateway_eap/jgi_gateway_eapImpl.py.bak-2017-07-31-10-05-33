@@ -29,7 +29,7 @@ class jgi_gateway_eap:
     ######################################### noqa
     VERSION = "0.0.1"
     GIT_URL = "git@github.com:eapearson/jgi_gateway.git"
-    GIT_COMMIT_HASH = "5d1a1fa215fac06c04a57d92d3b7e7efd4ce00ce"
+    GIT_COMMIT_HASH = "f59e142a2f90d3f2db70b53e23610e8b6b5b8606"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER
@@ -42,8 +42,8 @@ class jgi_gateway_eap:
         default constructor
         """
 
-        #print "DEBUG - config:"
-        #print json.dumps(config)
+        # print "DEBUG - config:"
+        # print json.dumps(config)
 
         self.config = config
         self.user = None
@@ -70,9 +70,9 @@ class jgi_gateway_eap:
            "search_string" of String, parameter "limit" of Long, parameter
            "page" of Long
         :returns: instance of type "SearchResults" -> structure: parameter
-           "results" of type "SearchQueryResult" (typedef mapping<string,
-           string> docdata;) -> list of unspecified object, parameter
-           "search_elapsed_time" of Long
+           "search_result" of type "SearchQueryResult" (typedef
+           mapping<string, string> docdata;) -> list of unspecified object,
+           parameter "search_elapsed_time" of Long
         """
         # ctx is the context object
         # return variables are: output
@@ -86,18 +86,19 @@ class jgi_gateway_eap:
         if 'page' in input:
             query['page'] = input['page']
         queryjson = json.dumps(query)
-        tquerystart = time.time()
+        tquerystart = time.clock()
         ret = requests.post(self.jgi_host + '/query', data=queryjson,
                             auth=(self.user, self.passwd),
                             headers=header)
-        tqueryend = time.time()
-        search_elapsed_time = int(round(tqueryend - tquerystart) * 1000)
-        print "search elapsed time: %d" search_elapsed_time
+       
 
         if ret.status_code == 200:
             output = dict()
-            output['results'] = ret.json()
-            output['search_elapsed_time', search_elapsed_time]
+            output['search_result'] = ret.json()
+            tqueryend = time.clock()
+            search_elapsed_time = int(round((tqueryend - tquerystart) * 1000))
+            print "search elapsed time: %d" % search_elapsed_time
+            output['search_elapsed_time'] = search_elapsed_time
         else:
             raise ValueError('Bad Response from JGI search service (%d)' %
                              ret.status_code)
@@ -166,7 +167,11 @@ class jgi_gateway_eap:
         # return variables are: results
         #BEGIN debug
         results = dict()
-        results['config'] = json.dumps(config);
+        results['config'] = json.dumps(config)
+        configPropsFile = './work/config.properties'
+        fo = open(configPropsFile, 'r');
+        results['config_properties'] = fo.read()
+        fo.close()
         #END debug
 
         # At some point might do deeper type checking...

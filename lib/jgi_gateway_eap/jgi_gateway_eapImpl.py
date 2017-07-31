@@ -29,7 +29,7 @@ class jgi_gateway_eap:
     ######################################### noqa
     VERSION = "0.0.1"
     GIT_URL = "git@github.com:eapearson/jgi_gateway.git"
-    GIT_COMMIT_HASH = "f59e142a2f90d3f2db70b53e23610e8b6b5b8606"
+    GIT_COMMIT_HASH = "8ab3e88cb5a1f6b0813a56acd84c9f3e7890a828"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER
@@ -160,14 +160,19 @@ class jgi_gateway_eap:
 
     def debug(self, ctx):
         """
-        :returns: instance of type "DebugResults" -> structure: parameter
-           "config" of String
+        :returns: instance of type "DebugResults" (REMOVE ME) -> structure:
+           parameter "config" of String, parameter "config_properties" of
+           String
         """
         # ctx is the context object
         # return variables are: results
         #BEGIN debug
         results = dict()
-        results['config'] = json.dumps(config);
+        results['config'] = json.dumps(config)
+        configPropsFile = './work/config.properties'
+        fo = open(configPropsFile, 'r');
+        results['config_properties'] = fo.read()
+        fo.close()
         #END debug
 
         # At some point might do deeper type checking...

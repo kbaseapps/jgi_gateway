@@ -309,6 +309,7 @@ StagingResults is a reference to a hash where the key is a string and the value 
 $results is a jgi_gateway_eap.DebugResults
 DebugResults is a reference to a hash where the following keys are defined:
 	config has a value which is a string
+	config_properties has a value which is a string
 
 </pre>
 
@@ -319,6 +320,7 @@ DebugResults is a reference to a hash where the following keys are defined:
 $results is a jgi_gateway_eap.DebugResults
 DebugResults is a reference to a hash where the following keys are defined:
 	config has a value which is a string
+	config_properties has a value which is a string
 
 
 =end text
@@ -664,6 +666,11 @@ a reference to a hash where the key is a string and the value is a string
 
 
 
+=item Description
+
+REMOVE ME
+
+
 =item Definition
 
 =begin html
@@ -671,6 +678,7 @@ a reference to a hash where the key is a string and the value is a string
 <pre>
 a reference to a hash where the following keys are defined:
 config has a value which is a string
+config_properties has a value which is a string
 
 </pre>
 
@@ -680,6 +688,7 @@ config has a value which is a string
 
 a reference to a hash where the following keys are defined:
 config has a value which is a string
+config_properties has a value which is a string
 
 
 =end text
