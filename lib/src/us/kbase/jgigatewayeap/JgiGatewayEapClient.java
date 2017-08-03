@@ -199,17 +199,20 @@ public class JgiGatewayEapClient {
     }
 
     /**
-     * <p>Original spec-file function name: debug</p>
+     * <p>Original spec-file function name: stage_status</p>
      * <pre>
+     * but really is
      * </pre>
-     * @return   parameter "results" of type {@link us.kbase.jgigatewayeap.DebugResults DebugResults}
+     * @param   jobId   instance of String
+     * @return   parameter "results" of String
      * @throws IOException if an IO exception occurs
      * @throws JsonClientException if a JSON RPC exception occurs
      */
-    public DebugResults debug(RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+    public String stageStatus(String jobId, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
-        TypeReference<List<DebugResults>> retType = new TypeReference<List<DebugResults>>() {};
-        List<DebugResults> res = caller.jsonrpcCall("jgi_gateway_eap.debug", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        args.add(jobId);
+        TypeReference<List<String>> retType = new TypeReference<List<String>>() {};
+        List<String> res = caller.jsonrpcCall("jgi_gateway_eap.stage_status", args, retType, true, true, jsonRpcContext, this.serviceVersion);
         return res.get(0);
     }
 

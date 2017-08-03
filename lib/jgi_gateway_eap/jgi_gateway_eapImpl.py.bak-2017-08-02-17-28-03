@@ -183,6 +183,7 @@ class jgi_gateway_eap:
                              'results is not type basestring as required.')
         # return the results
         return [results]
+
     def status(self, ctx):
         #BEGIN_STATUS
         returnVal = {'state': "OK",

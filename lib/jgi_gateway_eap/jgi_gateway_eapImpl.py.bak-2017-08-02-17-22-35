@@ -29,7 +29,7 @@ class jgi_gateway_eap:
     ######################################### noqa
     VERSION = "0.0.1"
     GIT_URL = "git@github.com:eapearson/jgi_gateway.git"
-    GIT_COMMIT_HASH = "30547fa99e50632a3e93a29eead87a232f3adaee"
+    GIT_COMMIT_HASH = "8ab3e88cb5a1f6b0813a56acd84c9f3e7890a828"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER
@@ -90,12 +90,14 @@ class jgi_gateway_eap:
         ret = requests.post(self.jgi_host + '/query', data=queryjson,
                             auth=(self.user, self.passwd),
                             headers=header)
+       
 
         if ret.status_code == 200:
             output = dict()
             output['search_result'] = ret.json()
             tqueryend = time.clock()
             search_elapsed_time = int(round((tqueryend - tquerystart) * 1000))
+            print "search elapsed time: %d" % search_elapsed_time
             output['search_elapsed_time'] = search_elapsed_time
         else:
             raise ValueError('Bad Response from JGI search service (%d)' %
@@ -131,14 +133,20 @@ class jgi_gateway_eap:
         request = {"ids": ','.join(input['ids']),
                    "path": "/data/%s" % (ctx['user_id'])}
         requestjson = json.dumps(request)
+        print "Fetch request: " + requestjson
+        #pid = os.fork()
+        #if pid == 0:
         resp = requests.post(self.jgi_host + '/fetch', data=requestjson,
                             auth=(self.user, self.passwd),
                             headers=header)
         # TODO: Just bail or return error object?
         resp.raise_for_status()
+        print "jgi gateway data fetch (staging) request status: %d" % (resp.status_code)
+        print resp.text
         # TODO: handle parsing errors
         responsejson = json.loads(resp.text)
-        # TODO Add some logging
+        #sys.exit(0)
+        #    # TODO Add some logging
         for id in input['ids']:
             results[id] = responsejson
         #END stage_objects
@@ -150,37 +158,27 @@ class jgi_gateway_eap:
         # return the results
         return [results]
 
-    def stage_status(self, ctx, job_id):
+    def debug(self, ctx):
         """
-        but really is
-        :param job_id: instance of String
-        :returns: instance of String
+        :returns: instance of type "DebugResults" (REMOVE ME) -> structure:
+           parameter "config" of String, parameter "config_properties" of
+           String
         """
         # ctx is the context object
         # return variables are: results
-        #BEGIN stage_status
-        # header = {'Accept': 'application/json'}
-        request = {"id": join(input['job_id'])}
-        requestjson = json.dumps(request)
-        print "Fetch request: " + requestjson
-        resp = requests.post(self.jgi_host + '/status', data=requestjson,
-                            auth=(self.user, self.passwd),
-                            headers=header)
-        # TODO: Just bail or return error object?
-        resp.raise_for_status()
-        print "jgi gateway staging status request status: %d" % (resp.status_code)
-        print resp.text
-        # TODO: we hope to get json back but just string for now
-        # responsejson = json.loads(resp.text)
-        #    # TODO Add some logging
-
-        results = resp.text
-        #END stage_status
+        #BEGIN debug
+        results = dict()
+        results['config'] = json.dumps(config)
+        configPropsFile = './work/config.properties'
+        fo = open(configPropsFile, 'r');
+        results['config_properties'] = fo.read()
+        fo.close()
+        #END debug
 
         # At some point might do deeper type checking...
-        if not isinstance(results, basestring):
-            raise ValueError('Method stage_status return value ' +
-                             'results is not type basestring as required.')
+        if not isinstance(results, dict):
+            raise ValueError('Method debug return value ' +
+                             'results is not type dict as required.')
         # return the results
         return [results]
     def status(self, ctx):

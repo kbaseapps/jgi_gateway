@@ -60,11 +60,20 @@ module jgi_gateway_eap {
 
     funcdef stage_objects(StageInput input) returns (StagingResults results) authentication required;
 
-    /* REMOVE ME */
+    /* 
+    should be:
     typedef structure {
-        string config; 
-        string config_properties;
-    } DebugResults;
+        int queued;
+        int in_progress;
+        int copy_in_progress;
+        int restore_failed;
+        in scp_failed
+    } StagingStatusResults;
 
-    funcdef debug() returns (DebugResults results) authentication required;
+    funcdef stage_status(string job_id) returns (StagingStatusResults results) authentication required;
+    */
+
+    /* but really is */
+    funcdef stage_status(string job_id) returns (string results) authentication required;
+
 };

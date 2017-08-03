@@ -69,15 +69,15 @@ class jgi_gateway_eap(object):
             'jgi_gateway_eap.stage_objects',
             [input], self._service_ver, context)
 
-    def debug(self, context=None):
+    def stage_status(self, job_id, context=None):
         """
-        :returns: instance of type "DebugResults" (REMOVE ME) -> structure:
-           parameter "config" of String, parameter "config_properties" of
-           String
+        but really is
+        :param job_id: instance of String
+        :returns: instance of String
         """
         return self._client.call_method(
-            'jgi_gateway_eap.debug',
-            [], self._service_ver, context)
+            'jgi_gateway_eap.stage_status',
+            [job_id], self._service_ver, context)
 
     def status(self, context=None):
         return self._client.call_method('jgi_gateway_eap.status',

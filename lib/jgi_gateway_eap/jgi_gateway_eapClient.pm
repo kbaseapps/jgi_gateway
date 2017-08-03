@@ -295,9 +295,9 @@ StagingResults is a reference to a hash where the key is a string and the value 
  
 
 
-=head2 debug
+=head2 stage_status
 
-  $results = $obj->debug()
+  $results = $obj->stage_status($job_id)
 
 =over 4
 
@@ -306,10 +306,8 @@ StagingResults is a reference to a hash where the key is a string and the value 
 =begin html
 
 <pre>
-$results is a jgi_gateway_eap.DebugResults
-DebugResults is a reference to a hash where the following keys are defined:
-	config has a value which is a string
-	config_properties has a value which is a string
+$job_id is a string
+$results is a string
 
 </pre>
 
@@ -317,53 +315,62 @@ DebugResults is a reference to a hash where the following keys are defined:
 
 =begin text
 
-$results is a jgi_gateway_eap.DebugResults
-DebugResults is a reference to a hash where the following keys are defined:
-	config has a value which is a string
-	config_properties has a value which is a string
+$job_id is a string
+$results is a string
 
 
 =end text
 
 =item Description
 
-
+but really is
 
 =back
 
 =cut
 
- sub debug
+ sub stage_status
 {
     my($self, @args) = @_;
 
 # Authentication: required
 
-    if ((my $n = @args) != 0)
+    if ((my $n = @args) != 1)
     {
 	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
-							       "Invalid argument count for function debug (received $n, expecting 0)");
+							       "Invalid argument count for function stage_status (received $n, expecting 1)");
+    }
+    {
+	my($job_id) = @args;
+
+	my @_bad_arguments;
+        (!ref($job_id)) or push(@_bad_arguments, "Invalid type for argument 1 \"job_id\" (value was \"$job_id\")");
+        if (@_bad_arguments) {
+	    my $msg = "Invalid arguments passed to stage_status:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+								   method_name => 'stage_status');
+	}
     }
 
     my $url = $self->{url};
     my $result = $self->{client}->call($url, $self->{headers}, {
-	    method => "jgi_gateway_eap.debug",
+	    method => "jgi_gateway_eap.stage_status",
 	    params => \@args,
     });
     if ($result) {
 	if ($result->is_error) {
 	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
 					       code => $result->content->{error}->{code},
-					       method_name => 'debug',
+					       method_name => 'stage_status',
 					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
 					      );
 	} else {
 	    return wantarray ? @{$result->result} : $result->result->[0];
 	}
     } else {
-        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method debug",
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method stage_status",
 					    status_line => $self->{client}->status_line,
-					    method_name => 'debug',
+					    method_name => 'stage_status',
 				       );
     }
 }
@@ -411,16 +418,16 @@ sub version {
             Bio::KBase::Exceptions::JSONRPC->throw(
                 error => $result->error_message,
                 code => $result->content->{code},
-                method_name => 'debug',
+                method_name => 'stage_status',
             );
         } else {
             return wantarray ? @{$result->result} : $result->result->[0];
         }
     } else {
         Bio::KBase::Exceptions::HTTP->throw(
-            error => "Error invoking method debug",
+            error => "Error invoking method stage_status",
             status_line => $self->{client}->status_line,
-            method_name => 'debug',
+            method_name => 'stage_status',
         );
     }
 }
@@ -653,43 +660,6 @@ a reference to a hash where the key is a string and the value is a string
 =begin text
 
 a reference to a hash where the key is a string and the value is a string
-
-=end text
-
-=back
-
-
-
-=head2 DebugResults
-
-=over 4
-
-
-
-=item Description
-
-REMOVE ME
-
-
-=item Definition
-
-=begin html
-
-<pre>
-a reference to a hash where the following keys are defined:
-config has a value which is a string
-config_properties has a value which is a string
-
-</pre>
-
-=end html
-
-=begin text
-
-a reference to a hash where the following keys are defined:
-config has a value which is a string
-config_properties has a value which is a string
-
 
 =end text
 
