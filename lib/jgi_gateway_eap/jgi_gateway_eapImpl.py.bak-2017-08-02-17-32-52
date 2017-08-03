@@ -29,7 +29,7 @@ class jgi_gateway_eap:
     ######################################### noqa
     VERSION = "0.0.1"
     GIT_URL = "git@github.com:eapearson/jgi_gateway.git"
-    GIT_COMMIT_HASH = "d380c33580e47a24703d5fff1422ede7a446761b"
+    GIT_COMMIT_HASH = "30547fa99e50632a3e93a29eead87a232f3adaee"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER
@@ -160,11 +160,10 @@ class jgi_gateway_eap:
         # return variables are: results
         #BEGIN stage_status
         # header = {'Accept': 'application/json'}
-        header = {}
         request = {"id": join(input['job_id'])}
         requestjson = json.dumps(request)
         print "Fetch request: " + requestjson
-        resp = requests.get(self.jgi_host + '/status', params=requestjson,
+        resp = requests.get(self.jgi_host + '/status', data=requestjson,
                             auth=(self.user, self.passwd),
                             headers=header)
         # TODO: Just bail or return error object?
