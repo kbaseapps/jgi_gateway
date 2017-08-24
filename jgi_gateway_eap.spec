@@ -64,7 +64,10 @@ module jgi_gateway_eap {
         At time of writing, the value is always "staging" since the request to the jgi gateway jgi service
         and the call to stage_objects in the jgi gateway kbase service are in different processes.
     */
-    typedef mapping<string, string> StagingResult;
+    
+    typedef structure {
+        string job_id;
+    } StagingResult;
 
     funcdef stage_objects(StageInput input) 
             returns (StagingResult result, CallStats stats) 

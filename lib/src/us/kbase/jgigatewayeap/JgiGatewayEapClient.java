@@ -187,15 +187,15 @@ public class JgiGatewayEapClient {
      * <pre>
      * </pre>
      * @param   input   instance of type {@link us.kbase.jgigatewayeap.StageInput StageInput}
-     * @return   multiple set: (1) parameter "result" of original type "StagingResult" (StagingResult returns a map entry for each id submitted in the stage_objects request. The map key is the _id property returned in a SearchResult item (not described here but probably should be), the value is a string describing the result of the staging request. At time of writing, the value is always "staging" since the request to the jgi gateway jgi service and the call to stage_objects in the jgi gateway kbase service are in different processes.) &rarr; mapping from String to String, (2) parameter "stats" of type {@link us.kbase.jgigatewayeap.CallStats CallStats}
+     * @return   multiple set: (1) parameter "result" of type {@link us.kbase.jgigatewayeap.StagingResult StagingResult}, (2) parameter "stats" of type {@link us.kbase.jgigatewayeap.CallStats CallStats}
      * @throws IOException if an IO exception occurs
      * @throws JsonClientException if a JSON RPC exception occurs
      */
-    public Tuple2<Map<String,String>, CallStats> stageObjects(StageInput input, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+    public Tuple2<StagingResult, CallStats> stageObjects(StageInput input, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
         args.add(input);
-        TypeReference<Tuple2<Map<String,String>, CallStats>> retType = new TypeReference<Tuple2<Map<String,String>, CallStats>>() {};
-        Tuple2<Map<String,String>, CallStats> res = caller.jsonrpcCall("jgi_gateway_eap.stage_objects", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        TypeReference<Tuple2<StagingResult, CallStats>> retType = new TypeReference<Tuple2<StagingResult, CallStats>>() {};
+        Tuple2<StagingResult, CallStats> res = caller.jsonrpcCall("jgi_gateway_eap.stage_objects", args, retType, true, true, jsonRpcContext, this.serviceVersion);
         return res;
     }
 

@@ -65,8 +65,8 @@ class jgi_gateway_eap(object):
            of the staging request. At time of writing, the value is always
            "staging" since the request to the jgi gateway jgi service and the
            call to stage_objects in the jgi gateway kbase service are in
-           different processes.) -> mapping from String to String, (2)
-           parameter "stats" of type "CallStats" (Call performance
+           different processes.) -> structure: parameter "job_id" of String,
+           (2) parameter "stats" of type "CallStats" (Call performance
            measurement) -> structure: parameter "request_elapsed_time" of Long
         """
         return self._client.call_method(

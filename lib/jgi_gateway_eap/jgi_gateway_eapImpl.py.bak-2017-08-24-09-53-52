@@ -29,7 +29,7 @@ class jgi_gateway_eap:
     ######################################### noqa
     VERSION = "0.0.1"
     GIT_URL = "ssh://git@github.com/eapearson/jgi_gateway"
-    GIT_COMMIT_HASH = "a58a3e6840d35e28b04eef86ee3cc3b9eace6f0d"
+    GIT_COMMIT_HASH = "22798976cd457b86040a65a7a34499694c2884f2"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER
@@ -132,8 +132,8 @@ class jgi_gateway_eap:
            of the staging request. At time of writing, the value is always
            "staging" since the request to the jgi gateway jgi service and the
            call to stage_objects in the jgi gateway kbase service are in
-           different processes.) -> structure: parameter "job_id" of String,
-           (2) parameter "stats" of type "CallStats" (Call performance
+           different processes.) -> mapping from String to String, (2)
+           parameter "stats" of type "CallStats" (Call performance
            measurement) -> structure: parameter "request_elapsed_time" of Long
         """
         # ctx is the context object
@@ -162,10 +162,8 @@ class jgi_gateway_eap:
         # TODO: handle parsing errors
         responsejson = json.loads(resp.text)
         # TODO Add some logging
-        # for id in input['ids']:
-        #     result[id] = responsejson
-        job_id = responsejson['id']
-        result['job_id'] = job_id
+        for id in input['ids']:
+            result[id] = responsejson
 
         #END stage_objects
 

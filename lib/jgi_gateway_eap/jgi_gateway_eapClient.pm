@@ -227,7 +227,8 @@ $result is a jgi_gateway_eap.StagingResult
 $stats is a jgi_gateway_eap.CallStats
 StageInput is a reference to a hash where the following keys are defined:
 	ids has a value which is a reference to a list where each element is a string
-StagingResult is a reference to a hash where the key is a string and the value is a string
+StagingResult is a reference to a hash where the following keys are defined:
+	job_id has a value which is a string
 CallStats is a reference to a hash where the following keys are defined:
 	request_elapsed_time has a value which is an int
 
@@ -242,7 +243,8 @@ $result is a jgi_gateway_eap.StagingResult
 $stats is a jgi_gateway_eap.CallStats
 StageInput is a reference to a hash where the following keys are defined:
 	ids has a value which is a reference to a list where each element is a string
-StagingResult is a reference to a hash where the key is a string and the value is a string
+StagingResult is a reference to a hash where the following keys are defined:
+	job_id has a value which is a string
 CallStats is a reference to a hash where the following keys are defined:
 	request_elapsed_time has a value which is an int
 
@@ -710,14 +712,18 @@ and the call to stage_objects in the jgi gateway kbase service are in different 
 =begin html
 
 <pre>
-a reference to a hash where the key is a string and the value is a string
+a reference to a hash where the following keys are defined:
+job_id has a value which is a string
+
 </pre>
 
 =end html
 
 =begin text
 
-a reference to a hash where the key is a string and the value is a string
+a reference to a hash where the following keys are defined:
+job_id has a value which is a string
+
 
 =end text
 
