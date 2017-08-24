@@ -70,7 +70,9 @@ module jgi_gateway_eap {
             returns (StagingResult result, CallStats stats) 
             authentication required;
 
-   
+   typedef structure {
+       string job_id;
+   } StagingStatusInput;
 
     typedef structure {
         string message;
@@ -78,7 +80,7 @@ module jgi_gateway_eap {
 
     /* Fetch the current status of the given staging fetch request as 
        identified by its job id */
-    funcdef stage_status(string job_id) 
+    funcdef stage_status(StagingStatusInput input) 
             returns (StagingStatusResult result, CallStats stats) 
             authentication required;
 

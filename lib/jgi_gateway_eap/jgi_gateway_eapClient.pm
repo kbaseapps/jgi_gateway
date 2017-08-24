@@ -307,7 +307,7 @@ CallStats is a reference to a hash where the following keys are defined:
 
 =head2 stage_status
 
-  $result, $stats = $obj->stage_status($job_id)
+  $result, $stats = $obj->stage_status($input)
 
 =over 4
 
@@ -316,9 +316,11 @@ CallStats is a reference to a hash where the following keys are defined:
 =begin html
 
 <pre>
-$job_id is a string
+$input is a jgi_gateway_eap.StagingStatusInput
 $result is a jgi_gateway_eap.StagingStatusResult
 $stats is a jgi_gateway_eap.CallStats
+StagingStatusInput is a reference to a hash where the following keys are defined:
+	job_id has a value which is a string
 StagingStatusResult is a reference to a hash where the following keys are defined:
 	message has a value which is a string
 CallStats is a reference to a hash where the following keys are defined:
@@ -330,9 +332,11 @@ CallStats is a reference to a hash where the following keys are defined:
 
 =begin text
 
-$job_id is a string
+$input is a jgi_gateway_eap.StagingStatusInput
 $result is a jgi_gateway_eap.StagingStatusResult
 $stats is a jgi_gateway_eap.CallStats
+StagingStatusInput is a reference to a hash where the following keys are defined:
+	job_id has a value which is a string
 StagingStatusResult is a reference to a hash where the following keys are defined:
 	message has a value which is a string
 CallStats is a reference to a hash where the following keys are defined:
@@ -362,10 +366,10 @@ identified by its job id
 							       "Invalid argument count for function stage_status (received $n, expecting 1)");
     }
     {
-	my($job_id) = @args;
+	my($input) = @args;
 
 	my @_bad_arguments;
-        (!ref($job_id)) or push(@_bad_arguments, "Invalid type for argument 1 \"job_id\" (value was \"$job_id\")");
+        (ref($input) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"input\" (value was \"$input\")");
         if (@_bad_arguments) {
 	    my $msg = "Invalid arguments passed to stage_status:\n" . join("", map { "\t$_\n" } @_bad_arguments);
 	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
@@ -714,6 +718,36 @@ a reference to a hash where the key is a string and the value is a string
 =begin text
 
 a reference to a hash where the key is a string and the value is a string
+
+=end text
+
+=back
+
+
+
+=head2 StagingStatusInput
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+job_id has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+job_id has a value which is a string
+
 
 =end text
 

@@ -205,14 +205,14 @@ public class JgiGatewayEapClient {
      * Fetch the current status of the given staging fetch request as 
      * identified by its job id
      * </pre>
-     * @param   jobId   instance of String
+     * @param   input   instance of type {@link us.kbase.jgigatewayeap.StagingStatusInput StagingStatusInput}
      * @return   multiple set: (1) parameter "result" of type {@link us.kbase.jgigatewayeap.StagingStatusResult StagingStatusResult}, (2) parameter "stats" of type {@link us.kbase.jgigatewayeap.CallStats CallStats}
      * @throws IOException if an IO exception occurs
      * @throws JsonClientException if a JSON RPC exception occurs
      */
-    public Tuple2<StagingStatusResult, CallStats> stageStatus(String jobId, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+    public Tuple2<StagingStatusResult, CallStats> stageStatus(StagingStatusInput input, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
-        args.add(jobId);
+        args.add(input);
         TypeReference<Tuple2<StagingStatusResult, CallStats>> retType = new TypeReference<Tuple2<StagingStatusResult, CallStats>>() {};
         Tuple2<StagingStatusResult, CallStats> res = caller.jsonrpcCall("jgi_gateway_eap.stage_status", args, retType, true, true, jsonRpcContext, this.serviceVersion);
         return res;

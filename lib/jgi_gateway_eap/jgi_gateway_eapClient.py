@@ -73,11 +73,12 @@ class jgi_gateway_eap(object):
             'jgi_gateway_eap.stage_objects',
             [input], self._service_ver, context)
 
-    def stage_status(self, job_id, context=None):
+    def stage_status(self, input, context=None):
         """
         Fetch the current status of the given staging fetch request as 
         identified by its job id
-        :param job_id: instance of String
+        :param input: instance of type "StagingStatusInput" -> structure:
+           parameter "job_id" of String
         :returns: multiple set - (1) parameter "result" of type
            "StagingStatusResult" -> structure: parameter "message" of String,
            (2) parameter "stats" of type "CallStats" (Call performance
@@ -85,7 +86,7 @@ class jgi_gateway_eap(object):
         """
         return self._client.call_method(
             'jgi_gateway_eap.stage_status',
-            [job_id], self._service_ver, context)
+            [input], self._service_ver, context)
 
     def status(self, context=None):
         return self._client.call_method('jgi_gateway_eap.status',

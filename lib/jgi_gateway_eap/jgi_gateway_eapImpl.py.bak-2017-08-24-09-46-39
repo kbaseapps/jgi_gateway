@@ -29,7 +29,7 @@ class jgi_gateway_eap:
     ######################################### noqa
     VERSION = "0.0.1"
     GIT_URL = "ssh://git@github.com/eapearson/jgi_gateway"
-    GIT_COMMIT_HASH = "22798976cd457b86040a65a7a34499694c2884f2"
+    GIT_COMMIT_HASH = "f346e0caf42b27fc27cf9a5e93ebe3434f7f888b"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER
@@ -177,12 +177,11 @@ class jgi_gateway_eap:
         # return the results
         return [result, stats]
 
-    def stage_status(self, ctx, input):
+    def stage_status(self, ctx, job_id):
         """
         Fetch the current status of the given staging fetch request as 
         identified by its job id
-        :param input: instance of type "StagingStatusInput" -> structure:
-           parameter "job_id" of String
+        :param job_id: instance of String
         :returns: multiple set - (1) parameter "result" of type
            "StagingStatusResult" -> structure: parameter "message" of String,
            (2) parameter "stats" of type "CallStats" (Call performance
@@ -198,7 +197,7 @@ class jgi_gateway_eap:
 
         # header = {'Accept': 'application/json'}
         header = {}
-        request = {"id": input['job_id']}
+        request = {"id": job_id}
         requestjson = json.dumps(request)
         print "Fetch request: " + requestjson
         call_start = time.clock()
