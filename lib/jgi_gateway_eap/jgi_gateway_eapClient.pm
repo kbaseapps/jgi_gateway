@@ -343,7 +343,8 @@ CallStats is a reference to a hash where the following keys are defined:
 
 =item Description
 
-but really is
+Fetch the current status of the given staging fetch request as 
+identified by its job id
 
 =back
 
@@ -724,22 +725,6 @@ a reference to a hash where the key is a string and the value is a string
 
 =over 4
 
-
-
-=item Description
-
-should be:
-typedef structure {
-    int queued;
-    int in_progress;
-    int copy_in_progress;
-    int restore_failed;
-    in scp_failed
-} StagingStatusResult;
-
-funcdef stage_status(string job_id) 
-        returns (StagingStatusResult result, CallStats stats) 
-        authentication required;
 
 
 =item Definition

@@ -29,7 +29,7 @@ class jgi_gateway_eap:
     ######################################### noqa
     VERSION = "0.0.1"
     GIT_URL = "ssh://git@github.com/eapearson/jgi_gateway"
-    GIT_COMMIT_HASH = "f346e0caf42b27fc27cf9a5e93ebe3434f7f888b"
+    GIT_COMMIT_HASH = "1397353607fb5f779c74495a11eefa6d1648f66d"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER
@@ -179,13 +179,17 @@ class jgi_gateway_eap:
 
     def stage_status(self, ctx, job_id):
         """
-        Fetch the current status of the given staging fetch request as 
-        identified by its job id
+        but really is
         :param job_id: instance of String
         :returns: multiple set - (1) parameter "result" of type
-           "StagingStatusResult" -> structure: parameter "message" of String,
-           (2) parameter "stats" of type "CallStats" (Call performance
-           measurement) -> structure: parameter "request_elapsed_time" of Long
+           "StagingStatusResult" (should be: typedef structure { int queued;
+           int in_progress; int copy_in_progress; int restore_failed; in
+           scp_failed } StagingStatusResult; funcdef stage_status(string
+           job_id) returns (StagingStatusResult result, CallStats stats)
+           authentication required;) -> structure: parameter "message" of
+           String, (2) parameter "stats" of type "CallStats" (Call
+           performance measurement) -> structure: parameter
+           "request_elapsed_time" of Long
         """
         # ctx is the context object
         # return variables are: result, stats

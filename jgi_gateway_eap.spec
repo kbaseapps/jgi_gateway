@@ -70,26 +70,14 @@ module jgi_gateway_eap {
             returns (StagingResult result, CallStats stats) 
             authentication required;
 
-    /* 
-    should be:
-    typedef structure {
-        int queued;
-        int in_progress;
-        int copy_in_progress;
-        int restore_failed;
-        in scp_failed
-    } StagingStatusResult;
-
-    funcdef stage_status(string job_id) 
-            returns (StagingStatusResult result, CallStats stats) 
-            authentication required;
-    */
+   
 
     typedef structure {
         string message;
     } StagingStatusResult;
 
-    /* but really is */
+    /* Fetch the current status of the given staging fetch request as 
+       identified by its job id */
     funcdef stage_status(string job_id) 
             returns (StagingStatusResult result, CallStats stats) 
             authentication required;

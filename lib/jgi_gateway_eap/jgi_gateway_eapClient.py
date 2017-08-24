@@ -75,17 +75,13 @@ class jgi_gateway_eap(object):
 
     def stage_status(self, job_id, context=None):
         """
-        but really is
+        Fetch the current status of the given staging fetch request as 
+        identified by its job id
         :param job_id: instance of String
         :returns: multiple set - (1) parameter "result" of type
-           "StagingStatusResult" (should be: typedef structure { int queued;
-           int in_progress; int copy_in_progress; int restore_failed; in
-           scp_failed } StagingStatusResult; funcdef stage_status(string
-           job_id) returns (StagingStatusResult result, CallStats stats)
-           authentication required;) -> structure: parameter "message" of
-           String, (2) parameter "stats" of type "CallStats" (Call
-           performance measurement) -> structure: parameter
-           "request_elapsed_time" of Long
+           "StagingStatusResult" -> structure: parameter "message" of String,
+           (2) parameter "stats" of type "CallStats" (Call performance
+           measurement) -> structure: parameter "request_elapsed_time" of Long
         """
         return self._client.call_method(
             'jgi_gateway_eap.stage_status',

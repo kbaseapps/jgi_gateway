@@ -202,7 +202,8 @@ public class JgiGatewayEapClient {
     /**
      * <p>Original spec-file function name: stage_status</p>
      * <pre>
-     * but really is
+     * Fetch the current status of the given staging fetch request as 
+     * identified by its job id
      * </pre>
      * @param   jobId   instance of String
      * @return   multiple set: (1) parameter "result" of type {@link us.kbase.jgigatewayeap.StagingStatusResult StagingStatusResult}, (2) parameter "stats" of type {@link us.kbase.jgigatewayeap.CallStats CallStats}

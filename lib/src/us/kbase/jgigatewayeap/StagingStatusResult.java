@@ -13,19 +13,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /**
  * <p>Original spec-file type: StagingStatusResult</p>
- * <pre>
- * should be:
- * typedef structure {
- *     int queued;
- *     int in_progress;
- *     int copy_in_progress;
- *     int restore_failed;
- *     in scp_failed
- * } StagingStatusResult;
- * funcdef stage_status(string job_id) 
- *         returns (StagingStatusResult result, CallStats stats) 
- *         authentication required;
- * </pre>
+ * 
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
