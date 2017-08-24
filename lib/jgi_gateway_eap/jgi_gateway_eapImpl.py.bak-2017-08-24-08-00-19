@@ -28,8 +28,8 @@ class jgi_gateway_eap:
     # the latter method is running.
     ######################################### noqa
     VERSION = "0.0.1"
-    GIT_URL = "ssh://git@github.com/eapearson/jgi_gateway"
-    GIT_COMMIT_HASH = "5b8d7373cd7edac84e7fa450295f701626da0719"
+    GIT_URL = "git@github.com:eapearson/jgi_gateway.git"
+    GIT_COMMIT_HASH = "d380c33580e47a24703d5fff1422ede7a446761b"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER
@@ -69,22 +69,15 @@ class jgi_gateway_eap:
            @optional limit @optional page) -> structure: parameter
            "search_string" of String, parameter "limit" of Long, parameter
            "page" of Long
-        :returns: multiple set - (1) parameter "result" of type
-           "SearchResult" -> structure: parameter "search_result" of type
-           "SearchQueryResult" (typedef mapping<string, string> docdata;) ->
-           list of unspecified object, (2) parameter "stats" of type
-           "CallStats" (Call performance measurement) -> structure: parameter
-           "request_elapsed_time" of Long
+        :returns: instance of type "SearchResults" -> structure: parameter
+           "search_result" of type "SearchQueryResult" (typedef
+           mapping<string, string> docdata;) -> list of unspecified object,
+           parameter "search_elapsed_time" of Long
         """
         # ctx is the context object
-        # return variables are: result, stats
+        # return variables are: output
         #BEGIN search_jgi
-        
-        # Return structures
         stats = dict()
-        result = dict()
-
-        # Do it
         header = {'Content-Type': 'application/json'}
         if 'search_string' not in input:
             raise(ValueError("missing required parameter search_string"))
@@ -100,51 +93,42 @@ class jgi_gateway_eap:
                             headers=header)
         call_end = time.clock()
         elapsed_time = int(round((call_end - call_start) * 1000))
-        stats['request_elapsed_time'] = elapsed_time;
+        stats['elapsed_time'] = elapsed_time;
 
         if ret.status_code == 200:
-            result['search_result'] = ret.json()            
+            output = dict()
+            output['search_result'] = ret.json()            
         else:
             raise ValueError('Bad Response from JGI search service (%d)' %
                              ret.status_code)
 
-        #END search_jgi
-
         # At some point might do deeper type checking...
-        if not isinstance(result, dict):
+        if not isinstance(output, dict):
             raise ValueError('Method search_jgi return value ' +
-                             'result is not type dict as required.')
-        if not isinstance(stats, dict):
-            raise ValueError('Method search_jgi return value ' +
-                             'stats is not type dict as required.')
+                             'output is not type dict as required.')
         # return the results
-        return [result, stats]
+        return [output, stats]
+        #END search_jgi
 
     def stage_objects(self, ctx, input):
         """
         :param input: instance of type "StageInput" -> structure: parameter
            "ids" of list of String
-        :returns: multiple set - (1) parameter "result" of type
-           "StagingResult" (StagingResult returns a map entry for each id
-           submitted in the stage_objects request. The map key is the _id
-           property returned in a SearchResult item (not described here but
-           probably should be), the value is a string describing the result
-           of the staging request. At time of writing, the value is always
-           "staging" since the request to the jgi gateway jgi service and the
-           call to stage_objects in the jgi gateway kbase service are in
-           different processes.) -> mapping from String to String, (2)
-           parameter "stats" of type "CallStats" (Call performance
-           measurement) -> structure: parameter "request_elapsed_time" of Long
+        :returns: instance of type "StagingResults" (StagingResults returns a
+           map entry for each id submitted in the stage_objects request. The
+           map key is the _id property returned in a SearchResults item (not
+           described here but probably should be), the value is a string
+           describing the result of the staging request. At time of writing,
+           the value is always "staging" since the request to the jgi gateway
+           jgi service and the call to stage_objects in the jgi gateway kbase
+           service are in different processes.) -> mapping from String to
+           String
         """
         # ctx is the context object
-        # return variables are: result, stats
+        # return variables are: results
         #BEGIN stage_objects
-
-        # Return structures
         stats = dict()
-        result = dict()
-
-        # Do it
+        results = dict()
         header = {'Content-Type': 'application/json'}
         request = {"ids": ','.join(input['ids']),
                    "path": "/data/%s" % (ctx['user_id'])}
@@ -155,7 +139,7 @@ class jgi_gateway_eap:
                             headers=header)
         call_end = time.clock()
         elapsed_time = int(round((call_end - call_start) * 1000))
-        stats['request_elapsed_time'] = elapsed_time
+        stats['elapsed_time'] = elapsed_time
                             
         # TODO: Just bail or return error object?
         resp.raise_for_status()
@@ -163,42 +147,26 @@ class jgi_gateway_eap:
         responsejson = json.loads(resp.text)
         # TODO Add some logging
         for id in input['ids']:
-            result[id] = responsejson
-
-        #END stage_objects
+            results[id] = responsejson
 
         # At some point might do deeper type checking...
-        if not isinstance(result, dict):
+        if not isinstance(results, dict):
             raise ValueError('Method stage_objects return value ' +
-                             'result is not type dict as required.')
-        if not isinstance(stats, dict):
-            raise ValueError('Method stage_objects return value ' +
-                             'stats is not type dict as required.')
+                             'results is not type dict as required.')
         # return the results
-        return [result, stats]
+        return [results, stats]
+        #END stage_objects
 
     def stage_status(self, ctx, job_id):
         """
         but really is
         :param job_id: instance of String
-        :returns: multiple set - (1) parameter "result" of type
-           "StagingStatusResult" (should be: typedef structure { int queued;
-           int in_progress; int copy_in_progress; int restore_failed; in
-           scp_failed } StagingStatusResult; funcdef stage_status(string
-           job_id) returns (StagingStatusResult result, CallStats stats)
-           authentication required;) -> structure: parameter "message" of
-           String, (2) parameter "stats" of type "CallStats" (Call
-           performance measurement) -> structure: parameter
-           "request_elapsed_time" of Long
+        :returns: instance of String
         """
         # ctx is the context object
-        # return variables are: result, stats
+        # return variables are: results
         #BEGIN stage_status
-
-        # Result structs
         stats = dict()
-        result = dict()
-
         # header = {'Accept': 'application/json'}
         header = {}
         request = {"id": join(input['job_id'])}
@@ -209,28 +177,25 @@ class jgi_gateway_eap:
                             auth=(self.user, self.passwd),
                             headers=header)
         call_end = time.clock()
-        stats['request_elapsed_time'] = int(round((call_end - call_start) * 1000))
+        stats['elapsed_time'] = int(round((call_end - call_start) * 1000))
         # TODO: Just bail or return error object?
         resp.raise_for_status()
-        #print "jgi gateway staging status request status: %d" % (resp.status_code)
-        #print resp.text
+        print "jgi gateway staging status request status: %d" % (resp.status_code)
+        print resp.text
         # TODO: we hope to get json back but just string for now
         # responsejson = json.loads(resp.text)
         #    # TODO Add some logging
 
-        result['message'] = resp.text
-
-        #END stage_status
+        results = resp.text
 
         # At some point might do deeper type checking...
-        if not isinstance(result, dict):
+        if not isinstance(results, basestring):
             raise ValueError('Method stage_status return value ' +
-                             'result is not type dict as required.')
-        if not isinstance(stats, dict):
-            raise ValueError('Method stage_status return value ' +
-                             'stats is not type dict as required.')
+                             'results is not type basestring as required.')
         # return the results
-        return [result, stats]
+        return [results, stats]
+        #END stage_status
+
     def status(self, ctx):
         #BEGIN_STATUS
         returnVal = {'state': "OK",

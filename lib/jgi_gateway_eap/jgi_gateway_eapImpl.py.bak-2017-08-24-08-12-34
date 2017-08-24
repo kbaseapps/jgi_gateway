@@ -72,9 +72,9 @@ class jgi_gateway_eap:
         :returns: multiple set - (1) parameter "result" of type
            "SearchResult" -> structure: parameter "search_result" of type
            "SearchQueryResult" (typedef mapping<string, string> docdata;) ->
-           list of unspecified object, (2) parameter "stats" of type
-           "CallStats" (Call performance measurement) -> structure: parameter
-           "request_elapsed_time" of Long
+           list of unspecified object, parameter "search_elapsed_time" of
+           Long, (2) parameter "stats" of type "CallStats" (Call performance
+           measurement) -> structure: parameter "elapsed_time" of Long
         """
         # ctx is the context object
         # return variables are: result, stats
@@ -134,7 +134,7 @@ class jgi_gateway_eap:
            call to stage_objects in the jgi gateway kbase service are in
            different processes.) -> mapping from String to String, (2)
            parameter "stats" of type "CallStats" (Call performance
-           measurement) -> structure: parameter "request_elapsed_time" of Long
+           measurement) -> structure: parameter "elapsed_time" of Long
         """
         # ctx is the context object
         # return variables are: result, stats
@@ -188,8 +188,8 @@ class jgi_gateway_eap:
            job_id) returns (StagingStatusResult result, CallStats stats)
            authentication required;) -> structure: parameter "message" of
            String, (2) parameter "stats" of type "CallStats" (Call
-           performance measurement) -> structure: parameter
-           "request_elapsed_time" of Long
+           performance measurement) -> structure: parameter "elapsed_time" of
+           Long
         """
         # ctx is the context object
         # return variables are: result, stats

@@ -10,6 +10,13 @@ module jgi_gateway_eap {
     typedef int bool;
 
     /*
+        Call performance measurement
+    */
+    typedef structure {        
+        int request_elapsed_time;
+    } CallStats;
+
+    /*
         search_jgi searches the JGI service for matches against the
         search_string
 
@@ -35,30 +42,33 @@ module jgi_gateway_eap {
 
     typedef structure {
        SearchQueryResult search_result;
-       int search_elapsed_time;
-    } SearchResults;
+    } SearchResult;
 
 
     /*
         The search_jgi function takes a search string and returns a list of
         documents.
     */
-    funcdef search_jgi(SearchInput input) returns (SearchResults output) authentication required;
+    funcdef search_jgi(SearchInput input) 
+            returns (SearchResult result, CallStats stats) 
+            authentication required;
 
     typedef structure {
        list<string> ids;
     } StageInput;
 
     /*
-        StagingResults returns a map entry for each id submitted in the stage_objects request.
-        The map key is the _id property returned in a SearchResults item (not described here but probably 
+        StagingResult returns a map entry for each id submitted in the stage_objects request.
+        The map key is the _id property returned in a SearchResult item (not described here but probably 
         should be), the value is a string describing the result of the staging request.
         At time of writing, the value is always "staging" since the request to the jgi gateway jgi service
         and the call to stage_objects in the jgi gateway kbase service are in different processes.
     */
-    typedef mapping<string, string> StagingResults;
+    typedef mapping<string, string> StagingResult;
 
-    funcdef stage_objects(StageInput input) returns (StagingResults results) authentication required;
+    funcdef stage_objects(StageInput input) 
+            returns (StagingResult result, CallStats stats) 
+            authentication required;
 
     /* 
     should be:
@@ -68,12 +78,20 @@ module jgi_gateway_eap {
         int copy_in_progress;
         int restore_failed;
         in scp_failed
-    } StagingStatusResults;
+    } StagingStatusResult;
 
-    funcdef stage_status(string job_id) returns (StagingStatusResults results) authentication required;
+    funcdef stage_status(string job_id) 
+            returns (StagingStatusResult result, CallStats stats) 
+            authentication required;
     */
 
+    typedef structure {
+        string message;
+    } StagingStatusResult;
+
     /* but really is */
-    funcdef stage_status(string job_id) returns (string results) authentication required;
+    funcdef stage_status(string job_id) 
+            returns (StagingStatusResult result, CallStats stats) 
+            authentication required;
 
 };

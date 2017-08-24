@@ -110,7 +110,7 @@ sub new
 
 =head2 search_jgi
 
-  $output = $obj->search_jgi($input)
+  $result, $stats = $obj->search_jgi($input)
 
 =over 4
 
@@ -120,15 +120,17 @@ sub new
 
 <pre>
 $input is a jgi_gateway_eap.SearchInput
-$output is a jgi_gateway_eap.SearchResults
+$result is a jgi_gateway_eap.SearchResult
+$stats is a jgi_gateway_eap.CallStats
 SearchInput is a reference to a hash where the following keys are defined:
 	search_string has a value which is a string
 	limit has a value which is an int
 	page has a value which is an int
-SearchResults is a reference to a hash where the following keys are defined:
+SearchResult is a reference to a hash where the following keys are defined:
 	search_result has a value which is a jgi_gateway_eap.SearchQueryResult
-	search_elapsed_time has a value which is an int
 SearchQueryResult is a reference to a list where each element is an UnspecifiedObject, which can hold any non-null object
+CallStats is a reference to a hash where the following keys are defined:
+	request_elapsed_time has a value which is an int
 
 </pre>
 
@@ -137,15 +139,17 @@ SearchQueryResult is a reference to a list where each element is an UnspecifiedO
 =begin text
 
 $input is a jgi_gateway_eap.SearchInput
-$output is a jgi_gateway_eap.SearchResults
+$result is a jgi_gateway_eap.SearchResult
+$stats is a jgi_gateway_eap.CallStats
 SearchInput is a reference to a hash where the following keys are defined:
 	search_string has a value which is a string
 	limit has a value which is an int
 	page has a value which is an int
-SearchResults is a reference to a hash where the following keys are defined:
+SearchResult is a reference to a hash where the following keys are defined:
 	search_result has a value which is a jgi_gateway_eap.SearchQueryResult
-	search_elapsed_time has a value which is an int
 SearchQueryResult is a reference to a list where each element is an UnspecifiedObject, which can hold any non-null object
+CallStats is a reference to a hash where the following keys are defined:
+	request_elapsed_time has a value which is an int
 
 
 =end text
@@ -209,7 +213,7 @@ documents.
 
 =head2 stage_objects
 
-  $results = $obj->stage_objects($input)
+  $result, $stats = $obj->stage_objects($input)
 
 =over 4
 
@@ -219,10 +223,13 @@ documents.
 
 <pre>
 $input is a jgi_gateway_eap.StageInput
-$results is a jgi_gateway_eap.StagingResults
+$result is a jgi_gateway_eap.StagingResult
+$stats is a jgi_gateway_eap.CallStats
 StageInput is a reference to a hash where the following keys are defined:
 	ids has a value which is a reference to a list where each element is a string
-StagingResults is a reference to a hash where the key is a string and the value is a string
+StagingResult is a reference to a hash where the key is a string and the value is a string
+CallStats is a reference to a hash where the following keys are defined:
+	request_elapsed_time has a value which is an int
 
 </pre>
 
@@ -231,10 +238,13 @@ StagingResults is a reference to a hash where the key is a string and the value 
 =begin text
 
 $input is a jgi_gateway_eap.StageInput
-$results is a jgi_gateway_eap.StagingResults
+$result is a jgi_gateway_eap.StagingResult
+$stats is a jgi_gateway_eap.CallStats
 StageInput is a reference to a hash where the following keys are defined:
 	ids has a value which is a reference to a list where each element is a string
-StagingResults is a reference to a hash where the key is a string and the value is a string
+StagingResult is a reference to a hash where the key is a string and the value is a string
+CallStats is a reference to a hash where the following keys are defined:
+	request_elapsed_time has a value which is an int
 
 
 =end text
@@ -297,7 +307,7 @@ StagingResults is a reference to a hash where the key is a string and the value 
 
 =head2 stage_status
 
-  $results = $obj->stage_status($job_id)
+  $result, $stats = $obj->stage_status($job_id)
 
 =over 4
 
@@ -307,7 +317,12 @@ StagingResults is a reference to a hash where the key is a string and the value 
 
 <pre>
 $job_id is a string
-$results is a string
+$result is a jgi_gateway_eap.StagingStatusResult
+$stats is a jgi_gateway_eap.CallStats
+StagingStatusResult is a reference to a hash where the following keys are defined:
+	message has a value which is a string
+CallStats is a reference to a hash where the following keys are defined:
+	request_elapsed_time has a value which is an int
 
 </pre>
 
@@ -316,7 +331,12 @@ $results is a string
 =begin text
 
 $job_id is a string
-$results is a string
+$result is a jgi_gateway_eap.StagingStatusResult
+$stats is a jgi_gateway_eap.CallStats
+StagingStatusResult is a reference to a hash where the following keys are defined:
+	message has a value which is a string
+CallStats is a reference to a hash where the following keys are defined:
+	request_elapsed_time has a value which is an int
 
 
 =end text
@@ -495,6 +515,41 @@ an int
 
 
 
+=head2 CallStats
+
+=over 4
+
+
+
+=item Description
+
+Call performance measurement
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+request_elapsed_time has a value which is an int
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+request_elapsed_time has a value which is an int
+
+
+=end text
+
+=back
+
+
+
 =head2 SearchInput
 
 =over 4
@@ -570,7 +625,7 @@ a reference to a list where each element is an UnspecifiedObject, which can hold
 
 
 
-=head2 SearchResults
+=head2 SearchResult
 
 =over 4
 
@@ -583,7 +638,6 @@ a reference to a list where each element is an UnspecifiedObject, which can hold
 <pre>
 a reference to a hash where the following keys are defined:
 search_result has a value which is a jgi_gateway_eap.SearchQueryResult
-search_elapsed_time has a value which is an int
 
 </pre>
 
@@ -593,7 +647,6 @@ search_elapsed_time has a value which is an int
 
 a reference to a hash where the following keys are defined:
 search_result has a value which is a jgi_gateway_eap.SearchQueryResult
-search_elapsed_time has a value which is an int
 
 
 =end text
@@ -632,7 +685,7 @@ ids has a value which is a reference to a list where each element is a string
 
 
 
-=head2 StagingResults
+=head2 StagingResult
 
 =over 4
 
@@ -640,8 +693,8 @@ ids has a value which is a reference to a list where each element is a string
 
 =item Description
 
-StagingResults returns a map entry for each id submitted in the stage_objects request.
-The map key is the _id property returned in a SearchResults item (not described here but probably 
+StagingResult returns a map entry for each id submitted in the stage_objects request.
+The map key is the _id property returned in a SearchResult item (not described here but probably 
 should be), the value is a string describing the result of the staging request.
 At time of writing, the value is always "staging" since the request to the jgi gateway jgi service
 and the call to stage_objects in the jgi gateway kbase service are in different processes.
@@ -660,6 +713,52 @@ a reference to a hash where the key is a string and the value is a string
 =begin text
 
 a reference to a hash where the key is a string and the value is a string
+
+=end text
+
+=back
+
+
+
+=head2 StagingStatusResult
+
+=over 4
+
+
+
+=item Description
+
+should be:
+typedef structure {
+    int queued;
+    int in_progress;
+    int copy_in_progress;
+    int restore_failed;
+    in scp_failed
+} StagingStatusResult;
+
+funcdef stage_status(string job_id) 
+        returns (StagingStatusResult result, CallStats stats) 
+        authentication required;
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+message has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+message has a value which is a string
+
 
 =end text
 

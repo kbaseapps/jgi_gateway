@@ -42,10 +42,12 @@ class jgi_gateway_eap(object):
            @optional limit @optional page) -> structure: parameter
            "search_string" of String, parameter "limit" of Long, parameter
            "page" of Long
-        :returns: instance of type "SearchResults" -> structure: parameter
-           "search_result" of type "SearchQueryResult" (typedef
-           mapping<string, string> docdata;) -> list of unspecified object,
-           parameter "search_elapsed_time" of Long
+        :returns: multiple set - (1) parameter "result" of type
+           "SearchResult" -> structure: parameter "search_result" of type
+           "SearchQueryResult" (typedef mapping<string, string> docdata;) ->
+           list of unspecified object, (2) parameter "stats" of type
+           "CallStats" (Call performance measurement) -> structure: parameter
+           "request_elapsed_time" of Long
         """
         return self._client.call_method(
             'jgi_gateway_eap.search_jgi',
@@ -55,15 +57,17 @@ class jgi_gateway_eap(object):
         """
         :param input: instance of type "StageInput" -> structure: parameter
            "ids" of list of String
-        :returns: instance of type "StagingResults" (StagingResults returns a
-           map entry for each id submitted in the stage_objects request. The
-           map key is the _id property returned in a SearchResults item (not
-           described here but probably should be), the value is a string
-           describing the result of the staging request. At time of writing,
-           the value is always "staging" since the request to the jgi gateway
-           jgi service and the call to stage_objects in the jgi gateway kbase
-           service are in different processes.) -> mapping from String to
-           String
+        :returns: multiple set - (1) parameter "result" of type
+           "StagingResult" (StagingResult returns a map entry for each id
+           submitted in the stage_objects request. The map key is the _id
+           property returned in a SearchResult item (not described here but
+           probably should be), the value is a string describing the result
+           of the staging request. At time of writing, the value is always
+           "staging" since the request to the jgi gateway jgi service and the
+           call to stage_objects in the jgi gateway kbase service are in
+           different processes.) -> mapping from String to String, (2)
+           parameter "stats" of type "CallStats" (Call performance
+           measurement) -> structure: parameter "request_elapsed_time" of Long
         """
         return self._client.call_method(
             'jgi_gateway_eap.stage_objects',
@@ -73,7 +77,15 @@ class jgi_gateway_eap(object):
         """
         but really is
         :param job_id: instance of String
-        :returns: instance of String
+        :returns: multiple set - (1) parameter "result" of type
+           "StagingStatusResult" (should be: typedef structure { int queued;
+           int in_progress; int copy_in_progress; int restore_failed; in
+           scp_failed } StagingStatusResult; funcdef stage_status(string
+           job_id) returns (StagingStatusResult result, CallStats stats)
+           authentication required;) -> structure: parameter "message" of
+           String, (2) parameter "stats" of type "CallStats" (Call
+           performance measurement) -> structure: parameter
+           "request_elapsed_time" of Long
         """
         return self._client.call_method(
             'jgi_gateway_eap.stage_status',
