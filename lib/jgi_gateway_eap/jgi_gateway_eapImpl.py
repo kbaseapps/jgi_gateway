@@ -29,7 +29,7 @@ class jgi_gateway_eap:
     ######################################### noqa
     VERSION = "0.0.1"
     GIT_URL = "ssh://git@github.com/eapearson/jgi_gateway"
-    GIT_COMMIT_HASH = "2729365fd4234ef52127245a95215587e164ea1b"
+    GIT_COMMIT_HASH = "a487581ef96cba3a6d3dd2c83bb19aed69eb6eb8"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER
@@ -126,7 +126,7 @@ class jgi_gateway_eap:
             if not isinstance(include_private, int) or include_private not in [1,0]:
                 raise(ValueError("the 'include_private' parameter must be an integer 1 or 0"))
             if include_private:
-                query['userid'] = ctx['user_id]
+                query['userid'] = ctx['user_id']
 
         # PREPARE REQUEST
 
@@ -208,8 +208,8 @@ class jgi_gateway_eap:
 
         call_start = time.clock()
         resp = requests.post(self.jgi_host + '/fetch', data=requestjson,
-                            auth=(self.user, self.passwd),
-                            headers=header)
+                                auth=(self.user, self.passwd),
+                                headers=header)
         call_end = time.clock()
         elapsed_time = int(round((call_end - call_start) * 1000))
         stats['request_elapsed_time'] = elapsed_time
@@ -263,7 +263,7 @@ class jgi_gateway_eap:
         # id
         # The job id is required in order to specify for which job we want the status
         #
-        if 'job_id' is not in input:
+        if 'job_id' not in input:
             raise(ValueError('the "job_id" is required'))
         job_id = input['job_id']
         if isinstance(job_id, basestring):
