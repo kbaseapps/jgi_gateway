@@ -75,7 +75,7 @@ class jgi_gatewayTest(unittest.TestCase):
 
     # NOTE: According to Python unittest naming rules test method names should start from 'test'. # noqa
     def test_search(self):
-        query = {"search_string": "coli"}
+        query = {"query": "coli"}
         ret = self.getImpl().search_jgi(self.getContext(), query)[0]
         self.assertIsNotNone(ret)
         self.assertIn('hits', ret)

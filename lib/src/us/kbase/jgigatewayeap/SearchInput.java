@@ -16,7 +16,7 @@ import us.kbase.common.service.UObject;
  * <p>Original spec-file type: SearchInput</p>
  * <pre>
  * search_jgi searches the JGI service for matches against the
- * search_string
+ * query, which may be a string or an object mapping string->string
  * Other parameters
  * @optional limit
  * @optional page
@@ -26,7 +26,7 @@ import us.kbase.common.service.UObject;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
-    "search_string",
+    "query",
     "filter",
     "limit",
     "page",
@@ -34,8 +34,8 @@ import us.kbase.common.service.UObject;
 })
 public class SearchInput {
 
-    @JsonProperty("search_string")
-    private java.lang.String searchString;
+    @JsonProperty("query")
+    private Map<String, String> query;
     @JsonProperty("filter")
     private Map<String, UObject> filter;
     @JsonProperty("limit")
@@ -46,18 +46,18 @@ public class SearchInput {
     private Long includePrivate;
     private Map<java.lang.String, Object> additionalProperties = new HashMap<java.lang.String, Object>();
 
-    @JsonProperty("search_string")
-    public java.lang.String getSearchString() {
-        return searchString;
+    @JsonProperty("query")
+    public Map<String, String> getQuery() {
+        return query;
     }
 
-    @JsonProperty("search_string")
-    public void setSearchString(java.lang.String searchString) {
-        this.searchString = searchString;
+    @JsonProperty("query")
+    public void setQuery(Map<String, String> query) {
+        this.query = query;
     }
 
-    public SearchInput withSearchString(java.lang.String searchString) {
-        this.searchString = searchString;
+    public SearchInput withQuery(Map<String, String> query) {
+        this.query = query;
         return this;
     }
 
@@ -133,7 +133,7 @@ public class SearchInput {
 
     @Override
     public java.lang.String toString() {
-        return ((((((((((((("SearchInput"+" [searchString=")+ searchString)+", filter=")+ filter)+", limit=")+ limit)+", page=")+ page)+", includePrivate=")+ includePrivate)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((((((((("SearchInput"+" [query=")+ query)+", filter=")+ filter)+", limit=")+ limit)+", page=")+ page)+", includePrivate=")+ includePrivate)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

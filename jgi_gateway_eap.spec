@@ -22,17 +22,18 @@ module jgi_gateway_eap {
         I don't think the type compiler supports union typs, so unspecified it is.
     */
     typedef mapping<string, UnspecifiedObject> SearchFilter;
+    typedef mapping<string, string> SearchQuery;
 
     /*
         search_jgi searches the JGI service for matches against the
-        search_string
+        query, which may be a string or an object mapping string->string
 
         Other parameters
         @optional limit
         @optional page
     */
     typedef structure {
-        string search_string;
+        SearchQuery query;
         SearchFilter filter;
         int limit;
         int page;

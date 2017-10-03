@@ -123,11 +123,12 @@ $input is a jgi_gateway_eap.SearchInput
 $result is a jgi_gateway_eap.SearchResult
 $stats is a jgi_gateway_eap.CallStats
 SearchInput is a reference to a hash where the following keys are defined:
-	search_string has a value which is a string
+	query has a value which is a jgi_gateway_eap.SearchQuery
 	filter has a value which is a jgi_gateway_eap.SearchFilter
 	limit has a value which is an int
 	page has a value which is an int
 	include_private has a value which is a jgi_gateway_eap.bool
+SearchQuery is a reference to a hash where the key is a string and the value is a string
 SearchFilter is a reference to a hash where the key is a string and the value is an UnspecifiedObject, which can hold any non-null object
 bool is an int
 SearchResult is a reference to a hash where the following keys are defined:
@@ -146,11 +147,12 @@ $input is a jgi_gateway_eap.SearchInput
 $result is a jgi_gateway_eap.SearchResult
 $stats is a jgi_gateway_eap.CallStats
 SearchInput is a reference to a hash where the following keys are defined:
-	search_string has a value which is a string
+	query has a value which is a jgi_gateway_eap.SearchQuery
 	filter has a value which is a jgi_gateway_eap.SearchFilter
 	limit has a value which is an int
 	page has a value which is an int
 	include_private has a value which is a jgi_gateway_eap.bool
+SearchQuery is a reference to a hash where the key is a string and the value is a string
 SearchFilter is a reference to a hash where the key is a string and the value is an UnspecifiedObject, which can hold any non-null object
 bool is an int
 SearchResult is a reference to a hash where the following keys are defined:
@@ -598,6 +600,32 @@ a reference to a hash where the key is a string and the value is an UnspecifiedO
 
 
 
+=head2 SearchQuery
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the key is a string and the value is a string
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the key is a string and the value is a string
+
+=end text
+
+=back
+
+
+
 =head2 SearchInput
 
 =over 4
@@ -607,7 +635,7 @@ a reference to a hash where the key is a string and the value is an UnspecifiedO
 =item Description
 
 search_jgi searches the JGI service for matches against the
-search_string
+query, which may be a string or an object mapping string->string
 
 Other parameters
 @optional limit
@@ -620,7 +648,7 @@ Other parameters
 
 <pre>
 a reference to a hash where the following keys are defined:
-search_string has a value which is a string
+query has a value which is a jgi_gateway_eap.SearchQuery
 filter has a value which is a jgi_gateway_eap.SearchFilter
 limit has a value which is an int
 page has a value which is an int
@@ -633,7 +661,7 @@ include_private has a value which is a jgi_gateway_eap.bool
 =begin text
 
 a reference to a hash where the following keys are defined:
-search_string has a value which is a string
+query has a value which is a jgi_gateway_eap.SearchQuery
 filter has a value which is a jgi_gateway_eap.SearchFilter
 limit has a value which is an int
 page has a value which is an int

@@ -29,7 +29,7 @@ class jgi_gateway_eap:
     ######################################### noqa
     VERSION = "0.0.1"
     GIT_URL = "ssh://git@github.com/eapearson/jgi_gateway"
-    GIT_COMMIT_HASH = "7dd2fd48d4c437333a624027d2a142c5998cec3d"
+    GIT_COMMIT_HASH = "2729365fd4234ef52127245a95215587e164ea1b"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER
@@ -65,11 +65,12 @@ class jgi_gateway_eap:
         The search_jgi function takes a search string and returns a list of
         documents.
         :param input: instance of type "SearchInput" (search_jgi searches the
-           JGI service for matches against the search_string Other parameters
-           @optional limit @optional page) -> structure: parameter
-           "search_string" of String, parameter "filter" of type
-           "SearchFilter" (SearchFilter The jgi back end takes a map of
-           either string, integer, or array of integer. I don't think the
+           JGI service for matches against the query, which may be a string
+           or an object mapping string->string Other parameters @optional
+           limit @optional page) -> structure: parameter "query" of type
+           "SearchQuery" -> mapping from String to String, parameter "filter"
+           of type "SearchFilter" (SearchFilter The jgi back end takes a map
+           of either string, integer, or array of integer. I don't think the
            type compiler supports union typs, so unspecified it is.) ->
            mapping from String to unspecified object, parameter "limit" of
            Long, parameter "page" of Long, parameter "include_private" of
@@ -91,14 +92,14 @@ class jgi_gateway_eap:
 
         # INPUT
 
-        # search_string
+        # query
         # A required property, this provides the, well, search to conduct
         # over the jgi search service space. 
         # Note that the sender may simply send '*' to fetch all results.
         #
-        if 'search_string' not in input:
-            raise(ValueError("missing required parameter search_string"))
-        query = {"query": input['search_string']}
+        if 'query' not in input:
+            raise(ValueError("missing required parameter query"))
+        query = {"query": input['query']}
 
         # filter
         # Optional search filter, which is a dictionary with fields as keys
