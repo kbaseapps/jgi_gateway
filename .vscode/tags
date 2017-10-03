@@ -15,8 +15,8 @@ DEPLOY	../lib/jgi_gateway_eap/jgi_gateway_eapServer.py	/^DEPLOY = 'KB_DEPLOYMENT
 F401	../test/jgi_gateway_server_test.py	/^from pprint import pprint  # noqa: F401$/;"	kind:namespace	line:14
 F401	../test/jgi_gateway_server_test.py	/^import json  # noqa: F401$/;"	kind:namespace	line:4
 F401	../test/jgi_gateway_server_test.py	/^import os  # noqa: F401$/;"	kind:namespace	line:3
-GIT_COMMIT_HASH	../lib/jgi_gateway_eap/jgi_gateway_eapImpl.py	/^    GIT_COMMIT_HASH = "d380c33580e47a24703d5fff1422ede7a446761b"$/;"	kind:variable	line:32
-GIT_URL	../lib/jgi_gateway_eap/jgi_gateway_eapImpl.py	/^    GIT_URL = "git@github.com:eapearson\/jgi_gateway.git"$/;"	kind:variable	line:31
+GIT_COMMIT_HASH	../lib/jgi_gateway_eap/jgi_gateway_eapImpl.py	/^    GIT_COMMIT_HASH = "b432be0a9a080e0cabebf3490814d293f992370a"$/;"	kind:variable	line:32
+GIT_URL	../lib/jgi_gateway_eap/jgi_gateway_eapImpl.py	/^    GIT_URL = "ssh:\/\/git@github.com\/eapearson\/jgi_gateway"$/;"	kind:variable	line:31
 GetoptError	../lib/jgi_gateway_eap/jgi_gateway_eapServer.py	/^from getopt import getopt, GetoptError$/;"	kind:namespace	line:9
 IgnorePep8	../lib/jgi_gateway_eap/jgi_gateway_eapServer.py	/^from jgi_gateway_eap.jgi_gateway_eapImpl import jgi_gateway_eap  # noqa @IgnorePep8$/;"	kind:namespace	line:48
 InvalidParamsError	../lib/jgi_gateway_eap/jgi_gateway_eapServer.py	/^    JSONRPCError, InvalidRequestError$/;"	kind:namespace	line:11
@@ -177,13 +177,13 @@ search_jgi	../lib/jgi_gateway_eap/jgi_gateway_eapClient.py	/^    def search_jgi(
 search_jgi	../lib/jgi_gateway_eap/jgi_gateway_eapImpl.py	/^    def search_jgi(self, ctx, input):$/;"	kind:member	line:63
 setUpClass	../test/jgi_gateway_server_test.py	/^    def setUpClass(cls):$/;"	kind:member	line:24
 set_log_level	../lib/jgi_gateway_eap/jgi_gateway_eapServer.py	/^    def set_log_level(self, level):$/;"	kind:member	line:226
-stage_objects	../lib/jgi_gateway_eap/jgi_gateway_eapClient.py	/^    def stage_objects(self, input, context=None):$/;"	kind:member	line:54
-stage_objects	../lib/jgi_gateway_eap/jgi_gateway_eapImpl.py	/^    def stage_objects(self, ctx, input):$/;"	kind:member	line:112
-stage_status	../lib/jgi_gateway_eap/jgi_gateway_eapClient.py	/^    def stage_status(self, job_id, context=None):$/;"	kind:member	line:72
-stage_status	../lib/jgi_gateway_eap/jgi_gateway_eapImpl.py	/^    def stage_status(self, ctx, job_id):$/;"	kind:member	line:153
+stage_objects	../lib/jgi_gateway_eap/jgi_gateway_eapClient.py	/^    def stage_objects(self, input, context=None):$/;"	kind:member	line:56
+stage_objects	../lib/jgi_gateway_eap/jgi_gateway_eapImpl.py	/^    def stage_objects(self, ctx, input):$/;"	kind:member	line:123
+stage_status	../lib/jgi_gateway_eap/jgi_gateway_eapClient.py	/^    def stage_status(self, input, context=None):$/;"	kind:member	line:76
+stage_status	../lib/jgi_gateway_eap/jgi_gateway_eapImpl.py	/^    def stage_status(self, ctx, input):$/;"	kind:member	line:182
 start_server	../lib/jgi_gateway_eap/jgi_gateway_eapServer.py	/^def start_server(host='localhost', port=0, newprocess=False):$/;"	kind:function	line:527
-status	../lib/jgi_gateway_eap/jgi_gateway_eapClient.py	/^    def status(self, context=None):$/;"	kind:member	line:82
-status	../lib/jgi_gateway_eap/jgi_gateway_eapImpl.py	/^    def status(self, ctx):$/;"	kind:member	line:187
+status	../lib/jgi_gateway_eap/jgi_gateway_eapClient.py	/^    def status(self, context=None):$/;"	kind:member	line:91
+status	../lib/jgi_gateway_eap/jgi_gateway_eapImpl.py	/^    def status(self, ctx):$/;"	kind:member	line:233
 stop_server	../lib/jgi_gateway_eap/jgi_gateway_eapServer.py	/^def stop_server():$/;"	kind:function	line:550
 sys	../lib/jgi_gateway_eap/jgi_gateway_eapImpl.py	/^import sys$/;"	kind:namespace	line:10
 sys	../lib/jgi_gateway_eap/jgi_gateway_eapServer.py	/^import sys$/;"	kind:namespace	line:4

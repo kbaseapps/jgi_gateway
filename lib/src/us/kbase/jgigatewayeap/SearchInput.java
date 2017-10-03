@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import us.kbase.common.service.UObject;
 
 
 /**
@@ -26,31 +27,52 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "search_string",
+    "filter",
     "limit",
-    "page"
+    "page",
+    "include_private"
 })
 public class SearchInput {
 
     @JsonProperty("search_string")
-    private String searchString;
+    private java.lang.String searchString;
+    @JsonProperty("filter")
+    private Map<String, UObject> filter;
     @JsonProperty("limit")
     private Long limit;
     @JsonProperty("page")
     private Long page;
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    @JsonProperty("include_private")
+    private Long includePrivate;
+    private Map<java.lang.String, Object> additionalProperties = new HashMap<java.lang.String, Object>();
 
     @JsonProperty("search_string")
-    public String getSearchString() {
+    public java.lang.String getSearchString() {
         return searchString;
     }
 
     @JsonProperty("search_string")
-    public void setSearchString(String searchString) {
+    public void setSearchString(java.lang.String searchString) {
         this.searchString = searchString;
     }
 
-    public SearchInput withSearchString(String searchString) {
+    public SearchInput withSearchString(java.lang.String searchString) {
         this.searchString = searchString;
+        return this;
+    }
+
+    @JsonProperty("filter")
+    public Map<String, UObject> getFilter() {
+        return filter;
+    }
+
+    @JsonProperty("filter")
+    public void setFilter(Map<String, UObject> filter) {
+        this.filter = filter;
+    }
+
+    public SearchInput withFilter(Map<String, UObject> filter) {
+        this.filter = filter;
         return this;
     }
 
@@ -84,19 +106,34 @@ public class SearchInput {
         return this;
     }
 
+    @JsonProperty("include_private")
+    public Long getIncludePrivate() {
+        return includePrivate;
+    }
+
+    @JsonProperty("include_private")
+    public void setIncludePrivate(Long includePrivate) {
+        this.includePrivate = includePrivate;
+    }
+
+    public SearchInput withIncludePrivate(Long includePrivate) {
+        this.includePrivate = includePrivate;
+        return this;
+    }
+
     @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
+    public Map<java.lang.String, Object> getAdditionalProperties() {
         return this.additionalProperties;
     }
 
     @JsonAnySetter
-    public void setAdditionalProperties(String name, Object value) {
+    public void setAdditionalProperties(java.lang.String name, Object value) {
         this.additionalProperties.put(name, value);
     }
 
     @Override
-    public String toString() {
-        return ((((((((("SearchInput"+" [searchString=")+ searchString)+", limit=")+ limit)+", page=")+ page)+", additionalProperties=")+ additionalProperties)+"]");
+    public java.lang.String toString() {
+        return ((((((((((((("SearchInput"+" [searchString=")+ searchString)+", filter=")+ filter)+", limit=")+ limit)+", page=")+ page)+", includePrivate=")+ includePrivate)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

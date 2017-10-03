@@ -124,8 +124,12 @@ $result is a jgi_gateway_eap.SearchResult
 $stats is a jgi_gateway_eap.CallStats
 SearchInput is a reference to a hash where the following keys are defined:
 	search_string has a value which is a string
+	filter has a value which is a jgi_gateway_eap.SearchFilter
 	limit has a value which is an int
 	page has a value which is an int
+	include_private has a value which is a jgi_gateway_eap.bool
+SearchFilter is a reference to a hash where the key is a string and the value is an UnspecifiedObject, which can hold any non-null object
+bool is an int
 SearchResult is a reference to a hash where the following keys are defined:
 	search_result has a value which is a jgi_gateway_eap.SearchQueryResult
 SearchQueryResult is a reference to a list where each element is an UnspecifiedObject, which can hold any non-null object
@@ -143,8 +147,12 @@ $result is a jgi_gateway_eap.SearchResult
 $stats is a jgi_gateway_eap.CallStats
 SearchInput is a reference to a hash where the following keys are defined:
 	search_string has a value which is a string
+	filter has a value which is a jgi_gateway_eap.SearchFilter
 	limit has a value which is an int
 	page has a value which is an int
+	include_private has a value which is a jgi_gateway_eap.bool
+SearchFilter is a reference to a hash where the key is a string and the value is an UnspecifiedObject, which can hold any non-null object
+bool is an int
 SearchResult is a reference to a hash where the following keys are defined:
 	search_result has a value which is a jgi_gateway_eap.SearchQueryResult
 SearchQueryResult is a reference to a list where each element is an UnspecifiedObject, which can hold any non-null object
@@ -557,6 +565,39 @@ request_elapsed_time has a value which is an int
 
 
 
+=head2 SearchFilter
+
+=over 4
+
+
+
+=item Description
+
+SearchFilter
+The jgi back end takes a map of either string, integer, or array of integer.
+I don't think the type compiler supports union typs, so unspecified it is.
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the key is a string and the value is an UnspecifiedObject, which can hold any non-null object
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the key is a string and the value is an UnspecifiedObject, which can hold any non-null object
+
+=end text
+
+=back
+
+
+
 =head2 SearchInput
 
 =over 4
@@ -580,8 +621,10 @@ Other parameters
 <pre>
 a reference to a hash where the following keys are defined:
 search_string has a value which is a string
+filter has a value which is a jgi_gateway_eap.SearchFilter
 limit has a value which is an int
 page has a value which is an int
+include_private has a value which is a jgi_gateway_eap.bool
 
 </pre>
 
@@ -591,8 +634,10 @@ page has a value which is an int
 
 a reference to a hash where the following keys are defined:
 search_string has a value which is a string
+filter has a value which is a jgi_gateway_eap.SearchFilter
 limit has a value which is an int
 page has a value which is an int
+include_private has a value which is a jgi_gateway_eap.bool
 
 
 =end text

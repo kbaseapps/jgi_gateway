@@ -17,6 +17,13 @@ module jgi_gateway_eap {
     } CallStats;
 
     /*
+        SearchFilter
+        The jgi back end takes a map of either string, integer, or array of integer.
+        I don't think the type compiler supports union typs, so unspecified it is.
+    */
+    typedef mapping<string, UnspecifiedObject> SearchFilter;
+
+    /*
         search_jgi searches the JGI service for matches against the
         search_string
 
@@ -26,9 +33,12 @@ module jgi_gateway_eap {
     */
     typedef structure {
         string search_string;
+        SearchFilter filter;
         int limit;
         int page;
+        bool include_private;
     } SearchInput;
+
 
 
     /*

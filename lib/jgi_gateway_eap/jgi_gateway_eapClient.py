@@ -40,8 +40,13 @@ class jgi_gateway_eap(object):
         :param input: instance of type "SearchInput" (search_jgi searches the
            JGI service for matches against the search_string Other parameters
            @optional limit @optional page) -> structure: parameter
-           "search_string" of String, parameter "limit" of Long, parameter
-           "page" of Long
+           "search_string" of String, parameter "filter" of type
+           "SearchFilter" (SearchFilter The jgi back end takes a map of
+           either string, integer, or array of integer. I don't think the
+           type compiler supports union typs, so unspecified it is.) ->
+           mapping from String to unspecified object, parameter "limit" of
+           Long, parameter "page" of Long, parameter "include_private" of
+           type "bool" (a bool defined as int)
         :returns: multiple set - (1) parameter "result" of type
            "SearchResult" -> structure: parameter "search_result" of type
            "SearchQueryResult" (typedef mapping<string, string> docdata;) ->
