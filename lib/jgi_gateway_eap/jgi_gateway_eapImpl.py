@@ -266,7 +266,7 @@ class jgi_gateway_eap:
         if 'job_id' not in input:
             raise(ValueError('the "job_id" is required'))
         job_id = input['job_id']
-        if isinstance(job_id, basestring):
+        if not isinstance(job_id, basestring):
             raise(ValueError('the "job_id" must be a string'))
 
         request = {"id": job_id}
