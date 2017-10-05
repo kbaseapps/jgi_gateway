@@ -108,9 +108,9 @@ sub new
 
 
 
-=head2 search_jgi
+=head2 search
 
-  $result, $stats = $obj->search_jgi($input)
+  $result, $error, $stats = $obj->search($parameter)
 
 =over 4
 
@@ -119,8 +119,9 @@ sub new
 =begin html
 
 <pre>
-$input is a jgi_gateway_eap.SearchInput
+$parameter is a jgi_gateway_eap.SearchInput
 $result is a jgi_gateway_eap.SearchResult
+$error is a jgi_gateway_eap.Error
 $stats is a jgi_gateway_eap.CallStats
 SearchInput is a reference to a hash where the following keys are defined:
 	query has a value which is a jgi_gateway_eap.SearchQuery
@@ -133,7 +134,20 @@ SearchFilter is a reference to a hash where the key is a string and the value is
 bool is an int
 SearchResult is a reference to a hash where the following keys are defined:
 	search_result has a value which is a jgi_gateway_eap.SearchQueryResult
-SearchQueryResult is a reference to a list where each element is an UnspecifiedObject, which can hold any non-null object
+SearchQueryResult is a reference to a hash where the following keys are defined:
+	hits has a value which is a reference to a list where each element is a jgi_gateway_eap.SearchResultItem
+	total has a value which is an int
+SearchResultItem is a reference to a hash where the following keys are defined:
+	source has a value which is a jgi_gateway_eap.SearchDocument
+	index has a value which is a string
+	score has a value which is a string
+	id has a value which is a string
+SearchDocument is an UnspecifiedObject, which can hold any non-null object
+Error is a reference to a hash where the following keys are defined:
+	message has a value which is a string
+	type has a value which is a string
+	code has a value which is a string
+	info has a value which is an UnspecifiedObject, which can hold any non-null object
 CallStats is a reference to a hash where the following keys are defined:
 	request_elapsed_time has a value which is an int
 
@@ -143,8 +157,9 @@ CallStats is a reference to a hash where the following keys are defined:
 
 =begin text
 
-$input is a jgi_gateway_eap.SearchInput
+$parameter is a jgi_gateway_eap.SearchInput
 $result is a jgi_gateway_eap.SearchResult
+$error is a jgi_gateway_eap.Error
 $stats is a jgi_gateway_eap.CallStats
 SearchInput is a reference to a hash where the following keys are defined:
 	query has a value which is a jgi_gateway_eap.SearchQuery
@@ -157,7 +172,20 @@ SearchFilter is a reference to a hash where the key is a string and the value is
 bool is an int
 SearchResult is a reference to a hash where the following keys are defined:
 	search_result has a value which is a jgi_gateway_eap.SearchQueryResult
-SearchQueryResult is a reference to a list where each element is an UnspecifiedObject, which can hold any non-null object
+SearchQueryResult is a reference to a hash where the following keys are defined:
+	hits has a value which is a reference to a list where each element is a jgi_gateway_eap.SearchResultItem
+	total has a value which is an int
+SearchResultItem is a reference to a hash where the following keys are defined:
+	source has a value which is a jgi_gateway_eap.SearchDocument
+	index has a value which is a string
+	score has a value which is a string
+	id has a value which is a string
+SearchDocument is an UnspecifiedObject, which can hold any non-null object
+Error is a reference to a hash where the following keys are defined:
+	message has a value which is a string
+	type has a value which is a string
+	code has a value which is a string
+	info has a value which is an UnspecifiedObject, which can hold any non-null object
 CallStats is a reference to a hash where the following keys are defined:
 	request_elapsed_time has a value which is an int
 
@@ -166,14 +194,14 @@ CallStats is a reference to a hash where the following keys are defined:
 
 =item Description
 
-The search_jgi function takes a search string and returns a list of
+The search function takes a search structure and returns a list of
 documents.
 
 =back
 
 =cut
 
- sub search_jgi
+ sub search
 {
     my($self, @args) = @_;
 
@@ -182,48 +210,48 @@ documents.
     if ((my $n = @args) != 1)
     {
 	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
-							       "Invalid argument count for function search_jgi (received $n, expecting 1)");
+							       "Invalid argument count for function search (received $n, expecting 1)");
     }
     {
-	my($input) = @args;
+	my($parameter) = @args;
 
 	my @_bad_arguments;
-        (ref($input) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"input\" (value was \"$input\")");
+        (ref($parameter) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"parameter\" (value was \"$parameter\")");
         if (@_bad_arguments) {
-	    my $msg = "Invalid arguments passed to search_jgi:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	    my $msg = "Invalid arguments passed to search:\n" . join("", map { "\t$_\n" } @_bad_arguments);
 	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
-								   method_name => 'search_jgi');
+								   method_name => 'search');
 	}
     }
 
     my $url = $self->{url};
     my $result = $self->{client}->call($url, $self->{headers}, {
-	    method => "jgi_gateway_eap.search_jgi",
+	    method => "jgi_gateway_eap.search",
 	    params => \@args,
     });
     if ($result) {
 	if ($result->is_error) {
 	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
 					       code => $result->content->{error}->{code},
-					       method_name => 'search_jgi',
+					       method_name => 'search',
 					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
 					      );
 	} else {
 	    return wantarray ? @{$result->result} : $result->result->[0];
 	}
     } else {
-        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method search_jgi",
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method search",
 					    status_line => $self->{client}->status_line,
-					    method_name => 'search_jgi',
+					    method_name => 'search',
 				       );
     }
 }
  
 
 
-=head2 stage_objects
+=head2 stage
 
-  $result, $stats = $obj->stage_objects($input)
+  $result, $error, $stats = $obj->stage($parameter)
 
 =over 4
 
@@ -232,13 +260,19 @@ documents.
 =begin html
 
 <pre>
-$input is a jgi_gateway_eap.StageInput
+$parameter is a jgi_gateway_eap.StageInput
 $result is a jgi_gateway_eap.StagingResult
+$error is a jgi_gateway_eap.Error
 $stats is a jgi_gateway_eap.CallStats
 StageInput is a reference to a hash where the following keys are defined:
 	ids has a value which is a reference to a list where each element is a string
 StagingResult is a reference to a hash where the following keys are defined:
 	job_id has a value which is a string
+Error is a reference to a hash where the following keys are defined:
+	message has a value which is a string
+	type has a value which is a string
+	code has a value which is a string
+	info has a value which is an UnspecifiedObject, which can hold any non-null object
 CallStats is a reference to a hash where the following keys are defined:
 	request_elapsed_time has a value which is an int
 
@@ -248,13 +282,19 @@ CallStats is a reference to a hash where the following keys are defined:
 
 =begin text
 
-$input is a jgi_gateway_eap.StageInput
+$parameter is a jgi_gateway_eap.StageInput
 $result is a jgi_gateway_eap.StagingResult
+$error is a jgi_gateway_eap.Error
 $stats is a jgi_gateway_eap.CallStats
 StageInput is a reference to a hash where the following keys are defined:
 	ids has a value which is a reference to a list where each element is a string
 StagingResult is a reference to a hash where the following keys are defined:
 	job_id has a value which is a string
+Error is a reference to a hash where the following keys are defined:
+	message has a value which is a string
+	type has a value which is a string
+	code has a value which is a string
+	info has a value which is an UnspecifiedObject, which can hold any non-null object
 CallStats is a reference to a hash where the following keys are defined:
 	request_elapsed_time has a value which is an int
 
@@ -269,7 +309,7 @@ CallStats is a reference to a hash where the following keys are defined:
 
 =cut
 
- sub stage_objects
+ sub stage
 {
     my($self, @args) = @_;
 
@@ -278,39 +318,39 @@ CallStats is a reference to a hash where the following keys are defined:
     if ((my $n = @args) != 1)
     {
 	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
-							       "Invalid argument count for function stage_objects (received $n, expecting 1)");
+							       "Invalid argument count for function stage (received $n, expecting 1)");
     }
     {
-	my($input) = @args;
+	my($parameter) = @args;
 
 	my @_bad_arguments;
-        (ref($input) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"input\" (value was \"$input\")");
+        (ref($parameter) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"parameter\" (value was \"$parameter\")");
         if (@_bad_arguments) {
-	    my $msg = "Invalid arguments passed to stage_objects:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	    my $msg = "Invalid arguments passed to stage:\n" . join("", map { "\t$_\n" } @_bad_arguments);
 	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
-								   method_name => 'stage_objects');
+								   method_name => 'stage');
 	}
     }
 
     my $url = $self->{url};
     my $result = $self->{client}->call($url, $self->{headers}, {
-	    method => "jgi_gateway_eap.stage_objects",
+	    method => "jgi_gateway_eap.stage",
 	    params => \@args,
     });
     if ($result) {
 	if ($result->is_error) {
 	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
 					       code => $result->content->{error}->{code},
-					       method_name => 'stage_objects',
+					       method_name => 'stage',
 					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
 					      );
 	} else {
 	    return wantarray ? @{$result->result} : $result->result->[0];
 	}
     } else {
-        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method stage_objects",
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method stage",
 					    status_line => $self->{client}->status_line,
-					    method_name => 'stage_objects',
+					    method_name => 'stage',
 				       );
     }
 }
@@ -319,7 +359,7 @@ CallStats is a reference to a hash where the following keys are defined:
 
 =head2 stage_status
 
-  $result, $stats = $obj->stage_status($input)
+  $result, $error, $stats = $obj->stage_status($parameter)
 
 =over 4
 
@@ -328,13 +368,19 @@ CallStats is a reference to a hash where the following keys are defined:
 =begin html
 
 <pre>
-$input is a jgi_gateway_eap.StagingStatusInput
+$parameter is a jgi_gateway_eap.StagingStatusInput
 $result is a jgi_gateway_eap.StagingStatusResult
+$error is a jgi_gateway_eap.Error
 $stats is a jgi_gateway_eap.CallStats
 StagingStatusInput is a reference to a hash where the following keys are defined:
 	job_id has a value which is a string
 StagingStatusResult is a reference to a hash where the following keys are defined:
 	message has a value which is a string
+Error is a reference to a hash where the following keys are defined:
+	message has a value which is a string
+	type has a value which is a string
+	code has a value which is a string
+	info has a value which is an UnspecifiedObject, which can hold any non-null object
 CallStats is a reference to a hash where the following keys are defined:
 	request_elapsed_time has a value which is an int
 
@@ -344,13 +390,19 @@ CallStats is a reference to a hash where the following keys are defined:
 
 =begin text
 
-$input is a jgi_gateway_eap.StagingStatusInput
+$parameter is a jgi_gateway_eap.StagingStatusInput
 $result is a jgi_gateway_eap.StagingStatusResult
+$error is a jgi_gateway_eap.Error
 $stats is a jgi_gateway_eap.CallStats
 StagingStatusInput is a reference to a hash where the following keys are defined:
 	job_id has a value which is a string
 StagingStatusResult is a reference to a hash where the following keys are defined:
 	message has a value which is a string
+Error is a reference to a hash where the following keys are defined:
+	message has a value which is a string
+	type has a value which is a string
+	code has a value which is a string
+	info has a value which is an UnspecifiedObject, which can hold any non-null object
 CallStats is a reference to a hash where the following keys are defined:
 	request_elapsed_time has a value which is an int
 
@@ -378,10 +430,10 @@ identified by its job id
 							       "Invalid argument count for function stage_status (received $n, expecting 1)");
     }
     {
-	my($input) = @args;
+	my($parameter) = @args;
 
 	my @_bad_arguments;
-        (ref($input) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"input\" (value was \"$input\")");
+        (ref($parameter) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"parameter\" (value was \"$parameter\")");
         if (@_bad_arguments) {
 	    my $msg = "Invalid arguments passed to stage_status:\n" . join("", map { "\t$_\n" } @_bad_arguments);
 	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
@@ -567,6 +619,42 @@ request_elapsed_time has a value which is an int
 
 
 
+=head2 Error
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+message has a value which is a string
+type has a value which is a string
+code has a value which is a string
+info has a value which is an UnspecifiedObject, which can hold any non-null object
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+message has a value which is a string
+type has a value which is a string
+code has a value which is a string
+info has a value which is an UnspecifiedObject, which can hold any non-null object
+
+
+=end text
+
+=back
+
+
+
 =head2 SearchFilter
 
 =over 4
@@ -577,7 +665,7 @@ request_elapsed_time has a value which is an int
 
 SearchFilter
 The jgi back end takes a map of either string, integer, or array of integer.
-I don't think the type compiler supports union typs, so unspecified it is.
+I don't think the type compiler supports union types, so unspecified it is.
 
 
 =item Definition
@@ -634,12 +722,16 @@ a reference to a hash where the key is a string and the value is a string
 
 =item Description
 
-search_jgi searches the JGI service for matches against the
+search searches the JGI service for matches against the
 query, which may be a string or an object mapping string->string
 
+query - 
+
 Other parameters
+@optional filter 
 @optional limit
 @optional page
+@optional include_private
 
 
 =item Definition
@@ -674,6 +766,82 @@ include_private has a value which is a jgi_gateway_eap.bool
 
 
 
+=head2 SearchDocument
+
+=over 4
+
+
+
+=item Description
+
+SearchDocument
+The source document for the search; it is both the data obtained by the
+search as well as the source of the index. 
+It is the entire metadata JAMO record.
+
+
+=item Definition
+
+=begin html
+
+<pre>
+an UnspecifiedObject, which can hold any non-null object
+</pre>
+
+=end html
+
+=begin text
+
+an UnspecifiedObject, which can hold any non-null object
+
+=end text
+
+=back
+
+
+
+=head2 SearchResultItem
+
+=over 4
+
+
+
+=item Description
+
+SearchResult
+Represents a single search result item
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+source has a value which is a jgi_gateway_eap.SearchDocument
+index has a value which is a string
+score has a value which is a string
+id has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+source has a value which is a jgi_gateway_eap.SearchDocument
+index has a value which is a string
+score has a value which is a string
+id has a value which is a string
+
+
+=end text
+
+=back
+
+
+
 =head2 SearchQueryResult
 
 =over 4
@@ -682,7 +850,16 @@ include_private has a value which is a jgi_gateway_eap.bool
 
 =item Description
 
-typedef mapping<string, string> docdata;
+SearchQueryResult
+The top level search object returned from the query.
+Note that this structure closely parallels that returned by the jgi search service.
+The only functional difference is that some field names which were prefixed by 
+underscore are known by their unprefixed selfs.
+hits  - a list of the actual search result documents and statsitics returned;;
+        note that this represents the window of search results defined by
+        the limit input property.
+total - the total number of items matched by the search; not the same as the 
+       items actually returned;
 
 
 =item Definition
@@ -690,14 +867,20 @@ typedef mapping<string, string> docdata;
 =begin html
 
 <pre>
-a reference to a list where each element is an UnspecifiedObject, which can hold any non-null object
+a reference to a hash where the following keys are defined:
+hits has a value which is a reference to a list where each element is a jgi_gateway_eap.SearchResultItem
+total has a value which is an int
+
 </pre>
 
 =end html
 
 =begin text
 
-a reference to a list where each element is an UnspecifiedObject, which can hold any non-null object
+a reference to a hash where the following keys are defined:
+hits has a value which is a reference to a list where each element is a jgi_gateway_eap.SearchResultItem
+total has a value which is an int
+
 
 =end text
 
@@ -741,6 +924,11 @@ search_result has a value which is a jgi_gateway_eap.SearchQueryResult
 
 
 
+=item Description
+
+STAGE
+
+
 =item Definition
 
 =begin html
@@ -773,11 +961,11 @@ ids has a value which is a reference to a list where each element is a string
 
 =item Description
 
-StagingResult returns a map entry for each id submitted in the stage_objects request.
+StagingResult returns a map entry for each id submitted in the stage request.
 The map key is the _id property returned in a SearchResult item (not described here but probably 
 should be), the value is a string describing the result of the staging request.
 At time of writing, the value is always "staging" since the request to the jgi gateway jgi service
-and the call to stage_objects in the jgi gateway kbase service are in different processes.
+and the call to stage in the jgi gateway kbase service are in different processes.
 
 
 =item Definition

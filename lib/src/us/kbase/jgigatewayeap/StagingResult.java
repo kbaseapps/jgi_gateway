@@ -14,11 +14,11 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 /**
  * <p>Original spec-file type: StagingResult</p>
  * <pre>
- * StagingResult returns a map entry for each id submitted in the stage_objects request.
+ * StagingResult returns a map entry for each id submitted in the stage request.
  * The map key is the _id property returned in a SearchResult item (not described here but probably 
  * should be), the value is a string describing the result of the staging request.
  * At time of writing, the value is always "staging" since the request to the jgi gateway jgi service
- * and the call to stage_objects in the jgi gateway kbase service are in different processes.
+ * and the call to stage in the jgi gateway kbase service are in different processes.
  * </pre>
  * 
  */

@@ -11,7 +11,7 @@ import us.kbase.auth.AuthToken;
 import us.kbase.common.service.JsonClientCaller;
 import us.kbase.common.service.JsonClientException;
 import us.kbase.common.service.RpcContext;
-import us.kbase.common.service.Tuple2;
+import us.kbase.common.service.Tuple3;
 import us.kbase.common.service.UnauthorizedException;
 
 /**
@@ -164,38 +164,38 @@ public class JgiGatewayEapClient {
     }
 
     /**
-     * <p>Original spec-file function name: search_jgi</p>
+     * <p>Original spec-file function name: search</p>
      * <pre>
-     * The search_jgi function takes a search string and returns a list of
+     * The search function takes a search structure and returns a list of
      * documents.
      * </pre>
-     * @param   input   instance of type {@link us.kbase.jgigatewayeap.SearchInput SearchInput}
-     * @return   multiple set: (1) parameter "result" of type {@link us.kbase.jgigatewayeap.SearchResult SearchResult}, (2) parameter "stats" of type {@link us.kbase.jgigatewayeap.CallStats CallStats}
+     * @param   parameter   instance of type {@link us.kbase.jgigatewayeap.SearchInput SearchInput}
+     * @return   multiple set: (1) parameter "result" of type {@link us.kbase.jgigatewayeap.SearchResult SearchResult}, (2) parameter "error" of type {@link us.kbase.jgigatewayeap.Error Error}, (3) parameter "stats" of type {@link us.kbase.jgigatewayeap.CallStats CallStats}
      * @throws IOException if an IO exception occurs
      * @throws JsonClientException if a JSON RPC exception occurs
      */
-    public Tuple2<SearchResult, CallStats> searchJgi(SearchInput input, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+    public Tuple3<SearchResult, Error, CallStats> search(SearchInput parameter, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
-        args.add(input);
-        TypeReference<Tuple2<SearchResult, CallStats>> retType = new TypeReference<Tuple2<SearchResult, CallStats>>() {};
-        Tuple2<SearchResult, CallStats> res = caller.jsonrpcCall("jgi_gateway_eap.search_jgi", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        args.add(parameter);
+        TypeReference<Tuple3<SearchResult, Error, CallStats>> retType = new TypeReference<Tuple3<SearchResult, Error, CallStats>>() {};
+        Tuple3<SearchResult, Error, CallStats> res = caller.jsonrpcCall("jgi_gateway_eap.search", args, retType, true, true, jsonRpcContext, this.serviceVersion);
         return res;
     }
 
     /**
-     * <p>Original spec-file function name: stage_objects</p>
+     * <p>Original spec-file function name: stage</p>
      * <pre>
      * </pre>
-     * @param   input   instance of type {@link us.kbase.jgigatewayeap.StageInput StageInput}
-     * @return   multiple set: (1) parameter "result" of type {@link us.kbase.jgigatewayeap.StagingResult StagingResult}, (2) parameter "stats" of type {@link us.kbase.jgigatewayeap.CallStats CallStats}
+     * @param   parameter   instance of type {@link us.kbase.jgigatewayeap.StageInput StageInput}
+     * @return   multiple set: (1) parameter "result" of type {@link us.kbase.jgigatewayeap.StagingResult StagingResult}, (2) parameter "error" of type {@link us.kbase.jgigatewayeap.Error Error}, (3) parameter "stats" of type {@link us.kbase.jgigatewayeap.CallStats CallStats}
      * @throws IOException if an IO exception occurs
      * @throws JsonClientException if a JSON RPC exception occurs
      */
-    public Tuple2<StagingResult, CallStats> stageObjects(StageInput input, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+    public Tuple3<StagingResult, Error, CallStats> stage(StageInput parameter, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
-        args.add(input);
-        TypeReference<Tuple2<StagingResult, CallStats>> retType = new TypeReference<Tuple2<StagingResult, CallStats>>() {};
-        Tuple2<StagingResult, CallStats> res = caller.jsonrpcCall("jgi_gateway_eap.stage_objects", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        args.add(parameter);
+        TypeReference<Tuple3<StagingResult, Error, CallStats>> retType = new TypeReference<Tuple3<StagingResult, Error, CallStats>>() {};
+        Tuple3<StagingResult, Error, CallStats> res = caller.jsonrpcCall("jgi_gateway_eap.stage", args, retType, true, true, jsonRpcContext, this.serviceVersion);
         return res;
     }
 
@@ -205,16 +205,16 @@ public class JgiGatewayEapClient {
      * Fetch the current status of the given staging fetch request as 
      * identified by its job id
      * </pre>
-     * @param   input   instance of type {@link us.kbase.jgigatewayeap.StagingStatusInput StagingStatusInput}
-     * @return   multiple set: (1) parameter "result" of type {@link us.kbase.jgigatewayeap.StagingStatusResult StagingStatusResult}, (2) parameter "stats" of type {@link us.kbase.jgigatewayeap.CallStats CallStats}
+     * @param   parameter   instance of type {@link us.kbase.jgigatewayeap.StagingStatusInput StagingStatusInput}
+     * @return   multiple set: (1) parameter "result" of type {@link us.kbase.jgigatewayeap.StagingStatusResult StagingStatusResult}, (2) parameter "error" of type {@link us.kbase.jgigatewayeap.Error Error}, (3) parameter "stats" of type {@link us.kbase.jgigatewayeap.CallStats CallStats}
      * @throws IOException if an IO exception occurs
      * @throws JsonClientException if a JSON RPC exception occurs
      */
-    public Tuple2<StagingStatusResult, CallStats> stageStatus(StagingStatusInput input, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+    public Tuple3<StagingStatusResult, Error, CallStats> stageStatus(StagingStatusInput parameter, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
-        args.add(input);
-        TypeReference<Tuple2<StagingStatusResult, CallStats>> retType = new TypeReference<Tuple2<StagingStatusResult, CallStats>>() {};
-        Tuple2<StagingStatusResult, CallStats> res = caller.jsonrpcCall("jgi_gateway_eap.stage_status", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        args.add(parameter);
+        TypeReference<Tuple3<StagingStatusResult, Error, CallStats>> retType = new TypeReference<Tuple3<StagingStatusResult, Error, CallStats>>() {};
+        Tuple3<StagingStatusResult, Error, CallStats> res = caller.jsonrpcCall("jgi_gateway_eap.stage_status", args, retType, true, true, jsonRpcContext, this.serviceVersion);
         return res;
     }
 

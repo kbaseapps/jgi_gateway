@@ -333,14 +333,14 @@ class Application(object):
         self.serverlog.set_log_level(6)
         self.rpc_service = JSONRPCServiceCustom()
         self.method_authentication = dict()
-        self.rpc_service.add(impl_jgi_gateway_eap.search_jgi,
-                             name='jgi_gateway_eap.search_jgi',
+        self.rpc_service.add(impl_jgi_gateway_eap.search,
+                             name='jgi_gateway_eap.search',
                              types=[dict])
-        self.method_authentication['jgi_gateway_eap.search_jgi'] = 'required'  # noqa
-        self.rpc_service.add(impl_jgi_gateway_eap.stage_objects,
-                             name='jgi_gateway_eap.stage_objects',
+        self.method_authentication['jgi_gateway_eap.search'] = 'required'  # noqa
+        self.rpc_service.add(impl_jgi_gateway_eap.stage,
+                             name='jgi_gateway_eap.stage',
                              types=[dict])
-        self.method_authentication['jgi_gateway_eap.stage_objects'] = 'required'  # noqa
+        self.method_authentication['jgi_gateway_eap.stage'] = 'required'  # noqa
         self.rpc_service.add(impl_jgi_gateway_eap.stage_status,
                              name='jgi_gateway_eap.stage_status',
                              types=[dict])

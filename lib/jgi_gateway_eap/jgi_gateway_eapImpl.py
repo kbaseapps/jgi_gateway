@@ -27,9 +27,9 @@ class jgi_gateway_eap:
     # state. A method could easily clobber the state set by another while
     # the latter method is running.
     ######################################### noqa
-    VERSION = "0.0.1"
+    VERSION = "0.2.0"
     GIT_URL = "ssh://git@github.com/eapearson/jgi_gateway"
-    GIT_COMMIT_HASH = "a487581ef96cba3a6d3dd2c83bb19aed69eb6eb8"
+    GIT_COMMIT_HASH = "aa94fa16e4695bff10a53d3537f1c62192d70359"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER
@@ -42,17 +42,18 @@ class jgi_gateway_eap:
         default constructor
         """
 
-        # print "DEBUG - config:"
-        # print json.dumps(config)
-
+        # Note - config errors are not caught here, but when the
+        # config would be used.
+        # TODO: it is cleaner to do it here, but not sure how well
+        # it plays with module lifecycle.
         self.config = config
         self.user = None
         self.passwd = None
-        if 'jgi-token' in config:
+        if 'jgi-token' in config and config['jgi-token'] != '':
             (user, passwd) = config['jgi-token'].split(':')
             self.user = user
             self.passwd = passwd
-        self.jgi_host = 'https://jgi-kbase.nersc.gov'
+        # self.jgi_host = 'https://jgi-kbase.nersc.gov'
         if 'jgi-host' in config:
             self.jgi_host = config['jgi-host']
         print "Using %s for queries" % (self.jgi_host)
@@ -60,36 +61,51 @@ class jgi_gateway_eap:
         pass
 
 
-    def search_jgi(self, ctx, input):
+    def search(self, ctx, parameter):
         """
-        The search_jgi function takes a search string and returns a list of
+        The search function takes a search structure and returns a list of
         documents.
-        :param input: instance of type "SearchInput" (search_jgi searches the
+        :param parameter: instance of type "SearchInput" (search searches the
            JGI service for matches against the query, which may be a string
-           or an object mapping string->string Other parameters @optional
-           limit @optional page) -> structure: parameter "query" of type
+           or an object mapping string->string query - Other parameters
+           @optional filter @optional limit @optional page @optional
+           include_private) -> structure: parameter "query" of type
            "SearchQuery" -> mapping from String to String, parameter "filter"
            of type "SearchFilter" (SearchFilter The jgi back end takes a map
            of either string, integer, or array of integer. I don't think the
-           type compiler supports union typs, so unspecified it is.) ->
+           type compiler supports union types, so unspecified it is.) ->
            mapping from String to unspecified object, parameter "limit" of
            Long, parameter "page" of Long, parameter "include_private" of
            type "bool" (a bool defined as int)
         :returns: multiple set - (1) parameter "result" of type
            "SearchResult" -> structure: parameter "search_result" of type
-           "SearchQueryResult" (typedef mapping<string, string> docdata;) ->
-           list of unspecified object, (2) parameter "stats" of type
-           "CallStats" (Call performance measurement) -> structure: parameter
-           "request_elapsed_time" of Long
+           "SearchQueryResult" (SearchQueryResult The top level search object
+           returned from the query. Note that this structure closely
+           parallels that returned by the jgi search service. The only
+           functional difference is that some field names which were prefixed
+           by underscore are known by their unprefixed selfs. hits  - a list
+           of the actual search result documents and statsitics returned;;
+           note that this represents the window of search results defined by
+           the limit input property. total - the total number of items
+           matched by the search; not the same as the items actually
+           returned;) -> structure: parameter "hits" of list of type
+           "SearchResultItem" (SearchResult Represents a single search result
+           item) -> structure: parameter "source" of type "SearchDocument"
+           (SearchDocument The source document for the search; it is both the
+           data obtained by the search as well as the source of the index. It
+           is the entire metadata JAMO record.) -> unspecified object,
+           parameter "index" of String, parameter "score" of String,
+           parameter "id" of String, parameter "total" of Long, (2) parameter
+           "error" of type "Error" -> structure: parameter "message" of
+           String, parameter "type" of String, parameter "code" of String,
+           parameter "info" of unspecified object, (3) parameter "stats" of
+           type "CallStats" (Call performance measurement) -> structure:
+           parameter "request_elapsed_time" of Long
         """
         # ctx is the context object
-        # return variables are: result, stats
-        #BEGIN search_jgi
+        # return variables are: result, error, stats
+        #BEGIN search
         
-        # Return structures
-        stats = dict()
-        result = dict()
-
         # INPUT
 
         # query
@@ -97,93 +113,264 @@ class jgi_gateway_eap:
         # over the jgi search service space. 
         # Note that the sender may simply send '*' to fetch all results.
         #
-        if 'query' not in input:
-            raise(ValueError("missing required parameter query"))
-        query = {"query": input['query']}
-
+        if 'query' not in parameter:
+            error = {
+                'message': "missing required parameter query",
+                'type': 'input',
+                'code': 'missing',
+                'info': {
+                    'key': 'query'
+                }
+            }
+            return [None, error, None]
+        
+        if not isinstance(parameter['query'], dict):
+            error = {
+                'message': ("the 'query' parameter must be a an object "
+                            "mapping fields to search strings"),
+                'type': 'input',
+                'code': 'wrong-type',
+                'info': {
+                    'key': 'query',
+                    'expecting': 'dict',
+                    'got': type(parameter['query']).__name__
+                }
+            }
+            return [None, error, None]
+        query = {
+            'query': parameter['query']
+        }
         # filter
         # Optional search filter, which is a dictionary with fields as keys
         # and a simple string, integer, or list of integers as value.
         # A special yet optional "operator"  field may contain AND, OR, or NOT
-        if 'filter' in input:
-            query['filter'] = input['filter']
+        if 'filter' in parameter:
+            if not isinstance(parameter['filter'], dict):
+                error = {
+                    'message': ("the 'filter' parameter must be an object "
+                                "mapping fields to filter values"),
+                    'type': 'input',
+                    'code': 'wrong-type',
+                    'info': {
+                        'key': 'filter'
+                    }
+                }
+                return [None, error, None]
+            query['filter'] = parameter['filter']
 
-        if 'limit' in input:
-            query['size'] = input['limit']
+        if 'limit' in parameter:
+            if not isinstance(parameter['limit'], int):
+                error = {
+                    'message': "the 'limit' parameter must be an integer",
+                    'type': 'input',
+                    'code': 'wrong-type',
+                    'info': {
+                        'key': 'limit'
+                    }
+                }
+                return [None, error, None]
+            if parameter['limit'] < 1 or parameter['limit'] > 10000:
+                error = {
+                    'message': ("the 'limit' parameter must be an "
+                                "integer between 1 and 10000"),
+                    'type': 'input',
+                    'code': 'out-of-range', 
+                    'info': {
+                        'key': 'limit'
+                    }
+                }
+                return [None, error, None]
+            query['size'] = parameter['limit']
 
-        if 'page' in input:
-            query['page'] = input['page']
+        if 'page' in parameter:
+            if not isinstance(parameter['page'], int):
+                error = {
+                    'messagse': "the 'page' parameter must be an integer",
+                    'type': 'input',
+                    'code': 'wrong-type',
+                    'info': {
+                        'key': 'page'
+                    }
+                }
+                return [None, error, None]
+            if parameter['page'] < 1 or parameter['page'] > 10000:
+                error = {
+                    'message': ("the 'page' parameter must be an integer "
+                                "between 1 and 10000"),
+                    'type': 'input',
+                    'code': 'out-of-range',
+                    'info': {
+                        'key': 'page'
+                    }
+                }
+                return [None, error, None]
+            # we use 1 based page numbering, the jgi api is 0 based.
+            query['page'] = parameter['page'] - 1
 
-        # include_private 
-        # A flag (kbase style boolean, 1, 0) indicating whether to request private
-        # data be searched. It causes this by including the username in the request
-        # to jgi. The kbase username is matched against the jgi user database, which
-        # includes a kbase username field. If the username is found, that account is used
-        # to determine which private data is searched.
+        # include_private A flag (kbase style boolean, 1, 0) indicating whether
+        # to request private data be searched. It causes this by including the
+        # username in the request to jgi. The kbase username is matched against
+        # the jgi user database, which includes a kbase username field. If the
+        # username is found, that account is used to determine which private
+        # data is searched.
         #
-        if 'include_private' in input:
-            include_private = input['include_private']
-            if not isinstance(include_private, int) or include_private not in [1,0]:
-                raise(ValueError("the 'include_private' parameter must be an integer 1 or 0"))
-            if include_private:
-                query['userid'] = ctx['user_id']
+        if 'include_private' in parameter:
+            include_private = parameter['include_private']
+            if not isinstance(include_private, int):
+                error = {
+                    'message': ("the 'include_private' parameter must be an "
+                                " integer"),
+                    'type': 'input',
+                    'code': 'wrong-type',
+                    'info': {
+                        'key': 'include_private'
+                    }
+                }
+                return [None, error, None]
+            if include_private not in [1, 0]:
+                error = {
+                    'message': ("the 'include_private' parameter must be an "
+                                "integer 1 or 0"),
+                    'type': 'input',
+                    'code': 'out-of-range',
+                    'info': {
+                        'key': 'include_private'
+                    }
+                }
+                return [None, error, None]
+            query['userid'] = ctx['user_id']
 
         # PREPARE REQUEST
 
-        # Do it
         header = {'Content-Type': 'application/json'}
 
         queryjson = json.dumps(query)
 
+        # Ensure that the configuration is correct; the constructor 
+        # does not enforce this.
+        if self.user is None:
+            error = {
+                'message': ("the configuration parameter 'user' is not set; "
+                            "cannot call service without it"),
+                'type': 'context',
+                'code': 'context-property-missing',
+                'info': {
+                    'key': 'user'
+                }
+            }
+            return [None, error, None]
+        if self.passwd is None:
+            error = {
+                'message': ("the configuration parameter 'passwd' is not set; "
+                            "cannot call service without it"),
+                'type': 'context',
+                'code': 'context-property-missing',
+                'info': {
+                    'key': 'passwd'
+                }
+            }
+            return [None, error, None]
+        if self.jgi_host is None:
+            error = {
+                'message': ("the endpoint parameter 'jgi_host' is not set; "
+                            "cannot call service without it"),
+                'type': 'context',
+                'code': 'context-property-missing',
+                'info': {
+                    'key': 'jgi_host'
+                }
+            }
+            return [None, error, None]
+
         call_start = time.clock()
-        ret = requests.post(self.jgi_host + '/query', data=queryjson,
-                            auth=(self.user, self.passwd),
-                            headers=header)
+        resp = requests.post(self.jgi_host + '/query', data=queryjson,
+                             auth=(self.user, self.passwd),
+                             headers=header)
         call_end = time.clock()
         elapsed_time = int(round((call_end - call_start) * 1000))
-        stats['request_elapsed_time'] = elapsed_time;
+        stats = {
+            'request_elapsed_time': elapsed_time
+        }
 
-        if ret.status_code == 200:
-            result['search_result'] = ret.json()            
-        else:
-            raise ValueError('Error Response from JGI search service (%d)' %
-                             ret.status_code)
+        if resp.status_code != 200:
+            error = {
+                'message': 'error processing query',
+                'type': 'upstream',
+                'code': 'http-error',
+                'info': {
+                    'response_code': resp.status_code,
+                    'response_text': resp.text
+                }
+            }
+            return [None, error, stats]
 
-        #END search_jgi
+        # resp.raise_for_status()
+        try:
+            responsejson = json.loads(resp.text)
+        except Exception as e:
+            error = {
+                'message': 'error decoding json response',
+                'type': 'exception',
+                'code': 'json-decoding',
+                'info': {
+                    'exception_message': str(e)
+                }
+            }
+            return [None, error, stats]
+
+        # We need to transform the result into a form that is acceptable to
+        # KIDL.
+        new_hits = []
+        for hit in responsejson['hits']:
+            new_hits.append({
+                'source': hit['_source'],
+                'index': hit['_index'],
+                'score': hit['_score'],
+                'id': hit['_id']
+            })
+        result = {
+            'hits': new_hits,
+            'total': responsejson['total']
+        }
+        return [result, None, stats]
+
+        #END search
 
         # At some point might do deeper type checking...
         if not isinstance(result, dict):
-            raise ValueError('Method search_jgi return value ' +
+            raise ValueError('Method search return value ' +
                              'result is not type dict as required.')
+        if not isinstance(error, dict):
+            raise ValueError('Method search return value ' +
+                             'error is not type dict as required.')
         if not isinstance(stats, dict):
-            raise ValueError('Method search_jgi return value ' +
+            raise ValueError('Method search return value ' +
                              'stats is not type dict as required.')
         # return the results
-        return [result, stats]
+        return [result, error, stats]
 
-    def stage_objects(self, ctx, input):
+    def stage(self, ctx, parameter):
         """
-        :param input: instance of type "StageInput" -> structure: parameter
-           "ids" of list of String
+        :param parameter: instance of type "StageInput" (STAGE) -> structure:
+           parameter "ids" of list of String
         :returns: multiple set - (1) parameter "result" of type
            "StagingResult" (StagingResult returns a map entry for each id
-           submitted in the stage_objects request. The map key is the _id
-           property returned in a SearchResult item (not described here but
-           probably should be), the value is a string describing the result
-           of the staging request. At time of writing, the value is always
-           "staging" since the request to the jgi gateway jgi service and the
-           call to stage_objects in the jgi gateway kbase service are in
-           different processes.) -> structure: parameter "job_id" of String,
-           (2) parameter "stats" of type "CallStats" (Call performance
-           measurement) -> structure: parameter "request_elapsed_time" of Long
+           submitted in the stage request. The map key is the _id property
+           returned in a SearchResult item (not described here but probably
+           should be), the value is a string describing the result of the
+           staging request. At time of writing, the value is always "staging"
+           since the request to the jgi gateway jgi service and the call to
+           stage in the jgi gateway kbase service are in different
+           processes.) -> structure: parameter "job_id" of String, (2)
+           parameter "error" of type "Error" -> structure: parameter
+           "message" of String, parameter "type" of String, parameter "code"
+           of String, parameter "info" of unspecified object, (3) parameter
+           "stats" of type "CallStats" (Call performance measurement) ->
+           structure: parameter "request_elapsed_time" of Long
         """
         # ctx is the context object
-        # return variables are: result, stats
-        #BEGIN stage_objects
-
-        # Return structures
-        stats = dict()
-        result = dict()
+        # return variables are: result, error, stats
+        #BEGIN stage
 
         # INPUT
 
@@ -191,11 +378,27 @@ class jgi_gateway_eap:
         # A list of string database entity ids. A file is associated with each
         # id, and a copy request will be issued for each on. Just the ids are 
         # passed through here, the fanning out is on the jgi side.
-        if 'ids' not in input:
-            raise(ValueError("the 'ids' parameter is required "))
-        ids = input['ids']
+        if 'ids' not in parameter:
+            error = {
+                'message': "the 'ids' parameter is required but missing",
+                'type': 'input',
+                'code': 'missing',
+                'info': {
+                    'key': 'ids'
+                }
+            }
+            return [None, error, None]
+        ids = parameter['ids']
         if not isinstance(ids, list):
-            raise(ValueError("the 'ids' parameter must be a list"))
+            error = {
+                'message': "the 'ids' parameter must be an list",
+                'type': 'input',
+                'code': 'wrong-type',
+                'info': {
+                    'key': 'ids'
+                }
+            }
+            return [None, error, None]
 
         # PREPARE REQUEST
 
@@ -204,20 +407,46 @@ class jgi_gateway_eap:
 
         request = {"ids": ','.join(ids),
                    "path": "/data/%s" % (ctx['user_id'])}
+
         requestjson = json.dumps(request)
 
         call_start = time.clock()
-        resp = requests.post(self.jgi_host + '/fetch', data=requestjson,
-                                auth=(self.user, self.passwd),
-                                headers=header)
+        resp = requests.post(self.jgi_host + '/fetch', 
+                             data=requestjson,
+                             auth=(self.user, self.passwd),
+                             headers=header)
         call_end = time.clock()
-        elapsed_time = int(round((call_end - call_start) * 1000))
-        stats['request_elapsed_time'] = elapsed_time
+        stats = {
+            'request_elapsed_time': int(round((call_end - call_start) * 1000))
+        }
                             
         # TODO: Just bail or return error object?
-        resp.raise_for_status()
-        # TODO: handle parsing errors
-        responsejson = json.loads(resp.text)
+        if resp.status_code != 200:
+            error = {
+                'message': 'error processing query',
+                'type': 'upstream',
+                'code': 'http-error',
+                'info': {
+                    'response_code': resp.status_code,
+                    'response_text': resp.text
+                }
+            }
+            return [None, error, stats]
+
+        # resp.raise_for_status()
+        try:
+            responsejson = json.loads(resp.text)
+        except Exception as e:
+            error = {
+                'message': 'error decoding json response',
+                'type': 'exception',
+                'code': 'json-decoding',
+                'info': {
+                    'exception_message': str(e)
+                }
+            }
+            return [None, error, stats]
+ 
         # TODO Add some logging
 
         #
@@ -225,51 +454,75 @@ class jgi_gateway_eap:
         # of the number of ids in the copy request.
         #
         job_id = responsejson['id']
-        result['job_id'] = job_id
 
-        #END stage_objects
+        result = {'job_id': job_id}
+
+        return [result, None, stats] 
+
+        # NOTE: we are already returne d here, the code below is dead.
+
+        #END stage
 
         # At some point might do deeper type checking...
         if not isinstance(result, dict):
-            raise ValueError('Method stage_objects return value ' +
+            raise ValueError('Method stage return value ' +
                              'result is not type dict as required.')
+        if not isinstance(error, dict):
+            raise ValueError('Method stage return value ' +
+                             'error is not type dict as required.')
         if not isinstance(stats, dict):
-            raise ValueError('Method stage_objects return value ' +
+            raise ValueError('Method stage return value ' +
                              'stats is not type dict as required.')
         # return the results
-        return [result, stats]
+        return [result, error, stats]
 
-    def stage_status(self, ctx, input):
+    def stage_status(self, ctx, parameter):
         """
         Fetch the current status of the given staging fetch request as 
         identified by its job id
-        :param input: instance of type "StagingStatusInput" -> structure:
+        :param parameter: instance of type "StagingStatusInput" -> structure:
            parameter "job_id" of String
         :returns: multiple set - (1) parameter "result" of type
            "StagingStatusResult" -> structure: parameter "message" of String,
-           (2) parameter "stats" of type "CallStats" (Call performance
-           measurement) -> structure: parameter "request_elapsed_time" of Long
+           (2) parameter "error" of type "Error" -> structure: parameter
+           "message" of String, parameter "type" of String, parameter "code"
+           of String, parameter "info" of unspecified object, (3) parameter
+           "stats" of type "CallStats" (Call performance measurement) ->
+           structure: parameter "request_elapsed_time" of Long
         """
         # ctx is the context object
-        # return variables are: result, stats
+        # return variables are: result, error, stats
         #BEGIN stage_status
-
-        # Result structs
-        stats = dict()
-        result = dict()
-
         # INPUT
 
         # id
-        # The job id is required in order to specify for which job we want the status
-        #
-        if 'job_id' not in input:
-            raise(ValueError('the "job_id" is required'))
-        job_id = input['job_id']
-        if not isinstance(job_id, basestring):
-            raise(ValueError('the "job_id" must be a string'))
+        # The job id is required in order to specify for which job we 
+        # want the status
+        if 'job_id' not in parameter:
+            error = {
+                'message': "the 'job_id' parameter is required but missing",
+                'type': 'input',
+                'code': 'missing',
+                'info': {
+                    'key': 'job_id'
+                }
+            }
+            return [None, error, None]
+        if not isinstance(parameter['job_id'], basestring):
+            error = {
+                'message': "the 'job_id' parameter must be a string",
+                'type': 'input',
+                'code': 'wrong-type',
+                'info': {
+                    'key': 'job_id'
+                }
+            }
+            return [None, error, None]
+        job_id = parameter['job_id']
 
-        request = {"id": job_id}
+        request = {
+            'id': job_id
+        }
 
         # PREPARE REQUEST
 
@@ -285,34 +538,57 @@ class jgi_gateway_eap:
                             auth=(self.user, self.passwd),
                             headers=header)
         call_end = time.clock()
-        stats['request_elapsed_time'] = int(round((call_end - call_start) * 1000))
-        # TODO: Just bail or return error object?
-        resp.raise_for_status()
-        #print "jgi gateway staging status request status: %d" % (resp.status_code)
-        #print resp.text
+        stats = {
+            'request_elapsed_time': int(round((call_end - call_start) * 1000))
+        }
+
+        if resp.status_code != 200:
+            error = {
+                'message': 'error processing query',
+                'type': 'upstream',
+                'code': 'http-error',
+                'info': {
+                    'response_code': resp.status_code,
+                    'response_text': resp.text
+                }
+            }
+            return [None, error, stats]
+
         # TODO: we hope to get json back but just string for now
         # responsejson = json.loads(resp.text)
-        #    # TODO Add some logging
+        # TODO Add some logging
+        result = {
+            'message': resp.text
+        }
 
-        result['message'] = resp.text
+        return [result, None, stats]
 
+        # NOTE: we are already returned here, the code below is dead.
         #END stage_status
 
         # At some point might do deeper type checking...
         if not isinstance(result, dict):
             raise ValueError('Method stage_status return value ' +
                              'result is not type dict as required.')
+        if not isinstance(error, dict):
+            raise ValueError('Method stage_status return value ' +
+                             'error is not type dict as required.')
         if not isinstance(stats, dict):
             raise ValueError('Method stage_status return value ' +
                              'stats is not type dict as required.')
         # return the results
-        return [result, stats]
+        return [result, error, stats]
     def status(self, ctx):
         #BEGIN_STATUS
-        returnVal = {'state': "OK",
-                     'message': "",
-                     'version': self.VERSION,
-                     'git_url': self.GIT_URL,
-                     'git_commit_hash': self.GIT_COMMIT_HASH}
+
+        result = {
+            'state': 'OK',
+            'message': 'The system is operating normally',
+            'version': self.VERSION,
+            'git_url': self.GIT_URL,
+            'git_commit_hash': self.GIT_COMMIT_HASH
+        }
+
+        return [result, None, None]
         #END_STATUS
         return [returnVal]

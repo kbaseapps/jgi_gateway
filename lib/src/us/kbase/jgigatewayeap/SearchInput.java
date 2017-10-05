@@ -15,11 +15,14 @@ import us.kbase.common.service.UObject;
 /**
  * <p>Original spec-file type: SearchInput</p>
  * <pre>
- * search_jgi searches the JGI service for matches against the
+ * search searches the JGI service for matches against the
  * query, which may be a string or an object mapping string->string
+ * query - 
  * Other parameters
+ * @optional filter 
  * @optional limit
  * @optional page
+ * @optional include_private
  * </pre>
  * 
  */

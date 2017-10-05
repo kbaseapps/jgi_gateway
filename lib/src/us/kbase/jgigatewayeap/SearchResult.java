@@ -2,7 +2,6 @@
 package us.kbase.jgigatewayeap;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -10,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import us.kbase.common.service.UObject;
 
 
 /**
@@ -25,21 +23,69 @@ import us.kbase.common.service.UObject;
 })
 public class SearchResult {
 
+    /**
+     * <p>Original spec-file type: SearchQueryResult</p>
+     * <pre>
+     * SearchQueryResult
+     * The top level search object returned from the query.
+     * Note that this structure closely parallels that returned by the jgi search service.
+     * The only functional difference is that some field names which were prefixed by 
+     * underscore are known by their unprefixed selfs.
+     * hits  - a list of the actual search result documents and statsitics returned;;
+     *         note that this represents the window of search results defined by
+     *         the limit input property.
+     * total - the total number of items matched by the search; not the same as the 
+     *        items actually returned;
+     * </pre>
+     * 
+     */
     @JsonProperty("search_result")
-    private List<UObject> searchResult;
+    private SearchQueryResult searchResult;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
+    /**
+     * <p>Original spec-file type: SearchQueryResult</p>
+     * <pre>
+     * SearchQueryResult
+     * The top level search object returned from the query.
+     * Note that this structure closely parallels that returned by the jgi search service.
+     * The only functional difference is that some field names which were prefixed by 
+     * underscore are known by their unprefixed selfs.
+     * hits  - a list of the actual search result documents and statsitics returned;;
+     *         note that this represents the window of search results defined by
+     *         the limit input property.
+     * total - the total number of items matched by the search; not the same as the 
+     *        items actually returned;
+     * </pre>
+     * 
+     */
     @JsonProperty("search_result")
-    public List<UObject> getSearchResult() {
+    public SearchQueryResult getSearchResult() {
         return searchResult;
     }
 
+    /**
+     * <p>Original spec-file type: SearchQueryResult</p>
+     * <pre>
+     * SearchQueryResult
+     * The top level search object returned from the query.
+     * Note that this structure closely parallels that returned by the jgi search service.
+     * The only functional difference is that some field names which were prefixed by 
+     * underscore are known by their unprefixed selfs.
+     * hits  - a list of the actual search result documents and statsitics returned;;
+     *         note that this represents the window of search results defined by
+     *         the limit input property.
+     * total - the total number of items matched by the search; not the same as the 
+     *        items actually returned;
+     * </pre>
+     * 
+     */
     @JsonProperty("search_result")
-    public void setSearchResult(List<UObject> searchResult) {
+    public void setSearchResult(SearchQueryResult searchResult) {
         this.searchResult = searchResult;
     }
 
-    public SearchResult withSearchResult(List<UObject> searchResult) {
+    public SearchResult withSearchResult(SearchQueryResult searchResult) {
         this.searchResult = searchResult;
         return this;
     }

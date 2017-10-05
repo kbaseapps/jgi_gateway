@@ -33,66 +33,91 @@ class jgi_gateway_eap(object):
             trust_all_ssl_certificates=trust_all_ssl_certificates,
             auth_svc=auth_svc)
 
-    def search_jgi(self, input, context=None):
+    def search(self, parameter, context=None):
         """
-        The search_jgi function takes a search string and returns a list of
+        The search function takes a search structure and returns a list of
         documents.
-        :param input: instance of type "SearchInput" (search_jgi searches the
+        :param parameter: instance of type "SearchInput" (search searches the
            JGI service for matches against the query, which may be a string
-           or an object mapping string->string Other parameters @optional
-           limit @optional page) -> structure: parameter "query" of type
+           or an object mapping string->string query - Other parameters
+           @optional filter @optional limit @optional page @optional
+           include_private) -> structure: parameter "query" of type
            "SearchQuery" -> mapping from String to String, parameter "filter"
            of type "SearchFilter" (SearchFilter The jgi back end takes a map
            of either string, integer, or array of integer. I don't think the
-           type compiler supports union typs, so unspecified it is.) ->
+           type compiler supports union types, so unspecified it is.) ->
            mapping from String to unspecified object, parameter "limit" of
            Long, parameter "page" of Long, parameter "include_private" of
            type "bool" (a bool defined as int)
         :returns: multiple set - (1) parameter "result" of type
            "SearchResult" -> structure: parameter "search_result" of type
-           "SearchQueryResult" (typedef mapping<string, string> docdata;) ->
-           list of unspecified object, (2) parameter "stats" of type
-           "CallStats" (Call performance measurement) -> structure: parameter
-           "request_elapsed_time" of Long
+           "SearchQueryResult" (SearchQueryResult The top level search object
+           returned from the query. Note that this structure closely
+           parallels that returned by the jgi search service. The only
+           functional difference is that some field names which were prefixed
+           by underscore are known by their unprefixed selfs. hits  - a list
+           of the actual search result documents and statsitics returned;;
+           note that this represents the window of search results defined by
+           the limit input property. total - the total number of items
+           matched by the search; not the same as the items actually
+           returned;) -> structure: parameter "hits" of list of type
+           "SearchResultItem" (SearchResult Represents a single search result
+           item) -> structure: parameter "source" of type "SearchDocument"
+           (SearchDocument The source document for the search; it is both the
+           data obtained by the search as well as the source of the index. It
+           is the entire metadata JAMO record.) -> unspecified object,
+           parameter "index" of String, parameter "score" of String,
+           parameter "id" of String, parameter "total" of Long, (2) parameter
+           "error" of type "Error" -> structure: parameter "message" of
+           String, parameter "type" of String, parameter "code" of String,
+           parameter "info" of unspecified object, (3) parameter "stats" of
+           type "CallStats" (Call performance measurement) -> structure:
+           parameter "request_elapsed_time" of Long
         """
         return self._client.call_method(
-            'jgi_gateway_eap.search_jgi',
-            [input], self._service_ver, context)
+            'jgi_gateway_eap.search',
+            [parameter], self._service_ver, context)
 
-    def stage_objects(self, input, context=None):
+    def stage(self, parameter, context=None):
         """
-        :param input: instance of type "StageInput" -> structure: parameter
-           "ids" of list of String
+        :param parameter: instance of type "StageInput" (STAGE) -> structure:
+           parameter "ids" of list of String
         :returns: multiple set - (1) parameter "result" of type
            "StagingResult" (StagingResult returns a map entry for each id
-           submitted in the stage_objects request. The map key is the _id
-           property returned in a SearchResult item (not described here but
-           probably should be), the value is a string describing the result
-           of the staging request. At time of writing, the value is always
-           "staging" since the request to the jgi gateway jgi service and the
-           call to stage_objects in the jgi gateway kbase service are in
-           different processes.) -> structure: parameter "job_id" of String,
-           (2) parameter "stats" of type "CallStats" (Call performance
-           measurement) -> structure: parameter "request_elapsed_time" of Long
+           submitted in the stage request. The map key is the _id property
+           returned in a SearchResult item (not described here but probably
+           should be), the value is a string describing the result of the
+           staging request. At time of writing, the value is always "staging"
+           since the request to the jgi gateway jgi service and the call to
+           stage in the jgi gateway kbase service are in different
+           processes.) -> structure: parameter "job_id" of String, (2)
+           parameter "error" of type "Error" -> structure: parameter
+           "message" of String, parameter "type" of String, parameter "code"
+           of String, parameter "info" of unspecified object, (3) parameter
+           "stats" of type "CallStats" (Call performance measurement) ->
+           structure: parameter "request_elapsed_time" of Long
         """
         return self._client.call_method(
-            'jgi_gateway_eap.stage_objects',
-            [input], self._service_ver, context)
+            'jgi_gateway_eap.stage',
+            [parameter], self._service_ver, context)
 
-    def stage_status(self, input, context=None):
+    def stage_status(self, parameter, context=None):
         """
         Fetch the current status of the given staging fetch request as 
         identified by its job id
-        :param input: instance of type "StagingStatusInput" -> structure:
+        :param parameter: instance of type "StagingStatusInput" -> structure:
            parameter "job_id" of String
         :returns: multiple set - (1) parameter "result" of type
            "StagingStatusResult" -> structure: parameter "message" of String,
-           (2) parameter "stats" of type "CallStats" (Call performance
-           measurement) -> structure: parameter "request_elapsed_time" of Long
+           (2) parameter "error" of type "Error" -> structure: parameter
+           "message" of String, parameter "type" of String, parameter "code"
+           of String, parameter "info" of unspecified object, (3) parameter
+           "stats" of type "CallStats" (Call performance measurement) ->
+           structure: parameter "request_elapsed_time" of Long
         """
         return self._client.call_method(
             'jgi_gateway_eap.stage_status',
-            [input], self._service_ver, context)
+            [parameter], self._service_ver, context)
 
     def status(self, context=None):
         return self._client.call_method('jgi_gateway_eap.status',
