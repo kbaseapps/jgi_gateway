@@ -192,8 +192,9 @@ class jgi_gatewayTest(unittest.TestCase):
             self.assertEquals(err['code'], error_code)
             self.assertEquals(err['info']['key'], error_key)
 
-    # def test_status(self):
-    #     ret, err, status = self.getImpl().status(self.getContext())
+    def test_status(self):
+        ret, err, status = self.getImpl().status(self.getContext())
+        self.assertEquals(ret['state'], 'OK')
 
     # These tests cover the simple cases of the control parameters.
     def test_search_timeout(self):
