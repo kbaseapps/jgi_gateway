@@ -86,11 +86,13 @@ class jgi_gateway_eap:
         if 'connection-timeout' not in config:
             raise(ValueError('"connection-timeout" configuration property not provided'))
         try:
-            self.connection_timeout = float(config['connection-timeout'])
+            connection_timeout = int(config['connection-timeout'])
         except ValueError as ex:
             raise(ValueError('"connection-timeout" configuration property is not a float: ' + str(ex)))
         if not (config['connection-timeout'] > 0):
             raise(ValueError('"connection-timeout" configuration property must be > 0'))
+
+        self.connection_timeout = 1000 / connection_timeout
 
         #END_CONSTRUCTOR
         pass
@@ -362,47 +364,72 @@ class jgi_gateway_eap:
             'request_elapsed_time': elapsed_time
         }
 
-        if resp.status_code != 200:
-            error = {
-                'message': 'error processing query',
-                'type': 'upstream',
-                'code': 'http-error',
-                'info': {
-                    'response_code': resp.status_code,
-                    'response_text': resp.text
+        if resp.status_code == 200: 
+            try:
+                responsejson = json.loads(resp.text)
+            except Exception as e:
+                error = {
+                    'message': 'error decoding json response',
+                    'type': 'exception',
+                    'code': 'json-decoding',
+                    'info': {
+                        'exception_message': str(e)
+                    }
                 }
+                return [None, error, stats]
+            new_hits = []
+            for hit in responsejson['hits']:
+                new_hits.append({
+                    'source': hit['_source'],
+                    'index': hit['_index'],
+                    'score': hit['_score'],
+                    'id': hit['_id']
+                })
+            result = {
+                'hits': new_hits,
+                'total': responsejson['total']
+            }
+            return [result, None, stats]
+        elif resp.status_code == 500:
+            error = {
+                'message': 'the jgi search service experienced an internal error',
+                'type': 'upstream-service',
+                'code': 'internal-error',
+                'info': {
+                    'status': resp.status_code,
+                    # TODO: convert tojson
+                    'body': resp.text
+                }
+            }
+            return [None, error, stats]
+        elif resp.status_code == 502:
+            error = {
+                'message': 'jgi search service unavailable due to gateway error',
+                'type': 'upstream-service',
+                'code': 'gateway-error'
+            }
+            return [None, error, stats]
+        elif resp.status_code == 503:
+            error = {
+                'message': 'jgi search service unavailable',
+                'type': 'upstream-service',
+                'code': 'service-unavailable'
+            }
+            return [None, error, stats]
+        else:
+            error = {
+                'message': 'the jgi search service experienced an unknown error',
+                'type': 'upstream-service',
+                'code': 'unknown-error'
             }
             return [None, error, stats]
 
         # resp.raise_for_status()
-        try:
-            responsejson = json.loads(resp.text)
-        except Exception as e:
-            error = {
-                'message': 'error decoding json response',
-                'type': 'exception',
-                'code': 'json-decoding',
-                'info': {
-                    'exception_message': str(e)
-                }
-            }
-            return [None, error, stats]
+        
 
         # We need to transform the result into a form that is acceptable to
         # KIDL.
-        new_hits = []
-        for hit in responsejson['hits']:
-            new_hits.append({
-                'source': hit['_source'],
-                'index': hit['_index'],
-                'score': hit['_score'],
-                'id': hit['_id']
-            })
-        result = {
-            'hits': new_hits,
-            'total': responsejson['total']
-        }
-        return [result, None, stats]
+        
 
         #END search
 
