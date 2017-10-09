@@ -192,5 +192,41 @@ class jgi_gatewayTest(unittest.TestCase):
             self.assertEquals(err['code'], error_code)
             self.assertEquals(err['info']['key'], error_key)
 
-    def test_status(self):
-        ret, err, status = self.getImpl().status(self.getContext())
+    # def test_status(self):
+    #     ret, err, status = self.getImpl().status(self.getContext())
+
+    # These tests cover the simple cases of the control parameters.
+    def test_search_timeout(self):
+        # Test default result size of 10 for the given user and a wildcard 
+        # that should give us everything.
+        impl = self.getImpl()
+        original_timeout = impl.connection_timeout
+        test_timeout = 0.0001
+        impl.connection_timeout = test_timeout
+
+        query = {'query': {'_all': '*'}}
+        ret, err, stats = self.getImpl().search(self.getContext(), query)
+        self.assertIsNone(ret)
+        self.assertIsNotNone(err)
+        self.assertEquals(err['info']['timeout'], test_timeout)
+        self.assertEquals(err['type'], 'network')
+        self.assertEquals(err['code'], 'connection-timeout')
+        impl.connection_timeout = original_timeout
+
+    def test_search_bad_host(self):
+        # Test default result size of 10 for the given user and a wildcard 
+        # that should give us everything.
+        impl = self.getImpl()
+        original_host = impl.jgi_host
+        bad_host = original_host + 'x'
+        impl.jgi_host = bad_host
+
+        query = {'query': {'_all': '*'}}
+        ret, err, stats = self.getImpl().search(self.getContext(), query)
+        self.assertIsNone(ret)
+        self.assertIsNotNone(err)
+        # self.assertEquals(err['info']['timeout'], test_timeout)
+        self.assertEquals(err['type'], 'network')
+        self.assertEquals(err['code'], 'connection-error')
+        impl.jgi_host = original_host
+ 

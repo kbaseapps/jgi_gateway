@@ -9,6 +9,7 @@ import requests
 import json
 import sys
 import time
+import re
 #END_HEADER
 
 
@@ -49,14 +50,48 @@ class jgi_gateway_eap:
         self.config = config
         self.user = None
         self.passwd = None
-        if 'jgi-token' in config and config['jgi-token'] != '':
-            (user, passwd) = config['jgi-token'].split(':')
-            self.user = user
-            self.passwd = passwd
-        # self.jgi_host = 'https://jgi-kbase.nersc.gov'
-        if 'jgi-host' in config:
-            self.jgi_host = config['jgi-host']
-        print "Using %s for queries" % (self.jgi_host)
+
+        # Import and validate the jgi host
+        if 'jgi-host' not in config:
+            raise(ValueError('"jgi-host" configuration property not provided'))
+        # The host must be secure, and be reasonably valid:
+        # https://a.b
+        if (not re.match("^https://.+?\\..+$", config['jgi-host'])):
+            raise(ValueError('"jgi-host" configuration property not a valid url base'))
+        
+        self.jgi_host = config['jgi-host']
+
+        print("Using jgi host: %s" % (self.jgi_host))
+
+
+        # Import and validate the jgi token
+        if 'jgi-token' not in config:
+            raise(ValueError('"jgi-token" configuration property not provided'))
+        
+        token = config['jgi-token'].split(':')
+        if (len(token) != 2):
+            raise(ValueError('"jgi-token" configuration property is invalid'))
+
+        (user, passwd) = token
+
+        # Given a string which can split, the worst we can have is an empty 
+        # part, since we are ensured to get at least a 0-length string
+        if ((len(user) == 0) or (len(passwd) == 0)):
+            raise(ValueError('"jgi-token" configuration property is invalid'))
+
+        self.user = user
+        self.passwd = passwd
+
+        # Import and validate the connection timeout
+        if 'connection-timeout' not in config:
+            raise(ValueError('"connection-timeout" configuration property not provided'))
+        try:
+            self.connection_timeout = float(config['connection-timeout'])
+        except ValueError as ex:
+            raise(ValueError('"connection-timeout" configuration property is not a float: ' + str(ex)))
+        if not (config['connection-timeout'] > 0):
+            raise(ValueError('"connection-timeout" configuration property must be > 0'))
+
         #END_CONSTRUCTOR
         pass
 
@@ -283,9 +318,44 @@ class jgi_gateway_eap:
             return [None, error, None]
 
         call_start = time.clock()
-        resp = requests.post(self.jgi_host + '/query', data=queryjson,
-                             auth=(self.user, self.passwd),
-                             headers=header)
+        timeout = self.connection_timeout
+        try:
+            resp = requests.post(self.jgi_host + '/query', data=queryjson,
+                                 auth=(self.user, self.passwd),
+                                 timeout=timeout,
+                                 headers=header)
+        except requests.exceptions.Timeout as ex:
+            call_end = time.clock()
+            elapsed_time = int(round((call_end - call_start) * 1000))
+            stats = {
+                'request_elapsed_time': elapsed_time
+            }
+            error = {
+                'message': 'timeout exceeded sending query to jgi search service',
+                'type': 'network',
+                'code': 'connection-timeout',
+                'info': {
+                    'exception_message': str(ex),
+                    'timeout': timeout
+                }
+            }
+            return [None, error, stats]
+        except requests.exceptions.RequestException as ex:
+            call_end = time.clock()
+            elapsed_time = int(round((call_end - call_start) * 1000))
+            stats = {
+                'request_elapsed_time': elapsed_time
+            }
+            error = {
+                'message': 'connection error sending query to jgi search service',
+                'type': 'network',
+                'code': 'connection-error',
+                'info': {
+                    'exception_message': str(ex)
+                }
+            }
+            return [None, error, stats]
+
         call_end = time.clock()
         elapsed_time = int(round((call_end - call_start) * 1000))
         stats = {
@@ -411,10 +481,45 @@ class jgi_gateway_eap:
         requestjson = json.dumps(request)
 
         call_start = time.clock()
-        resp = requests.post(self.jgi_host + '/fetch', 
-                             data=requestjson,
-                             auth=(self.user, self.passwd),
-                             headers=header)
+        timeout = self.connection_timeout
+        try:
+            resp = requests.post(self.jgi_host + '/fetch', 
+                                 data=requestjson,
+                                 auth=(self.user, self.passwd),
+                                 timeout=timeout,
+                                 headers=header)
+        except requests.exceptions.Timeout as ex:
+            call_end = time.clock()
+            elapsed_time = int(round((call_end - call_start) * 1000))
+            stats = {
+                'request_elapsed_time': elapsed_time
+            }
+            error = {
+                'message': 'error sending fetech request to jgi search service',
+                'type': 'network',
+                'code': 'connection-timeout',
+                'info': {
+                    'exception_message': str(ex),
+                    'timeout': timeout
+                }
+            }
+            return [None, error, stats]
+        except requests.exceptions.RequestException as ex:
+            call_end = time.clock()
+            elapsed_time = int(round((call_end - call_start) * 1000))
+            stats = {
+                'request_elapsed_time': elapsed_time
+            }
+            error = {
+                'message': 'connection error sending fetch request to jgi search service',
+                'type': 'network',
+                'code': 'connection-error',
+                'info': {
+                    'exception_message': str(ex)
+                }
+            }
+            return [None, error, stats]        
+
         call_end = time.clock()
         stats = {
             'request_elapsed_time': int(round((call_end - call_start) * 1000))
@@ -534,9 +639,44 @@ class jgi_gateway_eap:
         # requestjson = json.dumps(request)
         # print "Fetch request: " + requestjson
         call_start = time.clock()
-        resp = requests.get(self.jgi_host + '/status', params=request,
-                            auth=(self.user, self.passwd),
-                            headers=header)
+        timeout = self.connection_timeout
+        try:
+            resp = requests.get(self.jgi_host + '/status', params=request,
+                                auth=(self.user, self.passwd),
+                                timeout=timeout,
+                                headers=header)
+        except requests.exceptions.Timeout as ex:
+            call_end = time.clock()
+            elapsed_time = int(round((call_end - call_start) * 1000))
+            stats = {
+                'request_elapsed_time': elapsed_time
+            }
+            error = {
+                'message': 'error sending status request to jgi search service',
+                'type': 'network',
+                'code': 'connection-timeout',
+                'info': {
+                    'exception_message': str(ex),
+                    'timeout': timeout
+                }
+            }
+            return [None, error, stats]
+        except requests.exceptions.RequestException as ex:
+            call_end = time.clock()
+            elapsed_time = int(round((call_end - call_start) * 1000))
+            stats = {
+                'request_elapsed_time': elapsed_time
+            }
+            error = {
+                'message': 'connection error sending status request to jgi search service',
+                'type': 'network',
+                'code': 'connection-error',
+                'info': {
+                    'exception_message': str(ex)
+                }
+            }
+            return [None, error, stats]
+
         call_end = time.clock()
         stats = {
             'request_elapsed_time': int(round((call_end - call_start) * 1000))
