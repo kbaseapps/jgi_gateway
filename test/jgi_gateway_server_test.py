@@ -81,7 +81,7 @@ class jgi_gatewayTest(unittest.TestCase):
 
     # These tests cover the simple cases of the control parameters.
     def test_search_simple(self):
-        # Test default result size of 10 for the given user and a wildcard 
+        # Test default result size of 10 for the given user and a wildcard
         # that should give us everything.
         query = {'query': {'_all': '*'}}
         ret, err, stats = self.getImpl().search(self.getContext(), query)
@@ -110,14 +110,14 @@ class jgi_gatewayTest(unittest.TestCase):
             [{'query': 'i am wrong'}, 'wrong-type', 'query'],
             [{'query': {'_all': '*'}, 'filter': 1}, 'wrong-type', 'filter'],
             [{'query': {'_all': '*'}, 'limit': 'x'}, 'wrong-type', 'limit'],
-            [{'query': {'_all': '*'}, 'limit': 0}, 'out-of-range', 'limit'],
-            [{'query': {'_all': '*'}, 'limit': 10001}, 'out-of-range', 'limit'],
+            [{'query': {'_all': '*'}, 'limit': 0}, 'invalid', 'limit'],
+            [{'query': {'_all': '*'}, 'limit': 10001}, 'invalid', 'limit'],
             [{'query': {'_all': '*'}, 'page': 'x'}, 'wrong-type', 'page'],
-            [{'query': {'_all': '*'}, 'page': 0}, 'out-of-range', 'page'],
-            [{'query': {'_all': '*'}, 'page': 10001}, 'out-of-range', 'page'],
+            [{'query': {'_all': '*'}, 'page': 0}, 'invalid', 'page'],
+            [{'query': {'_all': '*'}, 'page': 10001}, 'invalid', 'page'],
             [{'query': {'_all': '*'}, 'include_private': 'x'}, 'wrong-type', 'include_private'],
-            [{'query': {'_all': '*'}, 'include_private': -1}, 'out-of-range', 'include_private'],
-            [{'query': {'_all': '*'}, 'include_private': 2}, 'out-of-range', 'include_private']
+            [{'query': {'_all': '*'}, 'include_private': -1}, 'invalid', 'include_private'],
+            [{'query': {'_all': '*'}, 'include_private': 2}, 'invalid', 'include_private']
         ]
         for query, error_code, error_key in tests:
             ret, err, status = self.getImpl().search(self.getContext(), query)
@@ -157,8 +157,8 @@ class jgi_gatewayTest(unittest.TestCase):
         hitid = a_hit['id']
         self.assertIsInstance(hitid, basestring)
 
-    # Test the error structure. 
-    # Use a 
+    # Test the error structure.
+    # Use a
     # def test_search_error_structure(self):
     #     query = {}
 
@@ -168,6 +168,7 @@ class jgi_gatewayTest(unittest.TestCase):
     def test_stage(self):
         req = {'ids': ['51d4fa27067c014cd6ed1a90', '51d4fa27067c014cd6ed1a96']}
         ret, error, status = self.getImpl().stage(self.getContext(), req)
+        print(error)
         self.assertIsNotNone(ret)
         self.assertIsInstance(ret, dict)
         self.assertIn('job_id', ret)
@@ -196,9 +197,9 @@ class jgi_gatewayTest(unittest.TestCase):
         ret, err, status = self.getImpl().status(self.getContext())
         self.assertEquals(ret['state'], 'OK')
 
-    # These tests cover the simple cases of the control parameters.
+    # # These tests cover the simple cases of the control parameters.
     def test_search_timeout(self):
-        # Test default result size of 10 for the given user and a wildcard 
+        # Test default result size of 10 for the given user and a wildcard
         # that should give us everything.
         impl = self.getImpl()
         original_timeout = impl.connection_timeout
@@ -214,13 +215,17 @@ class jgi_gatewayTest(unittest.TestCase):
         self.assertEquals(err['code'], 'connection-timeout')
         impl.connection_timeout = original_timeout
 
+    # This test may need to be commented out sometimes; it is possible
+    # that async network requests are tripping over each other, and we
+    # are changing the implementation config, which may screw up
+    # concurrent tests.
     def test_search_bad_host(self):
-        # Test default result size of 10 for the given user and a wildcard 
+        # Test default result size of 10 for the given user and a wildcard
         # that should give us everything.
         impl = self.getImpl()
-        original_host = impl.jgi_host
-        bad_host = original_host + 'x'
-        impl.jgi_host = bad_host
+        original_url = impl.jgi_search_base_url
+        bad_url = original_url + 'x'
+        impl.jgi_search_base_url = bad_url
 
         query = {'query': {'_all': '*'}}
         ret, err, stats = self.getImpl().search(self.getContext(), query)
@@ -229,5 +234,4 @@ class jgi_gatewayTest(unittest.TestCase):
         # self.assertEquals(err['info']['timeout'], test_timeout)
         self.assertEquals(err['type'], 'network')
         self.assertEquals(err['code'], 'connection-error')
-        impl.jgi_host = original_host
- 
+        impl.jgi_search_base_url = original_url
