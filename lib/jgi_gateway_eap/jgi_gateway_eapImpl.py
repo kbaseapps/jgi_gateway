@@ -52,29 +52,29 @@ class jgi_gateway_eap:
         self.passwd = None
 
         # Import and validate the jgi host
-        if 'jgi-host' not in config:
-            raise(ValueError('"jgi-host" configuration property not provided'))
+        if 'jgi-search-base-url' not in config:
+            raise(ValueError('"jgi-search-base-url" configuration property not provided'))
         # The host must be secure, and be reasonably valid:
         # https://a.b
-        if (not re.match("^https://.+?\\..+$", config['jgi-host'])):
+        if (not re.match("^https://.+?\\..+$", config['jgi-search-base-url'])):
             raise(ValueError('"jgi-host" configuration property not a valid url base'))
-        
-        self.jgi_host = config['jgi-host']
 
-        print("Using jgi host: %s" % (self.jgi_host))
+        self.jgi_search_base_url = config['jgi-search-base-url']
+
+        print("Using jgi base url: %s" % (self.jgi_search_base_url))
 
 
         # Import and validate the jgi token
         if 'jgi-token' not in config:
             raise(ValueError('"jgi-token" configuration property not provided'))
-        
+
         token = config['jgi-token'].split(':')
         if (len(token) != 2):
             raise(ValueError('"jgi-token" configuration property is invalid'))
 
         (user, passwd) = token
 
-        # Given a string which can split, the worst we can have is an empty 
+        # Given a string which can split, the worst we can have is an empty
         # part, since we are ensured to get at least a 0-length string
         if ((len(user) == 0) or (len(passwd) == 0)):
             raise(ValueError('"jgi-token" configuration property is invalid'))
@@ -92,7 +92,8 @@ class jgi_gateway_eap:
         if not (config['connection-timeout'] > 0):
             raise(ValueError('"connection-timeout" configuration property must be > 0'))
 
-        self.connection_timeout = 1000 / connection_timeout
+        self.connection_timeout = float(connection_timeout) /float(1000)
+        print('connection timeout %f sec' % (self.connection_timeout) )
 
         #END_CONSTRUCTOR
         pass
@@ -142,17 +143,17 @@ class jgi_gateway_eap:
         # ctx is the context object
         # return variables are: result, error, stats
         #BEGIN search
-        
+
         # INPUT
 
         # query
         # A required property, this provides the, well, search to conduct
-        # over the jgi search service space. 
+        # over the jgi search service space.
         # Note that the sender may simply send '*' to fetch all results.
         #
         if 'query' not in parameter:
             error = {
-                'message': "missing required parameter query",
+                'message': 'the required parameter "query" was not provided',
                 'type': 'input',
                 'code': 'missing',
                 'info': {
@@ -160,17 +161,18 @@ class jgi_gateway_eap:
                 }
             }
             return [None, error, None]
-        
+
         if not isinstance(parameter['query'], dict):
             error = {
-                'message': ("the 'query' parameter must be a an object "
-                            "mapping fields to search strings"),
+                'message': ('the "query" parameter must be a an object '
+                            'mapping fields to search strings'),
                 'type': 'input',
                 'code': 'wrong-type',
                 'info': {
                     'key': 'query',
-                    'expecting': 'dict',
-                    'got': type(parameter['query']).__name__
+                    'expected': 'object',
+                    # TODO translate to json type name
+                    'received': type(parameter['query']).__name__
                 }
             }
             return [None, error, None]
@@ -184,12 +186,15 @@ class jgi_gateway_eap:
         if 'filter' in parameter:
             if not isinstance(parameter['filter'], dict):
                 error = {
-                    'message': ("the 'filter' parameter must be an object "
-                                "mapping fields to filter values"),
+                    'message': ('the "filter" parameter must be an object '
+                                'mapping fields to filter values'),
                     'type': 'input',
                     'code': 'wrong-type',
                     'info': {
-                        'key': 'filter'
+                        'key': 'filter',
+                        'expected': 'object',
+                        # TODO translate to json type name
+                        'received': type(parameter['filter']).__name__
                     }
                 }
                 return [None, error, None]
@@ -198,20 +203,22 @@ class jgi_gateway_eap:
         if 'limit' in parameter:
             if not isinstance(parameter['limit'], int):
                 error = {
-                    'message': "the 'limit' parameter must be an integer",
+                    'message': 'the "limit" parameter must be an integer',
                     'type': 'input',
                     'code': 'wrong-type',
                     'info': {
-                        'key': 'limit'
+                        'key': 'limit',
+                        'expeced': 'integer',
+                        'received': type(parameter['limit']).__name__
                     }
                 }
                 return [None, error, None]
             if parameter['limit'] < 1 or parameter['limit'] > 10000:
                 error = {
-                    'message': ("the 'limit' parameter must be an "
-                                "integer between 1 and 10000"),
+                    'message': ('the "limit" parameter must be an '
+                                'integer between 1 and 10000'),
                     'type': 'input',
-                    'code': 'out-of-range', 
+                    'code': 'invalid',
                     'info': {
                         'key': 'limit'
                     }
@@ -222,20 +229,22 @@ class jgi_gateway_eap:
         if 'page' in parameter:
             if not isinstance(parameter['page'], int):
                 error = {
-                    'messagse': "the 'page' parameter must be an integer",
+                    'messagse': 'the "page" parameter must be an integer',
                     'type': 'input',
                     'code': 'wrong-type',
                     'info': {
-                        'key': 'page'
+                        'key': 'page',
+                        'expected': 'integer',
+                        'received': type(parameter['page']).__name__
                     }
                 }
                 return [None, error, None]
             if parameter['page'] < 1 or parameter['page'] > 10000:
                 error = {
-                    'message': ("the 'page' parameter must be an integer "
-                                "between 1 and 10000"),
+                    'message': ('the "page" parameter must be an integer '
+                                'between 1 and 10000'),
                     'type': 'input',
-                    'code': 'out-of-range',
+                    'code': 'invalid',
                     'info': {
                         'key': 'page'
                     }
@@ -269,7 +278,7 @@ class jgi_gateway_eap:
                     'message': ("the 'include_private' parameter must be an "
                                 "integer 1 or 0"),
                     'type': 'input',
-                    'code': 'out-of-range',
+                    'code': 'invalid',
                     'info': {
                         'key': 'include_private'
                     }
@@ -283,7 +292,7 @@ class jgi_gateway_eap:
 
         queryjson = json.dumps(query)
 
-        # Ensure that the configuration is correct; the constructor 
+        # Ensure that the configuration is correct; the constructor
         # does not enforce this.
         if self.user is None:
             error = {
@@ -307,14 +316,14 @@ class jgi_gateway_eap:
                 }
             }
             return [None, error, None]
-        if self.jgi_host is None:
+        if self.jgi_search_base_url is None:
             error = {
-                'message': ("the endpoint parameter 'jgi_host' is not set; "
+                'message': ("the configuration parameter 'jgi_search_base_url' is not set; "
                             "cannot call service without it"),
                 'type': 'context',
                 'code': 'context-property-missing',
                 'info': {
-                    'key': 'jgi_host'
+                    'key': 'jgi_search_base_url'
                 }
             }
             return [None, error, None]
@@ -322,7 +331,7 @@ class jgi_gateway_eap:
         call_start = time.clock()
         timeout = self.connection_timeout
         try:
-            resp = requests.post(self.jgi_host + '/query', data=queryjson,
+            resp = requests.post(self.jgi_search_base_url + '/query', data=queryjson,
                                  auth=(self.user, self.passwd),
                                  timeout=timeout,
                                  headers=header)
@@ -364,7 +373,7 @@ class jgi_gateway_eap:
             'request_elapsed_time': elapsed_time
         }
 
-        if resp.status_code == 200: 
+        if resp.status_code == 200:
             try:
                 responsejson = json.loads(resp.text)
             except Exception as e:
@@ -425,11 +434,11 @@ class jgi_gateway_eap:
             return [None, error, stats]
 
         # resp.raise_for_status()
-        
+
 
         # We need to transform the result into a form that is acceptable to
         # KIDL.
-        
+
 
         #END search
 
@@ -473,7 +482,7 @@ class jgi_gateway_eap:
 
         # ids
         # A list of string database entity ids. A file is associated with each
-        # id, and a copy request will be issued for each on. Just the ids are 
+        # id, and a copy request will be issued for each on. Just the ids are
         # passed through here, the fanning out is on the jgi side.
         if 'ids' not in parameter:
             error = {
@@ -510,7 +519,7 @@ class jgi_gateway_eap:
         call_start = time.clock()
         timeout = self.connection_timeout
         try:
-            resp = requests.post(self.jgi_host + '/fetch', 
+            resp = requests.post(self.jgi_search_base_url + '/fetch',
                                  data=requestjson,
                                  auth=(self.user, self.passwd),
                                  timeout=timeout,
@@ -545,13 +554,13 @@ class jgi_gateway_eap:
                     'exception_message': str(ex)
                 }
             }
-            return [None, error, stats]        
+            return [None, error, stats]
 
         call_end = time.clock()
         stats = {
             'request_elapsed_time': int(round((call_end - call_start) * 1000))
         }
-                            
+
         # TODO: Just bail or return error object?
         if resp.status_code != 200:
             error = {
@@ -578,7 +587,7 @@ class jgi_gateway_eap:
                 }
             }
             return [None, error, stats]
- 
+
         # TODO Add some logging
 
         #
@@ -589,7 +598,7 @@ class jgi_gateway_eap:
 
         result = {'job_id': job_id}
 
-        return [result, None, stats] 
+        return [result, None, stats]
 
         # NOTE: we are already returne d here, the code below is dead.
 
@@ -610,7 +619,7 @@ class jgi_gateway_eap:
 
     def stage_status(self, ctx, parameter):
         """
-        Fetch the current status of the given staging fetch request as 
+        Fetch the current status of the given staging fetch request as
         identified by its job id
         :param parameter: instance of type "StagingStatusInput" -> structure:
            parameter "job_id" of String
@@ -628,7 +637,7 @@ class jgi_gateway_eap:
         # INPUT
 
         # id
-        # The job id is required in order to specify for which job we 
+        # The job id is required in order to specify for which job we
         # want the status
         if 'job_id' not in parameter:
             error = {
@@ -668,7 +677,7 @@ class jgi_gateway_eap:
         call_start = time.clock()
         timeout = self.connection_timeout
         try:
-            resp = requests.get(self.jgi_host + '/status', params=request,
+            resp = requests.get(self.jgi_search_base_url + '/status', params=request,
                                 auth=(self.user, self.passwd),
                                 timeout=timeout,
                                 headers=header)
