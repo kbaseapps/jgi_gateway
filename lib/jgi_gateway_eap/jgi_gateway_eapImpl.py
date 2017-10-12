@@ -200,6 +200,29 @@ class jgi_gateway_eap:
                 return [None, error, None]
             query['filter'] = parameter['filter']
 
+        # fields
+        # Optional list of files to in return in the results.
+        # It is an array of strings, each string being the dot
+        # separated path to the result property, starting at _source.
+        # The top level fields (sister fields to _source) area
+        # always returned.
+        if 'fields' in parameter:
+            # could, but am not, checking the type of the list...
+            if not isinstance(parameter['fields'], list):
+                error = {
+                    'message': 'the "fields" parameter must be a list of strings',
+                    'type': 'input',
+                    'code': 'wrong-type',
+                    'info': {
+                        'key': 'fields',
+                        'expected': 'list',
+                        'received': type(parameter['fields']).__name__
+                    }
+                }
+                return [None, error, None]
+            query['fields'] = parameter['fields']
+
+
         if 'limit' in parameter:
             if not isinstance(parameter['limit'], int):
                 error = {

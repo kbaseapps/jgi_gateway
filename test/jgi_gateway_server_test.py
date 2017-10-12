@@ -103,12 +103,36 @@ class jgi_gatewayTest(unittest.TestCase):
         self.assertIn('hits', ret)
         self.assertEquals(len(ret['hits']), 20)
 
+    # Input values good and at the edges
+    # For now just test that error is None and result is not None.
+    def test_search_input_validation(self):
+        tests = [
+            # query
+            [{'query': {'_all': '*'}}],
+            # filter
+            [{'query': {'_all': '*'}, 'filter': {'file_type': 'fastq'}}],
+            # fields
+            [{'query': {'_all': '*'}, 'fields': ['file_type']}],
+            # limit
+            [{'query': {'_all': '*'}, 'limit': 10}],
+            # page
+            [{'query': {'_all': '*'}, 'page': 1}],
+            # include_private
+            [{'query': {'_all': '*'}, 'include_private': 1}],
+        ]
+        for query in tests:
+            ret, err, status = self.getImpl().search(self.getContext(), query)
+            self.assertIsNotNone(ret)
+            self.assertIsNone(err)
+            self.assertIsNotNote(status)
+
     # Trigger input validation errors
     def test_search_input_validation(self):
         tests = [
             [{}, 'missing', 'query'],
             [{'query': 'i am wrong'}, 'wrong-type', 'query'],
             [{'query': {'_all': '*'}, 'filter': 1}, 'wrong-type', 'filter'],
+            [{'query': {'_all': '*'}, 'fields': 'x'}, 'wrong-type', 'fields'],
             [{'query': {'_all': '*'}, 'limit': 'x'}, 'wrong-type', 'limit'],
             [{'query': {'_all': '*'}, 'limit': 0}, 'invalid', 'limit'],
             [{'query': {'_all': '*'}, 'limit': 10001}, 'invalid', 'limit'],
