@@ -353,6 +353,7 @@ class jgi_gateway_eap:
         req_start = time.clock()
         pre_elapsed = int(round((req_start - call_start) * 1000))
         timeout = self.connection_timeout
+        print('sending request: %s' % queryjson)
         try:
             resp = requests.post(self.jgi_search_base_url + '/query', data=queryjson,
                                  auth=(self.user, self.passwd),
@@ -365,6 +366,7 @@ class jgi_gateway_eap:
                 'pre_elapsed': pre_elapsed,
                 'request_elapsed_time': req_elapsed,
                 'post_elapsed': None,
+                'query_sent': queryjson
             }
             error = {
                 'message': 'timeout exceeded sending query to jgi search service',
@@ -383,6 +385,7 @@ class jgi_gateway_eap:
                 'pre_elapsed': pre_elapsed,
                 'request_elapsed_time': req_elapsed,
                 'post_elapsed': None,
+                'query_sent': queryjson
             }
             error = {
                 'message': 'connection error sending query to jgi search service',
@@ -400,6 +403,7 @@ class jgi_gateway_eap:
             'pre_elapsed': pre_elapsed,
             'request_elapsed_time': req_elapsed,
             'post_elapsed': None,
+            'query_sent': queryjson
         }
 
         if resp.status_code == 200:
@@ -416,7 +420,8 @@ class jgi_gateway_eap:
                     'type': 'exception',
                     'code': 'json-decoding',
                     'info': {
-                        'exception_message': str(e)
+                        'exception_message': str(e),
+                        'query_sent': queryjson
                     }
                 }
                 return [None, error, stats]
@@ -441,7 +446,8 @@ class jgi_gateway_eap:
                 'info': {
                     'status': resp.status_code,
                     # TODO: convert tojson
-                    'body': resp.text
+                    'body': resp.text,
+                    'query_sent': queryjson
                 }
             }
             return [None, error, stats]
