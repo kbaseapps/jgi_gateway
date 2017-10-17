@@ -71,9 +71,15 @@ class JSONRPCServiceCustom(JSONRPCService):
         Arguments:
         jsondata -- remote method call in jsonrpc format
         """
+        request_start = time.clock()
+
         result = self.call_py(ctx, jsondata)
         if result is not None:
-            return json.dumps(result, cls=JSONObjectEncoder)
+            result = json.dumps(result, cls=JSONObjectEncoder)
+
+        request_end = time.clock()
+        elapsed_time = int(round((request_end - reqyest_start) * 1000))
+        print('request elapsed: %d' % (elapsed_time))
 
         return None
 
@@ -175,6 +181,7 @@ class JSONRPCServiceCustom(JSONRPCService):
 
     def _handle_request(self, ctx, request):
         """Handles given request and returns its response."""
+
         if self.method_data[request['method']].has_key('types'):  # noqa @IgnorePep8
             self._validate_params_types(request['method'], request['params'])
 
@@ -555,6 +562,9 @@ def stop_server():
 
 def process_async_cli(input_file_path, output_file_path, token):
     exit_code = 0
+    request_start = time.clock()
+
+
     with open(input_file_path) as data_file:
         req = json.load(data_file)
     if 'version' not in req:
@@ -599,6 +609,11 @@ def process_async_cli(input_file_path, output_file_path, token):
         exit_code = 500
     with open(output_file_path, "w") as f:
         f.write(json.dumps(resp, cls=JSONObjectEncoder))
+
+    request_end = time.clock()
+    elapsed_time = int(round((request_end - reqyest_start) * 1000))
+    print('request elapsed: %d' % (elapsed_time))
+
     return exit_code
 
 if __name__ == "__main__":

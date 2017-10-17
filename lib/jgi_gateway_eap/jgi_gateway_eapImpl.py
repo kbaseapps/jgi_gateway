@@ -145,7 +145,7 @@ class jgi_gateway_eap:
         #BEGIN search
 
         # INPUT
-
+        call_start = time.clock()
         # query
         # A required property, this provides the, well, search to conduct
         # over the jgi search service space.
@@ -350,8 +350,8 @@ class jgi_gateway_eap:
                 }
             }
             return [None, error, None]
-
-        call_start = time.clock()
+        req_start = time.clock()
+        pre_elapsed = int(round((req_start - call_start) * 1000))
         timeout = self.connection_timeout
         try:
             resp = requests.post(self.jgi_search_base_url + '/query', data=queryjson,
@@ -359,10 +359,12 @@ class jgi_gateway_eap:
                                  timeout=timeout,
                                  headers=header)
         except requests.exceptions.Timeout as ex:
-            call_end = time.clock()
-            elapsed_time = int(round((call_end - call_start) * 1000))
+            req_end = time.clock()
+            req_elapsed = int(round((req_end - req_start) * 1000))
             stats = {
-                'request_elapsed_time': elapsed_time
+                'pre_elapsed': pre_elapsed,
+                'request_elapsed_time': req_elapsed,
+                'post_elapsed': None,
             }
             error = {
                 'message': 'timeout exceeded sending query to jgi search service',
@@ -375,10 +377,12 @@ class jgi_gateway_eap:
             }
             return [None, error, stats]
         except requests.exceptions.RequestException as ex:
-            call_end = time.clock()
-            elapsed_time = int(round((call_end - call_start) * 1000))
+            req_end = time.clock()
+            req_elapsed = int(round((req_end - req_start) * 1000))
             stats = {
-                'request_elapsed_time': elapsed_time
+                'pre_elapsed': pre_elapsed,
+                'request_elapsed_time': req_elapsed,
+                'post_elapsed': None,
             }
             error = {
                 'message': 'connection error sending query to jgi search service',
@@ -390,13 +394,20 @@ class jgi_gateway_eap:
             }
             return [None, error, stats]
 
-        call_end = time.clock()
-        elapsed_time = int(round((call_end - call_start) * 1000))
+        req_end = time.clock()
+        req_elapsed = int(round((req_end - req_start) * 1000))
         stats = {
-            'request_elapsed_time': elapsed_time
+            'pre_elapsed': pre_elapsed,
+            'request_elapsed_time': req_elapsed,
+            'post_elapsed': None,
         }
 
         if resp.status_code == 200:
+            post_end = time.clock()
+            post_elapsed = int(round((post_end - req_end) * 1000))
+            total_elapsed = int(round((post_end - call_start) * 1000))
+            stats['post_elapsed'] = post_elapsed
+            stats['total_elapsed'] = total_elapsed
             try:
                 responsejson = json.loads(resp.text)
             except Exception as e:

@@ -124,7 +124,29 @@ class jgi_gatewayTest(unittest.TestCase):
             ret, err, status = self.getImpl().search(self.getContext(), query)
             self.assertIsNotNone(ret)
             self.assertIsNone(err)
-            self.assertIsNotNote(status)
+            self.assertIsNotNone(status)
+
+    # Stats
+    def test_search_input_validation(self):
+        tests = [
+            # query
+            [{'query': {'_all': '*'}}],
+        ]
+        for query in tests:
+            ret, err, stats = self.getImpl().search(self.getContext(), query)
+            self.assertIsNotNone(status)
+
+            self.assertIn('request_elapsed_time', status)
+            req_elapsed = status['request_elapsed_time']
+            self.assertIsInstance(req_elapsed, int)
+
+            self.assertIn('pre_elapsed', status)
+            pre_elapsed = status['pre_elapsed']
+            self.assertIsInstance(pre_elapsed, int)
+
+            self.assertIn('post_elapsed', status)
+            post_elapsed = status['post_elapsed']
+            self.assertIsInstance(post_elapsed, int)
 
     # Trigger input validation errors
     def test_search_input_validation(self):
@@ -180,6 +202,7 @@ class jgi_gatewayTest(unittest.TestCase):
         self.assertIsInstance(score, float)
         hitid = a_hit['id']
         self.assertIsInstance(hitid, basestring)
+        print(stats)
 
     # Test the error structure.
     # Use a
