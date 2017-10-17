@@ -111,13 +111,18 @@ class jgi_gatewayTest(unittest.TestCase):
             [{'query': {'_all': '*'}}],
             # filter
             [{'query': {'_all': '*'}, 'filter': {'file_type': 'fastq'}}],
+            [{'query': {'_all': '*'}, 'filter': None}],
             # fields
+            [{'query': {'_all': '*'}, 'fields': None}],
             [{'query': {'_all': '*'}, 'fields': ['file_type']}],
             # limit
+            [{'query': {'_all': '*'}, 'limit': None}],
             [{'query': {'_all': '*'}, 'limit': 10}],
             # page
+            [{'query': {'_all': '*'}, 'page': None}],
             [{'query': {'_all': '*'}, 'page': 1}],
             # include_private
+            [{'query': {'_all': '*'}, 'include_private': None}],
             [{'query': {'_all': '*'}, 'include_private': 1}],
         ]
         for query in tests:

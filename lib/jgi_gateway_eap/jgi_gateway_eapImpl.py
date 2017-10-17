@@ -183,7 +183,7 @@ class jgi_gateway_eap:
         # Optional search filter, which is a dictionary with fields as keys
         # and a simple string, integer, or list of integers as value.
         # A special yet optional "operator"  field may contain AND, OR, or NOT
-        if 'filter' in parameter:
+        if 'filter' in parameter and parameter['filter'] != None:
             if not isinstance(parameter['filter'], dict):
                 error = {
                     'message': ('the "filter" parameter must be an object '
@@ -206,7 +206,7 @@ class jgi_gateway_eap:
         # separated path to the result property, starting at _source.
         # The top level fields (sister fields to _source) area
         # always returned.
-        if 'fields' in parameter:
+        if 'fields' in parameter and parameter['fields'] != None:
             # could, but am not, checking the type of the list...
             if not isinstance(parameter['fields'], list):
                 error = {
@@ -223,7 +223,7 @@ class jgi_gateway_eap:
             query['fields'] = parameter['fields']
 
 
-        if 'limit' in parameter:
+        if 'limit' in parameter and parameter['limit'] != None:
             if not isinstance(parameter['limit'], int):
                 error = {
                     'message': 'the "limit" parameter must be an integer',
@@ -249,7 +249,7 @@ class jgi_gateway_eap:
                 return [None, error, None]
             query['size'] = parameter['limit']
 
-        if 'page' in parameter:
+        if 'page' in parameter and parameter['page'] != None:
             if not isinstance(parameter['page'], int):
                 error = {
                     'messagse': 'the "page" parameter must be an integer',
@@ -283,7 +283,7 @@ class jgi_gateway_eap:
         # username is found, that account is used to determine which private
         # data is searched.
         #
-        if 'include_private' in parameter:
+        if 'include_private' in parameter and parameter['include_private'] != None:
             include_private = parameter['include_private']
             if not isinstance(include_private, int):
                 error = {
