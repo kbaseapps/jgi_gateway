@@ -15,8 +15,10 @@ Followed most of the instructions (need to recreate what worked).
 Ended up using the following line for unit tests:
 
 ```
-`pwd`/../kb_sdk/bin/kb-sdk test
+../kb_sdk/bin/kb-sdk test
 ```
+
+where kb_sdk is installed as a sibling directory.
 
 Basically, using a locally build kb-sdk and not the dockerized one.
 

@@ -317,7 +317,8 @@ class jgi_gateway_eap:
                     }
                 }
                 return [None, error, None]
-            query['userid'] = ctx['user_id']
+            if (include_private == 1):
+                query['userid'] = ctx['user_id']
 
         # PREPARE REQUEST
 
