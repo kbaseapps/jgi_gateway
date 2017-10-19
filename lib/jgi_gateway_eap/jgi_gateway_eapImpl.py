@@ -10,6 +10,7 @@ import json
 import sys
 import time
 import re
+import math
 #END_HEADER
 
 
@@ -236,10 +237,12 @@ class jgi_gateway_eap:
                     }
                 }
                 return [None, error, None]
-            if parameter['limit'] < 1 or parameter['limit'] > 10000:
+            # theoretical limit is 10000, but getting anywhere close just times
+            # out.
+            if parameter['limit'] < 1 or parameter['limit'] > 1000:
                 error = {
                     'message': ('the "limit" parameter must be an '
-                                'integer between 1 and 10000'),
+                                'integer between 1 and 1000'),
                     'type': 'input',
                     'code': 'invalid',
                     'info': {
@@ -248,6 +251,10 @@ class jgi_gateway_eap:
                 }
                 return [None, error, None]
             query['size'] = parameter['limit']
+        else:
+            query['size'] = 10
+
+        max_page = math.ceil(10000 / query['size'])
 
         if 'page' in parameter and parameter['page'] != None:
             if not isinstance(parameter['page'], int):
@@ -262,19 +269,22 @@ class jgi_gateway_eap:
                     }
                 }
                 return [None, error, None]
-            if parameter['page'] < 1 or parameter['page'] > 10000:
+            if parameter['page'] < 1 or parameter['page'] > max_page:
                 error = {
                     'message': ('the "page" parameter must be an integer '
-                                'between 1 and 10000'),
+                                'between 1 and %d with a page size of %d' % (max_page, query['size'])),
                     'type': 'input',
                     'code': 'invalid',
                     'info': {
-                        'key': 'page'
+                        'key': 'page',
+                        'valueProvided': parameter['page']
                     }
                 }
                 return [None, error, None]
             # we use 1 based page numbering, the jgi api is 0 based.
             query['page'] = parameter['page'] - 1
+        else:
+            query['page'] = 0
 
         # include_private A flag (kbase style boolean, 1, 0) indicating whether
         # to request private data be searched. It causes this by including the
@@ -711,8 +721,6 @@ class jgi_gateway_eap:
         # header = {'Accept': 'application/json'}
         header = {'Accept': 'text/html'}
 
-        # requestjson = json.dumps(request)
-        # print "Fetch request: " + requestjson
         call_start = time.clock()
         timeout = self.connection_timeout
         try:

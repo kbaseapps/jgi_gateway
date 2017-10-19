@@ -108,37 +108,42 @@ class jgi_gatewayTest(unittest.TestCase):
     def test_search_input_validation(self):
         tests = [
             # query
-            [{'query': {'_all': '*'}}],
+            [{'query': {'_all': '*'}}, 'bog simple search'],
             # filter
-            [{'query': {'_all': '*'}, 'filter': {'file_type': 'fastq'}}],
-            [{'query': {'_all': '*'}, 'filter': None}],
+            [{'query': {'_all': '*'}, 'filter': {'file_type': 'fastq'}}, 'with one file type'],
+            [{'query': {'_all': '*'}, 'filter': None}, 'with filter null'],
             # fields
-            [{'query': {'_all': '*'}, 'fields': None}],
-            [{'query': {'_all': '*'}, 'fields': ['file_type']}],
+            [{'query': {'_all': '*'}, 'fields': None}, 'with fields null'],
+            [{'query': {'_all': '*'}, 'fields': ['file_type']}, 'with fields set to one valid field'],
             # limit
-            [{'query': {'_all': '*'}, 'limit': None}],
-            [{'query': {'_all': '*'}, 'limit': 10}],
+            [{'query': {'_all': '*'}, 'limit': None}, 'with limit null'],
+            [{'query': {'_all': '*'}, 'limit': 1}, 'with limit set to lower limit: 1'],
+            [{'query': {'_all': '*'}, 'limit': 1000}, 'with limit set to upper limit: 1,000'],
             # page
-            [{'query': {'_all': '*'}, 'page': None}],
-            [{'query': {'_all': '*'}, 'page': 1}],
+            [{'query': {'_all': '*'}, 'page': None}, 'with page null'],
+            [{'query': {'_all': '*'}, 'page': 1}, 'with page at lower limit: 1'],
+            [{'query': {'_all': '*'}, 'page': 1000}, 'with page at upper limit: 1,000'],
             # include_private
-            [{'query': {'_all': '*'}, 'include_private': None}],
-            [{'query': {'_all': '*'}, 'include_private': 1}],
+            [{'query': {'_all': '*'}, 'include_private': None}, 'with include private null'],
+            [{'query': {'_all': '*'}, 'include_private': 0}, 'with include_private at lower bound: 0'],
+            [{'query': {'_all': '*'}, 'include_private': 1}, 'with include_private at upper bound: 1']
         ]
-        for query in tests:
+        for query, msg in tests:
             ret, err, status = self.getImpl().search(self.getContext(), query)
-            self.assertIsNotNone(ret)
-            self.assertIsNone(err)
-            self.assertIsNotNone(status)
+            if err:
+                print(err)
+            self.assertIsNotNone(ret, msg)
+            self.assertIsNone(err, msg)
+            self.assertIsNotNone(status, msg)
 
     # Stats
-    def test_search_input_validation(self):
+    def test_search_timing_stats(self):
         tests = [
             # query
             [{'query': {'_all': '*'}}],
         ]
-        for query in tests:
-            ret, err, stats = self.getImpl().search(self.getContext(), query)
+        for query, in tests:
+            ret, err, status = self.getImpl().search(self.getContext(), query)
             self.assertIsNotNone(status)
 
             self.assertIn('request_elapsed_time', status)
@@ -154,7 +159,7 @@ class jgi_gatewayTest(unittest.TestCase):
             self.assertIsInstance(post_elapsed, int)
 
     # Trigger input validation errors
-    def test_search_input_validation(self):
+    def test_search_input_validation_errors(self):
         tests = [
             [{}, 'missing', 'query'],
             [{'query': 'i am wrong'}, 'wrong-type', 'query'],
@@ -162,10 +167,10 @@ class jgi_gatewayTest(unittest.TestCase):
             [{'query': {'_all': '*'}, 'fields': 'x'}, 'wrong-type', 'fields'],
             [{'query': {'_all': '*'}, 'limit': 'x'}, 'wrong-type', 'limit'],
             [{'query': {'_all': '*'}, 'limit': 0}, 'invalid', 'limit'],
-            [{'query': {'_all': '*'}, 'limit': 10001}, 'invalid', 'limit'],
+            [{'query': {'_all': '*'}, 'limit': 1001}, 'invalid', 'limit'],
             [{'query': {'_all': '*'}, 'page': 'x'}, 'wrong-type', 'page'],
             [{'query': {'_all': '*'}, 'page': 0}, 'invalid', 'page'],
-            [{'query': {'_all': '*'}, 'page': 10001}, 'invalid', 'page'],
+            [{'query': {'_all': '*'}, 'page': 1001}, 'invalid', 'page'],
             [{'query': {'_all': '*'}, 'include_private': 'x'}, 'wrong-type', 'include_private'],
             [{'query': {'_all': '*'}, 'include_private': -1}, 'invalid', 'include_private'],
             [{'query': {'_all': '*'}, 'include_private': 2}, 'invalid', 'include_private']
@@ -207,7 +212,6 @@ class jgi_gatewayTest(unittest.TestCase):
         self.assertIsInstance(score, float)
         hitid = a_hit['id']
         self.assertIsInstance(hitid, basestring)
-        print(stats)
 
     # Test the error structure.
     # Use a
@@ -220,7 +224,6 @@ class jgi_gatewayTest(unittest.TestCase):
     def test_stage(self):
         req = {'ids': ['51d4fa27067c014cd6ed1a90', '51d4fa27067c014cd6ed1a96']}
         ret, error, status = self.getImpl().stage(self.getContext(), req)
-        print(error)
         self.assertIsNotNone(ret)
         self.assertIsInstance(ret, dict)
         self.assertIn('job_id', ret)
