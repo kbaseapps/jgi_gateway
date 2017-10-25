@@ -15,7 +15,7 @@ DEPLOY	../lib/jgi_gateway_eap/jgi_gateway_eapServer.py	/^DEPLOY = 'KB_DEPLOYMENT
 F401	../test/jgi_gateway_server_test.py	/^from pprint import pprint  # noqa: F401$/;"	kind:namespace	line:14
 F401	../test/jgi_gateway_server_test.py	/^import json  # noqa: F401$/;"	kind:namespace	line:4
 F401	../test/jgi_gateway_server_test.py	/^import os  # noqa: F401$/;"	kind:namespace	line:3
-GIT_COMMIT_HASH	../lib/jgi_gateway_eap/jgi_gateway_eapImpl.py	/^    GIT_COMMIT_HASH = "a487581ef96cba3a6d3dd2c83bb19aed69eb6eb8"$/;"	kind:variable	line:32
+GIT_COMMIT_HASH	../lib/jgi_gateway_eap/jgi_gateway_eapImpl.py	/^    GIT_COMMIT_HASH = "aa94fa16e4695bff10a53d3537f1c62192d70359"$/;"	kind:variable	line:32
 GIT_URL	../lib/jgi_gateway_eap/jgi_gateway_eapImpl.py	/^    GIT_URL = "ssh:\/\/git@github.com\/eapearson\/jgi_gateway"$/;"	kind:variable	line:31
 GetoptError	../lib/jgi_gateway_eap/jgi_gateway_eapServer.py	/^from getopt import getopt, GetoptError$/;"	kind:namespace	line:9
 IgnorePep8	../lib/jgi_gateway_eap/jgi_gateway_eapServer.py	/^from jgi_gateway_eap.jgi_gateway_eapImpl import jgi_gateway_eap  # noqa @IgnorePep8$/;"	kind:namespace	line:48
@@ -39,7 +39,7 @@ StringIO	../scripts/prepare_deploy_cfg.py	/^import StringIO$/;"	kind:namespace	l
 Template	../scripts/prepare_deploy_cfg.py	/^from jinja2 import Template$/;"	kind:namespace	line:4
 TokenCache	../lib/jgi_gateway_eap/authclient.py	/^class TokenCache(object):$/;"	kind:class	line:14
 UnusedImport	../lib/jgi_gateway_eap/jgi_gateway_eapClient.py	/^    from .baseclient import BaseClient as _BaseClient  # @UnusedImport$/;"	kind:namespace	line:14
-VERSION	../lib/jgi_gateway_eap/jgi_gateway_eapImpl.py	/^    VERSION = "0.0.1"$/;"	kind:variable	line:30
+VERSION	../lib/jgi_gateway_eap/jgi_gateway_eapImpl.py	/^    VERSION = "0.2.0"$/;"	kind:variable	line:30
 _AJ	../lib/jgi_gateway_eap/baseclient.py	/^_AJ = 'application\/json'$/;"	kind:variable	line:27
 _BaseClient	../lib/jgi_gateway_eap/jgi_gateway_eapClient.py	/^    from .baseclient import BaseClient as _BaseClient  # @UnusedImport$/;"	kind:namespace	line:14
 _BaseClient	../lib/jgi_gateway_eap/jgi_gateway_eapClient.py	/^    from baseclient import BaseClient as _BaseClient  # @Reimport$/;"	kind:namespace	line:17
@@ -103,11 +103,11 @@ default	../lib/jgi_gateway_eap/jgi_gateway_eapServer.py	/^    def default(self, 
 environ	../lib/jgi_gateway_eap/jgi_gateway_eapServer.py	/^from os import environ$/;"	kind:namespace	line:13
 environ	../test/jgi_gateway_server_test.py	/^from os import environ$/;"	kind:namespace	line:8
 file	../scripts/prepare_deploy_cfg.py	/^    file = open(sys.argv[1], 'r')$/;"	kind:variable	line:14
-getContext	../test/jgi_gateway_server_test.py	/^    def getContext(self):$/;"	kind:member	line:73
+getContext	../test/jgi_gateway_server_test.py	/^    def getContext(self):$/;"	kind:member	line:77
 getIPAddress	../lib/jgi_gateway_eap/jgi_gateway_eapServer.py	/^def getIPAddress(environ):$/;"	kind:function	line:297
-getImpl	../test/jgi_gateway_server_test.py	/^    def getImpl(self):$/;"	kind:member	line:70
-getWsClient	../test/jgi_gateway_server_test.py	/^    def getWsClient(self):$/;"	kind:member	line:58
-getWsName	../test/jgi_gateway_server_test.py	/^    def getWsName(self):$/;"	kind:member	line:61
+getImpl	../test/jgi_gateway_server_test.py	/^    def getImpl(self):$/;"	kind:member	line:74
+getWsClient	../test/jgi_gateway_server_test.py	/^    def getWsClient(self):$/;"	kind:member	line:62
+getWsName	../test/jgi_gateway_server_test.py	/^    def getWsName(self):$/;"	kind:member	line:65
 get_config	../lib/jgi_gateway_eap/jgi_gateway_eapServer.py	/^def get_config():$/;"	kind:function	line:36
 get_config_file	../lib/jgi_gateway_eap/jgi_gateway_eapServer.py	/^def get_config_file():$/;"	kind:function	line:28
 get_log_level	../lib/jgi_gateway_eap/jgi_gateway_eapServer.py	/^    def get_log_level(self):$/;"	kind:member	line:229
@@ -173,25 +173,29 @@ py3	../test/jgi_gateway_server_test.py	/^    from configparser import ConfigPars
 requests	../lib/jgi_gateway_eap/jgi_gateway_eapImpl.py	/^import requests$/;"	kind:namespace	line:8
 requests	../test/jgi_gateway_server_test.py	/^import requests$/;"	kind:namespace	line:6
 run_job	../lib/jgi_gateway_eap/baseclient.py	/^    def run_job(self, service_method, args, service_ver=None, context=None):$/;"	kind:member	line:225
-search_jgi	../lib/jgi_gateway_eap/jgi_gateway_eapClient.py	/^    def search_jgi(self, input, context=None):$/;"	kind:member	line:36
-search_jgi	../lib/jgi_gateway_eap/jgi_gateway_eapImpl.py	/^    def search_jgi(self, ctx, input):$/;"	kind:member	line:63
+search	../lib/jgi_gateway_eap/jgi_gateway_eapClient.py	/^    def search(self, parameter, context=None):$/;"	kind:member	line:36
+search	../lib/jgi_gateway_eap/jgi_gateway_eapImpl.py	/^    def search(self, ctx, parameter):$/;"	kind:member	line:64
 setUpClass	../test/jgi_gateway_server_test.py	/^    def setUpClass(cls):$/;"	kind:member	line:24
 set_log_level	../lib/jgi_gateway_eap/jgi_gateway_eapServer.py	/^    def set_log_level(self, level):$/;"	kind:member	line:226
-stage_objects	../lib/jgi_gateway_eap/jgi_gateway_eapClient.py	/^    def stage_objects(self, input, context=None):$/;"	kind:member	line:62
-stage_objects	../lib/jgi_gateway_eap/jgi_gateway_eapImpl.py	/^    def stage_objects(self, ctx, input):$/;"	kind:member	line:164
-stage_status	../lib/jgi_gateway_eap/jgi_gateway_eapClient.py	/^    def stage_status(self, input, context=None):$/;"	kind:member	line:82
-stage_status	../lib/jgi_gateway_eap/jgi_gateway_eapImpl.py	/^    def stage_status(self, ctx, input):$/;"	kind:member	line:242
+stage	../lib/jgi_gateway_eap/jgi_gateway_eapClient.py	/^    def stage(self, parameter, context=None):$/;"	kind:member	line:81
+stage	../lib/jgi_gateway_eap/jgi_gateway_eapImpl.py	/^    def stage(self, ctx, parameter):$/;"	kind:member	line:352
+stage_status	../lib/jgi_gateway_eap/jgi_gateway_eapClient.py	/^    def stage_status(self, parameter, context=None):$/;"	kind:member	line:104
+stage_status	../lib/jgi_gateway_eap/jgi_gateway_eapImpl.py	/^    def stage_status(self, ctx, parameter):$/;"	kind:member	line:479
 start_server	../lib/jgi_gateway_eap/jgi_gateway_eapServer.py	/^def start_server(host='localhost', port=0, newprocess=False):$/;"	kind:function	line:527
-status	../lib/jgi_gateway_eap/jgi_gateway_eapClient.py	/^    def status(self, context=None):$/;"	kind:member	line:97
-status	../lib/jgi_gateway_eap/jgi_gateway_eapImpl.py	/^    def status(self, ctx):$/;"	kind:member	line:310
+status	../lib/jgi_gateway_eap/jgi_gateway_eapClient.py	/^    def status(self, context=None):$/;"	kind:member	line:122
+status	../lib/jgi_gateway_eap/jgi_gateway_eapImpl.py	/^    def status(self, ctx):$/;"	kind:member	line:581
 stop_server	../lib/jgi_gateway_eap/jgi_gateway_eapServer.py	/^def stop_server():$/;"	kind:function	line:550
 sys	../lib/jgi_gateway_eap/jgi_gateway_eapImpl.py	/^import sys$/;"	kind:namespace	line:10
 sys	../lib/jgi_gateway_eap/jgi_gateway_eapServer.py	/^import sys$/;"	kind:namespace	line:4
 sys	../scripts/prepare_deploy_cfg.py	/^import sys$/;"	kind:namespace	line:1
 t	../scripts/prepare_deploy_cfg.py	/^    t = Template(text)$/;"	kind:variable	line:16
-tearDownClass	../test/jgi_gateway_server_test.py	/^    def tearDownClass(cls):$/;"	kind:member	line:53
-test_search	../test/jgi_gateway_server_test.py	/^    def test_search(self):$/;"	kind:member	line:77
-test_staging	../test/jgi_gateway_server_test.py	/^    def test_staging(self):$/;"	kind:member	line:94
+tearDownClass	../test/jgi_gateway_server_test.py	/^    def tearDownClass(cls):$/;"	kind:member	line:57
+test_search_input_validation	../test/jgi_gateway_server_test.py	/^    def test_search_input_validation(self):$/;"	kind:member	line:107
+test_search_return_structure	../test/jgi_gateway_server_test.py	/^    def test_search_return_structure(self):$/;"	kind:member	line:136
+test_search_simple	../test/jgi_gateway_server_test.py	/^    def test_search_simple(self):$/;"	kind:member	line:83
+test_stage	../test/jgi_gateway_server_test.py	/^    def test_stage(self):$/;"	kind:member	line:168
+test_stage_input_validation	../test/jgi_gateway_server_test.py	/^    def test_stage_input_validation(self):$/;"	kind:member	line:180
+test_status	../test/jgi_gateway_server_test.py	/^    def test_status(self):$/;"	kind:member	line:195
 text	../scripts/prepare_deploy_cfg.py	/^    text = file.read()$/;"	kind:variable	line:15
 time	../lib/jgi_gateway_eap/baseclient.py	/^import time$/;"	kind:namespace	line:24
 time	../lib/jgi_gateway_eap/jgi_gateway_eapImpl.py	/^import time$/;"	kind:namespace	line:11

@@ -150,13 +150,6 @@ class jgi_gatewayTest(unittest.TestCase):
             req_elapsed = status['request_elapsed_time']
             self.assertIsInstance(req_elapsed, int)
 
-            self.assertIn('pre_elapsed', status)
-            pre_elapsed = status['pre_elapsed']
-            self.assertIsInstance(pre_elapsed, int)
-
-            self.assertIn('post_elapsed', status)
-            post_elapsed = status['post_elapsed']
-            self.assertIsInstance(post_elapsed, int)
 
     # Trigger input validation errors
     def test_search_input_validation_errors(self):

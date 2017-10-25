@@ -10,7 +10,7 @@ import json
 import sys
 import time
 import re
-import math
+import utils
 #END_HEADER
 
 
@@ -145,297 +145,30 @@ class jgi_gateway_eap:
         # return variables are: result, error, stats
         #BEGIN search
 
+        # BASIC config
+        error = utils.validateCallConfig(self);
+        if error:
+            return [None, error, None]
+
+
         # INPUT
         call_start = time.clock()
-        # query
-        # A required property, this provides the, well, search to conduct
-        # over the jgi search service space.
-        # Note that the sender may simply send '*' to fetch all results.
-        #
-        if 'query' not in parameter:
-            error = {
-                'message': 'the required parameter "query" was not provided',
-                'type': 'input',
-                'code': 'missing',
-                'info': {
-                    'key': 'query'
-                }
-            }
+
+        query, error = utils.validateSearchParameter(parameter, ctx)
+        if error:
             return [None, error, None]
-
-        if not isinstance(parameter['query'], dict):
-            error = {
-                'message': ('the "query" parameter must be a an object '
-                            'mapping fields to search strings'),
-                'type': 'input',
-                'code': 'wrong-type',
-                'info': {
-                    'key': 'query',
-                    'expected': 'object',
-                    # TODO translate to json type name
-                    'received': type(parameter['query']).__name__
-                }
-            }
-            return [None, error, None]
-        query = {
-            'query': parameter['query']
-        }
-        # filter
-        # Optional search filter, which is a dictionary with fields as keys
-        # and a simple string, integer, or list of integers as value.
-        # A special yet optional "operator"  field may contain AND, OR, or NOT
-        if 'filter' in parameter and parameter['filter'] != None:
-            if not isinstance(parameter['filter'], dict):
-                error = {
-                    'message': ('the "filter" parameter must be an object '
-                                'mapping fields to filter values'),
-                    'type': 'input',
-                    'code': 'wrong-type',
-                    'info': {
-                        'key': 'filter',
-                        'expected': 'object',
-                        # TODO translate to json type name
-                        'received': type(parameter['filter']).__name__
-                    }
-                }
-                return [None, error, None]
-            query['filter'] = parameter['filter']
-
-        # fields
-        # Optional list of files to in return in the results.
-        # It is an array of strings, each string being the dot
-        # separated path to the result property, starting at _source.
-        # The top level fields (sister fields to _source) area
-        # always returned.
-        if 'fields' in parameter and parameter['fields'] != None:
-            # could, but am not, checking the type of the list...
-            if not isinstance(parameter['fields'], list):
-                error = {
-                    'message': 'the "fields" parameter must be a list of strings',
-                    'type': 'input',
-                    'code': 'wrong-type',
-                    'info': {
-                        'key': 'fields',
-                        'expected': 'list',
-                        'received': type(parameter['fields']).__name__
-                    }
-                }
-                return [None, error, None]
-            query['fields'] = parameter['fields']
-
-
-        if 'limit' in parameter and parameter['limit'] != None:
-            if not isinstance(parameter['limit'], int):
-                error = {
-                    'message': 'the "limit" parameter must be an integer',
-                    'type': 'input',
-                    'code': 'wrong-type',
-                    'info': {
-                        'key': 'limit',
-                        'expeced': 'integer',
-                        'received': type(parameter['limit']).__name__
-                    }
-                }
-                return [None, error, None]
-            # theoretical limit is 10000, but getting anywhere close just times
-            # out.
-            if parameter['limit'] < 1 or parameter['limit'] > 1000:
-                error = {
-                    'message': ('the "limit" parameter must be an '
-                                'integer between 1 and 1000'),
-                    'type': 'input',
-                    'code': 'invalid',
-                    'info': {
-                        'key': 'limit'
-                    }
-                }
-                return [None, error, None]
-            query['size'] = parameter['limit']
-        else:
-            query['size'] = 10
-
-        max_page = math.ceil(10000 / query['size'])
-
-        if 'page' in parameter and parameter['page'] != None:
-            if not isinstance(parameter['page'], int):
-                error = {
-                    'messagse': 'the "page" parameter must be an integer',
-                    'type': 'input',
-                    'code': 'wrong-type',
-                    'info': {
-                        'key': 'page',
-                        'expected': 'integer',
-                        'received': type(parameter['page']).__name__
-                    }
-                }
-                return [None, error, None]
-            if parameter['page'] < 1 or parameter['page'] > max_page:
-                error = {
-                    'message': ('the "page" parameter must be an integer '
-                                'between 1 and %d with a page size of %d' % (max_page, query['size'])),
-                    'type': 'input',
-                    'code': 'invalid',
-                    'info': {
-                        'key': 'page',
-                        'valueProvided': parameter['page']
-                    }
-                }
-                return [None, error, None]
-            # we use 1 based page numbering, the jgi api is 0 based.
-            query['page'] = parameter['page'] - 1
-        else:
-            query['page'] = 0
-
-        # include_private A flag (kbase style boolean, 1, 0) indicating whether
-        # to request private data be searched. It causes this by including the
-        # username in the request to jgi. The kbase username is matched against
-        # the jgi user database, which includes a kbase username field. If the
-        # username is found, that account is used to determine which private
-        # data is searched.
-        #
-        if 'include_private' in parameter and parameter['include_private'] != None:
-            include_private = parameter['include_private']
-            if not isinstance(include_private, int):
-                error = {
-                    'message': ("the 'include_private' parameter must be an "
-                                " integer"),
-                    'type': 'input',
-                    'code': 'wrong-type',
-                    'info': {
-                        'key': 'include_private'
-                    }
-                }
-                return [None, error, None]
-            if include_private not in [1, 0]:
-                error = {
-                    'message': ("the 'include_private' parameter must be an "
-                                "integer 1 or 0"),
-                    'type': 'input',
-                    'code': 'invalid',
-                    'info': {
-                        'key': 'include_private'
-                    }
-                }
-                return [None, error, None]
-            if (include_private == 1):
-                query['userid'] = ctx['user_id']
 
         # PREPARE REQUEST
+        responsejson, error, stats = utils.sendRequest('query', query, {
+            'connection_timeout': self.connection_timeout,
+            'url': self.jgi_search_base_url,
+            'user': self.user,
+            'password': self.passwd
+        })
 
-        header = {'Content-Type': 'application/json'}
-
-        queryjson = json.dumps(query)
-
-        # Ensure that the configuration is correct; the constructor
-        # does not enforce this.
-        if self.user is None:
-            error = {
-                'message': ("the configuration parameter 'user' is not set; "
-                            "cannot call service without it"),
-                'type': 'context',
-                'code': 'context-property-missing',
-                'info': {
-                    'key': 'user'
-                }
-            }
-            return [None, error, None]
-        if self.passwd is None:
-            error = {
-                'message': ("the configuration parameter 'passwd' is not set; "
-                            "cannot call service without it"),
-                'type': 'context',
-                'code': 'context-property-missing',
-                'info': {
-                    'key': 'passwd'
-                }
-            }
-            return [None, error, None]
-        if self.jgi_search_base_url is None:
-            error = {
-                'message': ("the configuration parameter 'jgi_search_base_url' is not set; "
-                            "cannot call service without it"),
-                'type': 'context',
-                'code': 'context-property-missing',
-                'info': {
-                    'key': 'jgi_search_base_url'
-                }
-            }
-            return [None, error, None]
-        req_start = time.clock()
-        pre_elapsed = int(round((req_start - call_start) * 1000))
-        timeout = self.connection_timeout
-        try:
-            resp = requests.post(self.jgi_search_base_url + '/query', data=queryjson,
-                                 auth=(self.user, self.passwd),
-                                 timeout=timeout,
-                                 headers=header)
-        except requests.exceptions.Timeout as ex:
-            req_end = time.clock()
-            req_elapsed = int(round((req_end - req_start) * 1000))
-            stats = {
-                'pre_elapsed': pre_elapsed,
-                'request_elapsed_time': req_elapsed,
-                'post_elapsed': None,
-                'query_sent': query
-            }
-            error = {
-                'message': 'timeout exceeded sending query to jgi search service',
-                'type': 'network',
-                'code': 'connection-timeout',
-                'info': {
-                    'exception_message': str(ex),
-                    'timeout': timeout
-                }
-            }
-            return [None, error, stats]
-        except requests.exceptions.RequestException as ex:
-            req_end = time.clock()
-            req_elapsed = int(round((req_end - req_start) * 1000))
-            stats = {
-                'pre_elapsed': pre_elapsed,
-                'request_elapsed_time': req_elapsed,
-                'post_elapsed': None,
-                'query_sent': query
-            }
-            error = {
-                'message': 'connection error sending query to jgi search service',
-                'type': 'network',
-                'code': 'connection-error',
-                'info': {
-                    'exception_message': str(ex)
-                }
-            }
-            return [None, error, stats]
-
-        req_end = time.clock()
-        req_elapsed = int(round((req_end - req_start) * 1000))
-        stats = {
-            'pre_elapsed': pre_elapsed,
-            'request_elapsed_time': req_elapsed,
-            'post_elapsed': None,
-            'query_sent': query
-        }
-
-        if resp.status_code == 200:
-            post_end = time.clock()
-            post_elapsed = int(round((post_end - req_end) * 1000))
-            total_elapsed = int(round((post_end - call_start) * 1000))
-            stats['post_elapsed'] = post_elapsed
-            stats['total_elapsed'] = total_elapsed
-            try:
-                responsejson = json.loads(resp.text)
-            except Exception as e:
-                error = {
-                    'message': 'error decoding json response',
-                    'type': 'exception',
-                    'code': 'json-decoding',
-                    'info': {
-                        'exception_message': str(e),
-                        'query_sent': query
-                    }
-                }
-                return [None, error, stats]
+        if responsejson:
             new_hits = []
+
             for hit in responsejson['hits']:
                 new_hits.append({
                     'source': hit['_source'],
@@ -447,41 +180,11 @@ class jgi_gateway_eap:
                 'hits': new_hits,
                 'total': responsejson['total']
             }
-            return [result, None, stats]
-        elif resp.status_code == 500:
-            error = {
-                'message': 'the jgi search service experienced an internal error',
-                'type': 'upstream-service',
-                'code': 'internal-error',
-                'info': {
-                    'status': resp.status_code,
-                    # TODO: convert tojson
-                    'body': resp.text,
-                    'query_sent': query
-                }
-            }
-            return [None, error, stats]
-        elif resp.status_code == 502:
-            error = {
-                'message': 'jgi search service unavailable due to gateway error',
-                'type': 'upstream-service',
-                'code': 'gateway-error'
-            }
-            return [None, error, stats]
-        elif resp.status_code == 503:
-            error = {
-                'message': 'jgi search service unavailable',
-                'type': 'upstream-service',
-                'code': 'service-unavailable'
-            }
-            return [None, error, stats]
         else:
-            error = {
-                'message': 'the jgi search service experienced an unknown error',
-                'type': 'upstream-service',
-                'code': 'unknown-error'
-            }
-            return [None, error, stats]
+            result = None
+
+        return [result, error, stats]
+
 
         # resp.raise_for_status()
 
@@ -528,125 +231,32 @@ class jgi_gateway_eap:
         # return variables are: result, error, stats
         #BEGIN stage
 
+        error = utils.validateCallConfig(self);
+        if error:
+            return [None, error, None]
+
         # INPUT
-
-        # ids
-        # A list of string database entity ids. A file is associated with each
-        # id, and a copy request will be issued for each on. Just the ids are
-        # passed through here, the fanning out is on the jgi side.
-        if 'ids' not in parameter:
-            error = {
-                'message': "the 'ids' parameter is required but missing",
-                'type': 'input',
-                'code': 'missing',
-                'info': {
-                    'key': 'ids'
-                }
-            }
-            return [None, error, None]
-        ids = parameter['ids']
-        if not isinstance(ids, list):
-            error = {
-                'message': "the 'ids' parameter must be an list",
-                'type': 'input',
-                'code': 'wrong-type',
-                'info': {
-                    'key': 'ids'
-                }
-            }
+        request, error = utils.validateFetchParameter(parameter, ctx)
+        if error:
             return [None, error, None]
 
-        # PREPARE REQUEST
+        responsejson, error, stats = utils.sendRequest('fetch', request,  {
+            'connection_timeout': self.connection_timeout,
+            'url': self.jgi_search_base_url,
+            'user': self.user,
+            'password': self.passwd
+        })
 
-        # Do it
-        header = {'Content-Type': 'application/json'}
+        if responsejson:
+            #
+            # Note that the response returns a single job id, regardless
+            # of the number of ids in the copy request.
+            #
+            job_id = responsejson['id']
 
-        request = {"ids": ','.join(ids),
-                   "path": "/data/%s" % (ctx['user_id'])}
-
-        requestjson = json.dumps(request)
-
-        call_start = time.clock()
-        timeout = self.connection_timeout
-        try:
-            resp = requests.post(self.jgi_search_base_url + '/fetch',
-                                 data=requestjson,
-                                 auth=(self.user, self.passwd),
-                                 timeout=timeout,
-                                 headers=header)
-        except requests.exceptions.Timeout as ex:
-            call_end = time.clock()
-            elapsed_time = int(round((call_end - call_start) * 1000))
-            stats = {
-                'request_elapsed_time': elapsed_time
-            }
-            error = {
-                'message': 'error sending fetech request to jgi search service',
-                'type': 'network',
-                'code': 'connection-timeout',
-                'info': {
-                    'exception_message': str(ex),
-                    'timeout': timeout
-                }
-            }
-            return [None, error, stats]
-        except requests.exceptions.RequestException as ex:
-            call_end = time.clock()
-            elapsed_time = int(round((call_end - call_start) * 1000))
-            stats = {
-                'request_elapsed_time': elapsed_time
-            }
-            error = {
-                'message': 'connection error sending fetch request to jgi search service',
-                'type': 'network',
-                'code': 'connection-error',
-                'info': {
-                    'exception_message': str(ex)
-                }
-            }
-            return [None, error, stats]
-
-        call_end = time.clock()
-        stats = {
-            'request_elapsed_time': int(round((call_end - call_start) * 1000))
-        }
-
-        # TODO: Just bail or return error object?
-        if resp.status_code != 200:
-            error = {
-                'message': 'error processing query',
-                'type': 'upstream',
-                'code': 'http-error',
-                'info': {
-                    'response_code': resp.status_code,
-                    'response_text': resp.text
-                }
-            }
-            return [None, error, stats]
-
-        # resp.raise_for_status()
-        try:
-            responsejson = json.loads(resp.text)
-        except Exception as e:
-            error = {
-                'message': 'error decoding json response',
-                'type': 'exception',
-                'code': 'json-decoding',
-                'info': {
-                    'exception_message': str(e)
-                }
-            }
-            return [None, error, stats]
-
-        # TODO Add some logging
-
-        #
-        # Note that the response returns a single job id, regardless
-        # of the number of ids in the copy request.
-        #
-        job_id = responsejson['id']
-
-        result = {'job_id': job_id}
+            result = {'job_id': job_id}
+        else:
+            result = None
 
         return [result, None, stats]
 
@@ -684,108 +294,27 @@ class jgi_gateway_eap:
         # ctx is the context object
         # return variables are: result, error, stats
         #BEGIN stage_status
+
+        error = utils.validateCallConfig(self);
+        if error:
+            return [None, error, None]
+
+
         # INPUT
-
-        # id
-        # The job id is required in order to specify for which job we
-        # want the status
-        if 'job_id' not in parameter:
-            error = {
-                'message': "the 'job_id' parameter is required but missing",
-                'type': 'input',
-                'code': 'missing',
-                'info': {
-                    'key': 'job_id'
-                }
-            }
+        request, error = utils.validateStateStatusParameter(parameter, ctx)
+        if error:
             return [None, error, None]
-        if not isinstance(parameter['job_id'], basestring):
-            error = {
-                'message': "the 'job_id' parameter must be a string",
-                'type': 'input',
-                'code': 'wrong-type',
-                'info': {
-                    'key': 'job_id'
-                }
-            }
-            return [None, error, None]
-        job_id = parameter['job_id']
 
-        request = {
-            'id': job_id
-        }
 
-        # PREPARE REQUEST
+        response, error, stats = utils.sendRequest('fetch', request,  {
+            'connection_timeout': self.connection_timeout,
+            'url': self.jgi_search_base_url,
+            'user': self.user,
+            'password': self.passwd,
+            'type': 'text'
+        })
 
-        # TODO: when the api is fixed, and this request returns a json object,
-        # the request header will need to be updated.
-        # header = {'Accept': 'application/json'}
-        header = {'Accept': 'text/html'}
-
-        call_start = time.clock()
-        timeout = self.connection_timeout
-        try:
-            resp = requests.get(self.jgi_search_base_url + '/status', params=request,
-                                auth=(self.user, self.passwd),
-                                timeout=timeout,
-                                headers=header)
-        except requests.exceptions.Timeout as ex:
-            call_end = time.clock()
-            elapsed_time = int(round((call_end - call_start) * 1000))
-            stats = {
-                'request_elapsed_time': elapsed_time
-            }
-            error = {
-                'message': 'error sending status request to jgi search service',
-                'type': 'network',
-                'code': 'connection-timeout',
-                'info': {
-                    'exception_message': str(ex),
-                    'timeout': timeout
-                }
-            }
-            return [None, error, stats]
-        except requests.exceptions.RequestException as ex:
-            call_end = time.clock()
-            elapsed_time = int(round((call_end - call_start) * 1000))
-            stats = {
-                'request_elapsed_time': elapsed_time
-            }
-            error = {
-                'message': 'connection error sending status request to jgi search service',
-                'type': 'network',
-                'code': 'connection-error',
-                'info': {
-                    'exception_message': str(ex)
-                }
-            }
-            return [None, error, stats]
-
-        call_end = time.clock()
-        stats = {
-            'request_elapsed_time': int(round((call_end - call_start) * 1000))
-        }
-
-        if resp.status_code != 200:
-            error = {
-                'message': 'error processing query',
-                'type': 'upstream',
-                'code': 'http-error',
-                'info': {
-                    'response_code': resp.status_code,
-                    'response_text': resp.text
-                }
-            }
-            return [None, error, stats]
-
-        # TODO: we hope to get json back but just string for now
-        # responsejson = json.loads(resp.text)
-        # TODO Add some logging
-        result = {
-            'message': resp.text
-        }
-
-        return [result, None, stats]
+        return [response, error, stats]
 
         # NOTE: we are already returned here, the code below is dead.
         #END stage_status
@@ -802,6 +331,8 @@ class jgi_gateway_eap:
                              'stats is not type dict as required.')
         # return the results
         return [result, error, stats]
+
+
     def status(self, ctx):
         #BEGIN_STATUS
 
