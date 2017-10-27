@@ -223,6 +223,21 @@ class jgi_gatewayTest(unittest.TestCase):
         job_id = ret['job_id']
         self.assertIsInstance(job_id, basestring)
 
+    def test_stage_and_status(self):
+        req = {'ids': ['5786eec57ded5e34bd91fa63']}
+        ret, error, status = self.getImpl().stage(self.getContext(), req)
+        self.assertIsNotNone(ret)
+        self.assertIsNone(error)
+        self.assertIsInstance(ret, dict)
+        self.assertIn('job_id', ret)
+        job_id = ret['job_id']
+        self.assertIsInstance(job_id, basestring)
+        req = {'job_id': job_id}
+        ret, error, status = self.getImpl().stage_status(self.getContext(), req)
+        self.assertIsNotNone(ret)
+        self.assertIsNone(error)
+        self.assertIsInstance(ret, basestring)
+
     # Test staging validation errors
 
     # Trigger input validation errors
@@ -244,7 +259,7 @@ class jgi_gatewayTest(unittest.TestCase):
     def test_stage_status_input_validation(self):
         tests = [
             [{}, 'missing', 'job_id'],
-            [{'job_id', 1}, 'wrong-type', 'job_id']
+            [{'job_id': 1}, 'wrong-type', 'job_id']
         ]
         for req, error_code, error_key in tests:
             ret, err, status = self.getImpl().stage_status(self.getContext(), req)

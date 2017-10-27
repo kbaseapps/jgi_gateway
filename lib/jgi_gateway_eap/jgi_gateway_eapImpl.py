@@ -160,6 +160,7 @@ class jgi_gateway_eap:
 
         # PREPARE REQUEST
         responsejson, error, stats = utils.sendRequest('query', query, {
+            'method': 'post',
             'connection_timeout': self.connection_timeout,
             'url': self.jgi_search_base_url,
             'user': self.user,
@@ -241,6 +242,7 @@ class jgi_gateway_eap:
             return [None, error, None]
 
         responsejson, error, stats = utils.sendRequest('fetch', request,  {
+            'method': 'post',
             'connection_timeout': self.connection_timeout,
             'url': self.jgi_search_base_url,
             'user': self.user,
@@ -305,8 +307,8 @@ class jgi_gateway_eap:
         if error:
             return [None, error, None]
 
-
-        response, error, stats = utils.sendRequest('fetch', request,  {
+        response, error, stats = utils.sendRequest('status', request,  {
+            'method': 'get',
             'connection_timeout': self.connection_timeout,
             'url': self.jgi_search_base_url,
             'user': self.user,

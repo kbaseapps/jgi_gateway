@@ -216,15 +216,19 @@ def validateSearchParameter(parameter, ctx):
 def sendRequest(path, data, ctx):
     header = {'Content-Type': 'application/json'}
 
-    queryjson = json.dumps(data)
-
     req_start = time.clock()
     timeout = ctx['connection_timeout']
     try:
-        resp = requests.post(ctx['url'] + '/' + path, data=queryjson,
-                             auth=(ctx['user'], ctx['password']),
-                             timeout=timeout,
-                             headers=header)
+        if (ctx['method'] == 'post'):
+            resp = requests.post(ctx['url'] + '/' + path, data=json.dumps(data),
+                                 auth=(ctx['user'], ctx['password']),
+                                 timeout=timeout,
+                                 headers=header)
+        else:
+            resp = requests.get(ctx['url'] + '/' + path, params=data,
+                                 auth=(ctx['user'], ctx['password']),
+                                 timeout=timeout,
+                                 headers=header)
     except requests.exceptions.Timeout as ex:
         req_end = time.clock()
         req_elapsed = int(round((req_end - req_start) * 1000))
@@ -272,7 +276,7 @@ def sendRequest(path, data, ctx):
             if (resp.headers['Content-Type'] == 'application/json'):
                 responsejson = json.loads(resp.text)
             else:
-                responsedata = {'message': resp.text}
+                responsejson = {'message': resp.text}
         except Exception as e:
             error = {
                 'message': 'error decoding json response',
@@ -317,7 +321,10 @@ def sendRequest(path, data, ctx):
         error = {
             'message': 'the jgi search service experienced an unknown error',
             'type': 'upstream-service',
-            'code': 'unknown-error'
+            'code': 'unknown-error',
+            'info': {
+                'text': resp.text
+            }
         }
         return [None, error, stats]
 
@@ -354,6 +361,17 @@ def validateFetchParameter(parameter, ctx):
 
 
 def validateStageStatusParameter(parameter, ctx):
+    if not isinstance(parameter, dict):
+        error = {
+            'message': "the parameter must be a dict",
+            'type': 'input',
+            'code': 'wrong-type',
+            'info': {
+                'key': 'parameter'
+            }
+        }
+        return [None, error]
+
     if 'job_id' not in parameter:
         error = {
             'message': "the 'job_id' parameter is required but missing",
@@ -379,4 +397,4 @@ def validateStageStatusParameter(parameter, ctx):
 
     return [{
         'id': job_id
-    }, none]
+    }, None]
