@@ -301,7 +301,7 @@ class jgi_gateway_eap:
 
 
         # INPUT
-        request, error = utils.validateStateStatusParameter(parameter, ctx)
+        request, error = utils.validateStageStatusParameter(parameter, ctx)
         if error:
             return [None, error, None]
 

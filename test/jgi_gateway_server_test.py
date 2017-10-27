@@ -241,6 +241,21 @@ class jgi_gatewayTest(unittest.TestCase):
             self.assertEquals(err['code'], error_code)
             self.assertEquals(err['info']['key'], error_key)
 
+    def test_stage_status_input_validation(self):
+        tests = [
+            [{}, 'missing', 'job_id'],
+            [{'job_id', 1}, 'wrong-type', 'job_id']
+        ]
+        for req, error_code, error_key in tests:
+            ret, err, status = self.getImpl().stage_status(self.getContext(), req)
+            #   ret, err, status = self.getImpl().stage(self.getContext(), param)
+            self.assertIsNone(ret)
+            self.assertIsNone(status)
+            self.assertIsInstance(err, dict)
+            self.assertEquals(err['type'], 'input')
+            self.assertEquals(err['code'], error_code)
+            self.assertEquals(err['info']['key'], error_key)
+
     def test_status(self):
         ret, err, status = self.getImpl().status(self.getContext())
         self.assertEquals(ret['state'], 'OK')
