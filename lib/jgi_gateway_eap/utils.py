@@ -144,7 +144,7 @@ def validateSearchParameter(parameter, ctx):
     else:
         param['size'] = 10
 
-    max_page = math.ceil(10000 / param['size']) + 1
+    max_page = math.ceil(10000 / param['size'])
 
     if 'page' in parameter and parameter['page'] != None:
         if not isinstance(parameter['page'], int):
@@ -299,7 +299,7 @@ def sendRequest(path, data, ctx):
                 'status': resp.status_code,
                 # TODO: convert tojson
                 'body': resp.text,
-                'query_sent': query
+                'query_sent': data
             }
         }
         return [None, error, stats]
