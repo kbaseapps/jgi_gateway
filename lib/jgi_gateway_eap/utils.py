@@ -144,7 +144,10 @@ def validateSearchParameter(parameter, ctx):
     else:
         param['size'] = 10
 
-    max_page = math.ceil(10000 / param['size'])
+    # The page size comes in 1-based
+    # The requested page cannot result in any item beyond 10,000.
+    # Therefore the max page is the 
+    max_page = math.floor(10000 / param['size'])
 
     if 'page' in parameter and parameter['page'] != None:
         if not isinstance(parameter['page'], int):
