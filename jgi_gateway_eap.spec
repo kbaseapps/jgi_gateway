@@ -119,7 +119,12 @@ module jgi_gateway_eap {
     /* STAGE */
 
     typedef structure {
-       list<string> ids;
+        string id;
+        string filename;
+    } FileRequest;
+
+    typedef structure {
+       list<FileRequest> files;
     } StageInput;
 
     /*

@@ -136,6 +136,14 @@ class jgi_gatewayTest(unittest.TestCase):
             self.assertIsNone(err, msg)
             self.assertIsNotNone(status, msg)
 
+    def test_page_at_limit(self):
+        # Test the same query, this time fetching the second page of hits
+        query = {'query': {'_all': '*'}, 'limit': 20, 'page': 1}
+        ret, err, stats = self.getImpl().search(self.getContext(), query)
+        self.assertIsNotNone(ret)
+        self.assertIn('hits', ret)
+        self.assertEquals(len(ret['hits']), 20)            
+
     # Stats
     def test_search_timing_stats(self):
         tests = [
@@ -215,7 +223,13 @@ class jgi_gatewayTest(unittest.TestCase):
     # Test staging
 
     def test_stage(self):
-        req = {'ids': ['51d4fa27067c014cd6ed1a90', '51d4fa27067c014cd6ed1a96']}
+        req = {'files': [{
+                'id': '51d4fa27067c014cd6ed1a90', 
+                'filename': 'file1'
+            }, {
+                'id': '51d4fa27067c014cd6ed1a96',
+                'filename': 'file2'
+            }]}
         ret, error, status = self.getImpl().stage(self.getContext(), req)
         self.assertIsNotNone(ret)
         self.assertIsInstance(ret, dict)
@@ -224,7 +238,10 @@ class jgi_gatewayTest(unittest.TestCase):
         self.assertIsInstance(job_id, basestring)
 
     def test_stage_and_status(self):
-        req = {'ids': ['5786eec57ded5e34bd91fa63']}
+        req = {'files': [{
+                'id': '5786eec57ded5e34bd91fa63',
+                'filename': 'file3'
+            }]}
         ret, error, status = self.getImpl().stage(self.getContext(), req)
         self.assertIsNotNone(ret)
         self.assertIsNone(error)
@@ -243,8 +260,12 @@ class jgi_gatewayTest(unittest.TestCase):
     # Trigger input validation errors
     def test_stage_input_validation(self):
         tests = [
-            [{}, 'missing', 'ids'],
-            [{'ids': 'x'}, 'wrong-type', 'ids']
+            [{}, 'missing', 'files'],
+            [{'files': 'x'}, 'wrong-type', 'files'],
+            [{'files': [{'x': 'x', 'filename': 'y'}]}, 'missing', ['files', 0, 'id'] ],
+            [{'files': [{'id': 'x', 'x': 'y'}]}, 'missing', ['files', 0, 'filename'] ],
+            [{'files': [{'id': 1, 'filename': 'y'}]}, 'wrong-type', ['files', 0, 'id'] ],
+            [{'files': [{'id': 'x', 'filename': 1}]}, 'wrong-type', ['files', 0, 'filename'] ]
         ]
         for req, error_code, error_key in tests:
             ret, err, status = self.getImpl().stage(self.getContext(), req)

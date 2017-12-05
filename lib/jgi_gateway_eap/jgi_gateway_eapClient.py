@@ -80,8 +80,9 @@ class jgi_gateway_eap(object):
 
     def stage(self, parameter, context=None):
         """
-        :param parameter: instance of type "StageInput" (STAGE) -> structure:
-           parameter "ids" of list of String
+        :param parameter: instance of type "StageInput" -> structure:
+           parameter "files" of list of type "FileRequest" (STAGE) ->
+           structure: parameter "id" of String, parameter "filename" of String
         :returns: multiple set - (1) parameter "result" of type
            "StagingResult" (StagingResult returns a map entry for each id
            submitted in the stage request. The map key is the _id property

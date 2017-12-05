@@ -31,7 +31,7 @@ class jgi_gateway_eap:
     ######################################### noqa
     VERSION = "0.2.0"
     GIT_URL = "ssh://git@github.com/eapearson/jgi_gateway"
-    GIT_COMMIT_HASH = "aa94fa16e4695bff10a53d3537f1c62192d70359"
+    GIT_COMMIT_HASH = "aabfad1f89c5b5ed1fa31f923fab02fc0127dbf3"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER
@@ -62,7 +62,7 @@ class jgi_gateway_eap:
 
         self.jgi_search_base_url = config['jgi-search-base-url']
 
-        print("Using jgi base url: %s" % (self.jgi_search_base_url))
+        # print("Using jgi base url: %s" % (self.jgi_search_base_url))
 
 
         # Import and validate the jgi token
@@ -197,22 +197,23 @@ class jgi_gateway_eap:
         #END search
 
         # At some point might do deeper type checking...
-        if not isinstance(result, dict):
-            raise ValueError('Method search return value ' +
-                             'result is not type dict as required.')
-        if not isinstance(error, dict):
-            raise ValueError('Method search return value ' +
-                             'error is not type dict as required.')
-        if not isinstance(stats, dict):
-            raise ValueError('Method search return value ' +
-                             'stats is not type dict as required.')
-        # return the results
-        return [result, error, stats]
+        # if not isinstance(result, dict):
+        #     raise ValueError('Method search return value ' +
+        #                      'result is not type dict as required.')
+        # if not isinstance(error, dict):
+        #     raise ValueError('Method search return value ' +
+        #                      'error is not type dict as required.')
+        # if not isinstance(stats, dict):
+        #     raise ValueError('Method search return value ' +
+        #                      'stats is not type dict as required.')
+        # # return the results
+        # return [result, error, stats]
 
     def stage(self, ctx, parameter):
         """
-        :param parameter: instance of type "StageInput" (STAGE) -> structure:
-           parameter "ids" of list of String
+        :param parameter: instance of type "StageInput" -> structure:
+           parameter "files" of list of type "FileRequest" (STAGE) ->
+           structure: parameter "id" of String, parameter "filename" of String
         :returns: multiple set - (1) parameter "result" of type
            "StagingResult" (StagingResult returns a map entry for each id
            submitted in the stage request. The map key is the _id property
@@ -267,21 +268,21 @@ class jgi_gateway_eap:
         #END stage
 
         # At some point might do deeper type checking...
-        if not isinstance(result, dict):
-            raise ValueError('Method stage return value ' +
-                             'result is not type dict as required.')
-        if not isinstance(error, dict):
-            raise ValueError('Method stage return value ' +
-                             'error is not type dict as required.')
-        if not isinstance(stats, dict):
-            raise ValueError('Method stage return value ' +
-                             'stats is not type dict as required.')
-        # return the results
-        return [result, error, stats]
+        # if not isinstance(result, dict):
+        #     raise ValueError('Method stage return value ' +
+        #                      'result is not type dict as required.')
+        # if not isinstance(error, dict):
+        #     raise ValueError('Method stage return value ' +
+        #                      'error is not type dict as required.')
+        # if not isinstance(stats, dict):
+        #     raise ValueError('Method stage return value ' +
+        #                      'stats is not type dict as required.')
+        # # return the results
+        # return [result, error, stats]
 
     def stage_status(self, ctx, parameter):
         """
-        Fetch the current status of the given staging fetch request as
+        Fetch the current status of the given staging fetch request as 
         identified by its job id
         :param parameter: instance of type "StagingStatusInput" -> structure:
            parameter "job_id" of String
@@ -322,19 +323,17 @@ class jgi_gateway_eap:
         #END stage_status
 
         # At some point might do deeper type checking...
-        if not isinstance(result, dict):
-            raise ValueError('Method stage_status return value ' +
-                             'result is not type dict as required.')
-        if not isinstance(error, dict):
-            raise ValueError('Method stage_status return value ' +
-                             'error is not type dict as required.')
-        if not isinstance(stats, dict):
-            raise ValueError('Method stage_status return value ' +
-                             'stats is not type dict as required.')
-        # return the results
-        return [result, error, stats]
-
-
+        # if not isinstance(result, dict):
+        #     raise ValueError('Method stage_status return value ' +
+        #                      'result is not type dict as required.')
+        # if not isinstance(error, dict):
+        #     raise ValueError('Method stage_status return value ' +
+        #                      'error is not type dict as required.')
+        # if not isinstance(stats, dict):
+        #     raise ValueError('Method stage_status return value ' +
+        #                      'stats is not type dict as required.')
+        # # return the results
+        # return [result, error, stats]
     def status(self, ctx):
         #BEGIN_STATUS
 
@@ -348,4 +347,4 @@ class jgi_gateway_eap:
 
         return [result, None, None]
         #END_STATUS
-        return [returnVal]
+        # return [returnVal]

@@ -2,7 +2,6 @@
 package us.kbase.jgigatewayeap;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -13,33 +12,53 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
- * <p>Original spec-file type: StageInput</p>
- * 
+ * <p>Original spec-file type: StageRequest</p>
+ * <pre>
+ * STAGE
+ * </pre>
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
-    "files"
+    "id",
+    "filename"
 })
-public class StageInput {
+public class StageRequest {
 
-    @JsonProperty("files")
-    private List<FileRequest> files;
+    @JsonProperty("id")
+    private String id;
+    @JsonProperty("filename")
+    private String filename;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    @JsonProperty("files")
-    public List<FileRequest> getFiles() {
-        return files;
+    @JsonProperty("id")
+    public String getId() {
+        return id;
     }
 
-    @JsonProperty("files")
-    public void setFiles(List<FileRequest> files) {
-        this.files = files;
+    @JsonProperty("id")
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public StageInput withFiles(List<FileRequest> files) {
-        this.files = files;
+    public StageRequest withId(String id) {
+        this.id = id;
+        return this;
+    }
+
+    @JsonProperty("filename")
+    public String getFilename() {
+        return filename;
+    }
+
+    @JsonProperty("filename")
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
+    public StageRequest withFilename(String filename) {
+        this.filename = filename;
         return this;
     }
 
@@ -55,7 +74,7 @@ public class StageInput {
 
     @Override
     public String toString() {
-        return ((((("StageInput"+" [files=")+ files)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((("StageRequest"+" [id=")+ id)+", filename=")+ filename)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

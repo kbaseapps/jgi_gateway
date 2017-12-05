@@ -331,35 +331,94 @@ def sendRequest(path, data, ctx):
         }
         return [None, error, stats]
 
+
 def validateFetchParameter(parameter, ctx):
     # ids
     # A list of string database entity ids. A file is associated with each
     # id, and a copy request will be issued for each on. Just the ids are
     # passed through here, the fanning out is on the jgi side.
-    if 'ids' not in parameter:
+    if 'files' not in parameter:
         error = {
-            'message': "the 'ids' parameter is required but missing",
+            'message': "the 'files' parameter is required but missing",
             'type': 'input',
             'code': 'missing',
             'info': {
-                'key': 'ids'
+                'key': 'files'
             }
         }
         return [None, error]
-    ids = parameter['ids']
+    files = parameter['files']
 
-    if not isinstance(ids, list):
+    if not isinstance(files, list):
         error = {
-            'message': "the 'ids' parameter must be an list",
+            'message': "the 'files' parameter must be an list",
             'type': 'input',
             'code': 'wrong-type',
             'info': {
-                'key': 'ids'
+                'key': 'files'
             }
         }
         return [None, error]
 
+    ids = []
+
+    for index, requested_file in enumerate(files):
+        if not isinstance(requested_file, dict):
+            error = {
+                'message': "a 'files' parameter item must be a dict",
+                'type': 'input',
+                'code': 'wrong-type',
+                'info': {
+                    'key': ['files', index]
+                }
+            }
+            return [None, error]
+        if 'id' not in requested_file:
+            error = {
+                'message': "the 'id' parameter is required but missing",
+                'type': 'input',
+                'code': 'missing',
+                'info': {
+                    'key': ['files', index, 'id']
+                }
+            }
+            return [None, error]
+        if not isinstance(requested_file['id'], basestring):
+            error = {
+                'message': "an 'id' parameter item must be a string",
+                'type': 'input',
+                'code': 'wrong-type',
+                'info': {
+                    'key': ['files', index, 'id']
+                }
+            }
+            return [None, error]   
+        if 'filename' not in requested_file:
+            error = {
+                'message': "the 'filename' parameter is required but missing",
+                'type': 'input',
+                'code': 'missing',
+                'info': {
+                    'key': ['files', index, 'filename']
+                }
+            }
+            return [None, error]          
+        if not isinstance(requested_file['filename'], basestring):
+            error = {
+                'message': "a 'filename' parameter item must be a string",
+                'type': 'input',
+                'code': 'wrong-type',
+                'info': {
+                    'key': ['files', index, 'filename']
+                }
+            }
+            return [None, error]            
+         
+        ids.append(requested_file['id'])
+
+    # NOTE: still using the old ids parameter for the call to jgi.
     return [{"ids": ','.join(ids),
+             "files": files,
              "path": "/data/%s" % (ctx['user_id'])}, None]
 
 

@@ -265,7 +265,10 @@ $result is a jgi_gateway_eap.StagingResult
 $error is a jgi_gateway_eap.Error
 $stats is a jgi_gateway_eap.CallStats
 StageInput is a reference to a hash where the following keys are defined:
-	ids has a value which is a reference to a list where each element is a string
+	files has a value which is a reference to a list where each element is a jgi_gateway_eap.FileRequest
+FileRequest is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	filename has a value which is a string
 StagingResult is a reference to a hash where the following keys are defined:
 	job_id has a value which is a string
 Error is a reference to a hash where the following keys are defined:
@@ -287,7 +290,10 @@ $result is a jgi_gateway_eap.StagingResult
 $error is a jgi_gateway_eap.Error
 $stats is a jgi_gateway_eap.CallStats
 StageInput is a reference to a hash where the following keys are defined:
-	ids has a value which is a reference to a list where each element is a string
+	files has a value which is a reference to a list where each element is a jgi_gateway_eap.FileRequest
+FileRequest is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	filename has a value which is a string
 StagingResult is a reference to a hash where the following keys are defined:
 	job_id has a value which is a string
 Error is a reference to a hash where the following keys are defined:
@@ -918,7 +924,7 @@ search_result has a value which is a jgi_gateway_eap.SearchQueryResult
 
 
 
-=head2 StageInput
+=head2 FileRequest
 
 =over 4
 
@@ -935,7 +941,8 @@ STAGE
 
 <pre>
 a reference to a hash where the following keys are defined:
-ids has a value which is a reference to a list where each element is a string
+id has a value which is a string
+filename has a value which is a string
 
 </pre>
 
@@ -944,7 +951,38 @@ ids has a value which is a reference to a list where each element is a string
 =begin text
 
 a reference to a hash where the following keys are defined:
-ids has a value which is a reference to a list where each element is a string
+id has a value which is a string
+filename has a value which is a string
+
+
+=end text
+
+=back
+
+
+
+=head2 StageInput
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+files has a value which is a reference to a list where each element is a jgi_gateway_eap.FileRequest
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+files has a value which is a reference to a list where each element is a jgi_gateway_eap.FileRequest
 
 
 =end text
