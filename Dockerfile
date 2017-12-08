@@ -15,6 +15,7 @@ RUN pip install --upgrade pip; pip install coverage
 
 # update security libraries in the base image
 RUN pip install cffi --upgrade \
+    && pip install --upgrade pip \
     && pip install pyopenssl --upgrade \
     && pip install ndg-httpsclient --upgrade \
     && pip install pyasn1 --upgrade \
