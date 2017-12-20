@@ -2,6 +2,7 @@
 package us.kbase.jgigatewayeap;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -31,6 +32,7 @@ import us.kbase.common.service.UObject;
 @JsonPropertyOrder({
     "query",
     "filter",
+    "sort",
     "limit",
     "page",
     "include_private"
@@ -41,6 +43,8 @@ public class SearchInput {
     private Map<String, String> query;
     @JsonProperty("filter")
     private Map<String, UObject> filter;
+    @JsonProperty("sort")
+    private List<SortSpec> sort;
     @JsonProperty("limit")
     private Long limit;
     @JsonProperty("page")
@@ -76,6 +80,21 @@ public class SearchInput {
 
     public SearchInput withFilter(Map<String, UObject> filter) {
         this.filter = filter;
+        return this;
+    }
+
+    @JsonProperty("sort")
+    public List<SortSpec> getSort() {
+        return sort;
+    }
+
+    @JsonProperty("sort")
+    public void setSort(List<SortSpec> sort) {
+        this.sort = sort;
+    }
+
+    public SearchInput withSort(List<SortSpec> sort) {
+        this.sort = sort;
         return this;
     }
 
@@ -136,7 +155,7 @@ public class SearchInput {
 
     @Override
     public java.lang.String toString() {
-        return ((((((((((((("SearchInput"+" [query=")+ query)+", filter=")+ filter)+", limit=")+ limit)+", page=")+ page)+", includePrivate=")+ includePrivate)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((((((((((("SearchInput"+" [query=")+ query)+", filter=")+ filter)+", sort=")+ sort)+", limit=")+ limit)+", page=")+ page)+", includePrivate=")+ includePrivate)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

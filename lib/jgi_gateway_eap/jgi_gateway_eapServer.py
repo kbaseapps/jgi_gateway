@@ -345,6 +345,10 @@ class Application(object):
                              name='jgi_gateway_eap.stage_status',
                              types=[dict])
         self.method_authentication['jgi_gateway_eap.stage_status'] = 'required'  # noqa
+        self.rpc_service.add(impl_jgi_gateway_eap.staging_jobs,
+                             name='jgi_gateway_eap.staging_jobs',
+                             types=[dict])
+        self.method_authentication['jgi_gateway_eap.staging_jobs'] = 'required'  # noqa
         self.rpc_service.add(impl_jgi_gateway_eap.status,
                              name='jgi_gateway_eap.status',
                              types=[dict])

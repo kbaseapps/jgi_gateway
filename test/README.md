@@ -32,4 +32,23 @@ Also, for the jgi-token, note that it looks like this in test.cfg
 secure.jgi_token=*my secure token*
 ```
 
+```
+test_token=<your kbase dev token>
+
+kbase_endpoint=https://ci.kbase.us/services
+
+auth_service_url=https://ci.kbase.us/services/auth/api/legacy/KBase/Sessions/Login
+auth_service_url_allow_insecure=true
+
+secure.jgi_token=<jgi basic auth token>
+
+secure.mongo_db=jgi_gateway
+secure.mongo_host=172.17.0.2
+secure.mongo_port=27017
+secure.mongo_user=jgi_gateway
+secure.mongo_pwd=test
+
+secure.job_monitoring=false
+```
+
 Note that other configuration properties specific to the jgi search service are hard-coded in the deploy.cfg

@@ -34,6 +34,11 @@ module jgi_gateway_eap {
     typedef mapping<string, UnspecifiedObject> SearchFilter;
     typedef mapping<string, string> SearchQuery;
 
+    typedef structure {
+        string field;
+        int descending;
+    } SortSpec;
+
     /*
         search searches the JGI service for matches against the
         query, which may be a string or an object mapping string->string
@@ -49,6 +54,7 @@ module jgi_gateway_eap {
     typedef structure {
         SearchQuery query;
         SearchFilter filter;
+        list<SortSpec> sort;
         int limit;
         int page;
         bool include_private;
@@ -121,10 +127,11 @@ module jgi_gateway_eap {
     typedef structure {
         string id;
         string filename;
-    } FileRequest;
+        string username;
+    } StageRequest;
 
     typedef structure {
-       list<FileRequest> files;
+       StageRequest file;
     } StageInput;
 
     /*
@@ -156,5 +163,54 @@ module jgi_gateway_eap {
     funcdef stage_status(StagingStatusInput parameter) 
             returns (StagingStatusResult result, Error error, CallStats stats) 
             authentication required;
+
+    typedef int timestamp;
+
+    typedef structure {
+        /* from request */
+        string jamo_id;
+        string filename;
+        string username;
+        /* from jgi service */
+        string job_id;
+        string status_code;
+        string status_raw;        
+        /* ours */
+        timestamp created;
+        timestamp updated;
+    } StagingJob;
+
+    typedef structure {
+        timestamp created_from;
+        timestamp created_to;
+        timestamp updated_from;
+        timestamp updated_to;
+        string status;
+        string jamo_id;
+        list<string> job_ids;
+        string filename;
+    } StagingJobsFilter;
+
+    typedef structure {
+        int start;
+        int limit;
+    } StagingJobsRange;
+
+    typedef structure {
+        StagingJobsFilter filter;
+        StagingJobsRange range;
+        list<SortSpec> sort;
+    } StagingJobsInput;
+
+    typedef structure {
+         list<StagingJob> staging_jobs;
+         int total_matched;
+         int total_jobs;
+    } StagingJobsResult;
+
+    /* Fetch all file staging jobs for the current user */
+    funcdef staging_jobs(StagingJobsInput parameter) 
+        returns (StagingJobsResult result, Error error, CallStats stats)
+        authentication required;
 
 };

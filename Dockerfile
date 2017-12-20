@@ -20,6 +20,7 @@ RUN pip install cffi --upgrade \
     && pip install ndg-httpsclient --upgrade \
     && pip install pyasn1 --upgrade \
     && pip install requests --upgrade \
+    && pip install requests-futures --upgrade \
     && pip install 'requests[security]' --upgrade
 
 # -----------------------------------------

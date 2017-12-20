@@ -126,11 +126,15 @@ $stats is a jgi_gateway_eap.CallStats
 SearchInput is a reference to a hash where the following keys are defined:
 	query has a value which is a jgi_gateway_eap.SearchQuery
 	filter has a value which is a jgi_gateway_eap.SearchFilter
+	sort has a value which is a reference to a list where each element is a jgi_gateway_eap.SortSpec
 	limit has a value which is an int
 	page has a value which is an int
 	include_private has a value which is a jgi_gateway_eap.bool
 SearchQuery is a reference to a hash where the key is a string and the value is a string
 SearchFilter is a reference to a hash where the key is a string and the value is an UnspecifiedObject, which can hold any non-null object
+SortSpec is a reference to a hash where the following keys are defined:
+	field has a value which is a string
+	descending has a value which is an int
 bool is an int
 SearchResult is a reference to a hash where the following keys are defined:
 	search_result has a value which is a jgi_gateway_eap.SearchQueryResult
@@ -164,11 +168,15 @@ $stats is a jgi_gateway_eap.CallStats
 SearchInput is a reference to a hash where the following keys are defined:
 	query has a value which is a jgi_gateway_eap.SearchQuery
 	filter has a value which is a jgi_gateway_eap.SearchFilter
+	sort has a value which is a reference to a list where each element is a jgi_gateway_eap.SortSpec
 	limit has a value which is an int
 	page has a value which is an int
 	include_private has a value which is a jgi_gateway_eap.bool
 SearchQuery is a reference to a hash where the key is a string and the value is a string
 SearchFilter is a reference to a hash where the key is a string and the value is an UnspecifiedObject, which can hold any non-null object
+SortSpec is a reference to a hash where the following keys are defined:
+	field has a value which is a string
+	descending has a value which is an int
 bool is an int
 SearchResult is a reference to a hash where the following keys are defined:
 	search_result has a value which is a jgi_gateway_eap.SearchQueryResult
@@ -265,10 +273,11 @@ $result is a jgi_gateway_eap.StagingResult
 $error is a jgi_gateway_eap.Error
 $stats is a jgi_gateway_eap.CallStats
 StageInput is a reference to a hash where the following keys are defined:
-	files has a value which is a reference to a list where each element is a jgi_gateway_eap.FileRequest
-FileRequest is a reference to a hash where the following keys are defined:
+	file has a value which is a jgi_gateway_eap.StageRequest
+StageRequest is a reference to a hash where the following keys are defined:
 	id has a value which is a string
 	filename has a value which is a string
+	username has a value which is a string
 StagingResult is a reference to a hash where the following keys are defined:
 	job_id has a value which is a string
 Error is a reference to a hash where the following keys are defined:
@@ -290,10 +299,11 @@ $result is a jgi_gateway_eap.StagingResult
 $error is a jgi_gateway_eap.Error
 $stats is a jgi_gateway_eap.CallStats
 StageInput is a reference to a hash where the following keys are defined:
-	files has a value which is a reference to a list where each element is a jgi_gateway_eap.FileRequest
-FileRequest is a reference to a hash where the following keys are defined:
+	file has a value which is a jgi_gateway_eap.StageRequest
+StageRequest is a reference to a hash where the following keys are defined:
 	id has a value which is a string
 	filename has a value which is a string
+	username has a value which is a string
 StagingResult is a reference to a hash where the following keys are defined:
 	job_id has a value which is a string
 Error is a reference to a hash where the following keys are defined:
@@ -470,6 +480,172 @@ identified by its job id
     }
 }
  
+
+
+=head2 staging_jobs
+
+  $result, $error, $stats = $obj->staging_jobs($parameter)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$parameter is a jgi_gateway_eap.StagingJobsInput
+$result is a jgi_gateway_eap.StagingJobsResult
+$error is a jgi_gateway_eap.Error
+$stats is a jgi_gateway_eap.CallStats
+StagingJobsInput is a reference to a hash where the following keys are defined:
+	filter has a value which is a jgi_gateway_eap.StagingJobsFilter
+	range has a value which is a jgi_gateway_eap.StagingJobsRange
+	sort has a value which is a reference to a list where each element is a jgi_gateway_eap.SortSpec
+StagingJobsFilter is a reference to a hash where the following keys are defined:
+	created_from has a value which is a jgi_gateway_eap.timestamp
+	created_to has a value which is a jgi_gateway_eap.timestamp
+	updated_from has a value which is a jgi_gateway_eap.timestamp
+	updated_to has a value which is a jgi_gateway_eap.timestamp
+	status has a value which is a string
+	jamo_id has a value which is a string
+	job_ids has a value which is a reference to a list where each element is a string
+	filename has a value which is a string
+timestamp is an int
+StagingJobsRange is a reference to a hash where the following keys are defined:
+	start has a value which is an int
+	limit has a value which is an int
+SortSpec is a reference to a hash where the following keys are defined:
+	field has a value which is a string
+	descending has a value which is an int
+StagingJobsResult is a reference to a hash where the following keys are defined:
+	staging_jobs has a value which is a reference to a list where each element is a jgi_gateway_eap.StagingJob
+	total_matched has a value which is an int
+	total_jobs has a value which is an int
+StagingJob is a reference to a hash where the following keys are defined:
+	jamo_id has a value which is a string
+	filename has a value which is a string
+	username has a value which is a string
+	job_id has a value which is a string
+	status_code has a value which is a string
+	status_raw has a value which is a string
+	created has a value which is a jgi_gateway_eap.timestamp
+	updated has a value which is a jgi_gateway_eap.timestamp
+Error is a reference to a hash where the following keys are defined:
+	message has a value which is a string
+	type has a value which is a string
+	code has a value which is a string
+	info has a value which is an UnspecifiedObject, which can hold any non-null object
+CallStats is a reference to a hash where the following keys are defined:
+	request_elapsed_time has a value which is an int
+
+</pre>
+
+=end html
+
+=begin text
+
+$parameter is a jgi_gateway_eap.StagingJobsInput
+$result is a jgi_gateway_eap.StagingJobsResult
+$error is a jgi_gateway_eap.Error
+$stats is a jgi_gateway_eap.CallStats
+StagingJobsInput is a reference to a hash where the following keys are defined:
+	filter has a value which is a jgi_gateway_eap.StagingJobsFilter
+	range has a value which is a jgi_gateway_eap.StagingJobsRange
+	sort has a value which is a reference to a list where each element is a jgi_gateway_eap.SortSpec
+StagingJobsFilter is a reference to a hash where the following keys are defined:
+	created_from has a value which is a jgi_gateway_eap.timestamp
+	created_to has a value which is a jgi_gateway_eap.timestamp
+	updated_from has a value which is a jgi_gateway_eap.timestamp
+	updated_to has a value which is a jgi_gateway_eap.timestamp
+	status has a value which is a string
+	jamo_id has a value which is a string
+	job_ids has a value which is a reference to a list where each element is a string
+	filename has a value which is a string
+timestamp is an int
+StagingJobsRange is a reference to a hash where the following keys are defined:
+	start has a value which is an int
+	limit has a value which is an int
+SortSpec is a reference to a hash where the following keys are defined:
+	field has a value which is a string
+	descending has a value which is an int
+StagingJobsResult is a reference to a hash where the following keys are defined:
+	staging_jobs has a value which is a reference to a list where each element is a jgi_gateway_eap.StagingJob
+	total_matched has a value which is an int
+	total_jobs has a value which is an int
+StagingJob is a reference to a hash where the following keys are defined:
+	jamo_id has a value which is a string
+	filename has a value which is a string
+	username has a value which is a string
+	job_id has a value which is a string
+	status_code has a value which is a string
+	status_raw has a value which is a string
+	created has a value which is a jgi_gateway_eap.timestamp
+	updated has a value which is a jgi_gateway_eap.timestamp
+Error is a reference to a hash where the following keys are defined:
+	message has a value which is a string
+	type has a value which is a string
+	code has a value which is a string
+	info has a value which is an UnspecifiedObject, which can hold any non-null object
+CallStats is a reference to a hash where the following keys are defined:
+	request_elapsed_time has a value which is an int
+
+
+=end text
+
+=item Description
+
+Fetch all file staging jobs for the current user
+
+=back
+
+=cut
+
+ sub staging_jobs
+{
+    my($self, @args) = @_;
+
+# Authentication: required
+
+    if ((my $n = @args) != 1)
+    {
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
+							       "Invalid argument count for function staging_jobs (received $n, expecting 1)");
+    }
+    {
+	my($parameter) = @args;
+
+	my @_bad_arguments;
+        (ref($parameter) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"parameter\" (value was \"$parameter\")");
+        if (@_bad_arguments) {
+	    my $msg = "Invalid arguments passed to staging_jobs:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+								   method_name => 'staging_jobs');
+	}
+    }
+
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "jgi_gateway_eap.staging_jobs",
+	    params => \@args,
+    });
+    if ($result) {
+	if ($result->is_error) {
+	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
+					       code => $result->content->{error}->{code},
+					       method_name => 'staging_jobs',
+					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
+					      );
+	} else {
+	    return wantarray ? @{$result->result} : $result->result->[0];
+	}
+    } else {
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method staging_jobs",
+					    status_line => $self->{client}->status_line,
+					    method_name => 'staging_jobs',
+				       );
+    }
+}
+ 
   
 sub status
 {
@@ -513,16 +689,16 @@ sub version {
             Bio::KBase::Exceptions::JSONRPC->throw(
                 error => $result->error_message,
                 code => $result->content->{code},
-                method_name => 'stage_status',
+                method_name => 'staging_jobs',
             );
         } else {
             return wantarray ? @{$result->result} : $result->result->[0];
         }
     } else {
         Bio::KBase::Exceptions::HTTP->throw(
-            error => "Error invoking method stage_status",
+            error => "Error invoking method staging_jobs",
             status_line => $self->{client}->status_line,
-            method_name => 'stage_status',
+            method_name => 'staging_jobs',
         );
     }
 }
@@ -720,6 +896,38 @@ a reference to a hash where the key is a string and the value is a string
 
 
 
+=head2 SortSpec
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+field has a value which is a string
+descending has a value which is an int
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+field has a value which is a string
+descending has a value which is an int
+
+
+=end text
+
+=back
+
+
+
 =head2 SearchInput
 
 =over 4
@@ -748,6 +956,7 @@ Other parameters
 a reference to a hash where the following keys are defined:
 query has a value which is a jgi_gateway_eap.SearchQuery
 filter has a value which is a jgi_gateway_eap.SearchFilter
+sort has a value which is a reference to a list where each element is a jgi_gateway_eap.SortSpec
 limit has a value which is an int
 page has a value which is an int
 include_private has a value which is a jgi_gateway_eap.bool
@@ -761,6 +970,7 @@ include_private has a value which is a jgi_gateway_eap.bool
 a reference to a hash where the following keys are defined:
 query has a value which is a jgi_gateway_eap.SearchQuery
 filter has a value which is a jgi_gateway_eap.SearchFilter
+sort has a value which is a reference to a list where each element is a jgi_gateway_eap.SortSpec
 limit has a value which is an int
 page has a value which is an int
 include_private has a value which is a jgi_gateway_eap.bool
@@ -924,7 +1134,7 @@ search_result has a value which is a jgi_gateway_eap.SearchQueryResult
 
 
 
-=head2 FileRequest
+=head2 StageRequest
 
 =over 4
 
@@ -943,6 +1153,7 @@ STAGE
 a reference to a hash where the following keys are defined:
 id has a value which is a string
 filename has a value which is a string
+username has a value which is a string
 
 </pre>
 
@@ -953,6 +1164,7 @@ filename has a value which is a string
 a reference to a hash where the following keys are defined:
 id has a value which is a string
 filename has a value which is a string
+username has a value which is a string
 
 
 =end text
@@ -973,7 +1185,7 @@ filename has a value which is a string
 
 <pre>
 a reference to a hash where the following keys are defined:
-files has a value which is a reference to a list where each element is a jgi_gateway_eap.FileRequest
+file has a value which is a jgi_gateway_eap.StageRequest
 
 </pre>
 
@@ -982,7 +1194,7 @@ files has a value which is a reference to a list where each element is a jgi_gat
 =begin text
 
 a reference to a hash where the following keys are defined:
-files has a value which is a reference to a list where each element is a jgi_gateway_eap.FileRequest
+file has a value which is a jgi_gateway_eap.StageRequest
 
 
 =end text
@@ -1082,6 +1294,220 @@ message has a value which is a string
 
 a reference to a hash where the following keys are defined:
 message has a value which is a string
+
+
+=end text
+
+=back
+
+
+
+=head2 timestamp
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+an int
+</pre>
+
+=end html
+
+=begin text
+
+an int
+
+=end text
+
+=back
+
+
+
+=head2 StagingJob
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+jamo_id has a value which is a string
+filename has a value which is a string
+username has a value which is a string
+job_id has a value which is a string
+status_code has a value which is a string
+status_raw has a value which is a string
+created has a value which is a jgi_gateway_eap.timestamp
+updated has a value which is a jgi_gateway_eap.timestamp
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+jamo_id has a value which is a string
+filename has a value which is a string
+username has a value which is a string
+job_id has a value which is a string
+status_code has a value which is a string
+status_raw has a value which is a string
+created has a value which is a jgi_gateway_eap.timestamp
+updated has a value which is a jgi_gateway_eap.timestamp
+
+
+=end text
+
+=back
+
+
+
+=head2 StagingJobsFilter
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+created_from has a value which is a jgi_gateway_eap.timestamp
+created_to has a value which is a jgi_gateway_eap.timestamp
+updated_from has a value which is a jgi_gateway_eap.timestamp
+updated_to has a value which is a jgi_gateway_eap.timestamp
+status has a value which is a string
+jamo_id has a value which is a string
+job_ids has a value which is a reference to a list where each element is a string
+filename has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+created_from has a value which is a jgi_gateway_eap.timestamp
+created_to has a value which is a jgi_gateway_eap.timestamp
+updated_from has a value which is a jgi_gateway_eap.timestamp
+updated_to has a value which is a jgi_gateway_eap.timestamp
+status has a value which is a string
+jamo_id has a value which is a string
+job_ids has a value which is a reference to a list where each element is a string
+filename has a value which is a string
+
+
+=end text
+
+=back
+
+
+
+=head2 StagingJobsRange
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+start has a value which is an int
+limit has a value which is an int
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+start has a value which is an int
+limit has a value which is an int
+
+
+=end text
+
+=back
+
+
+
+=head2 StagingJobsInput
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+filter has a value which is a jgi_gateway_eap.StagingJobsFilter
+range has a value which is a jgi_gateway_eap.StagingJobsRange
+sort has a value which is a reference to a list where each element is a jgi_gateway_eap.SortSpec
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+filter has a value which is a jgi_gateway_eap.StagingJobsFilter
+range has a value which is a jgi_gateway_eap.StagingJobsRange
+sort has a value which is a reference to a list where each element is a jgi_gateway_eap.SortSpec
+
+
+=end text
+
+=back
+
+
+
+=head2 StagingJobsResult
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+staging_jobs has a value which is a reference to a list where each element is a jgi_gateway_eap.StagingJob
+total_matched has a value which is an int
+total_jobs has a value which is an int
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+staging_jobs has a value which is a reference to a list where each element is a jgi_gateway_eap.StagingJob
+total_matched has a value which is an int
+total_jobs has a value which is an int
 
 
 =end text

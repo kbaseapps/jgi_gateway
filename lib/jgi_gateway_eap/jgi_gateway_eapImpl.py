@@ -5,12 +5,18 @@ JGI Gateway Service
 """
 
 import os
-import requests
 import json
 import sys
 import time
+import calendar
 import re
 import utils
+# from pymongo import MongoClient
+# from bson.json_util import dumps
+from bson import json_util
+from .staging_jobs_manager import StagingJobsManager
+from .jgi_gateway_eapServerContext import ServerContext
+
 #END_HEADER
 
 
@@ -31,9 +37,25 @@ class jgi_gateway_eap:
     ######################################### noqa
     VERSION = "0.2.0"
     GIT_URL = "ssh://git@github.com/eapearson/jgi_gateway"
-    GIT_COMMIT_HASH = "aabfad1f89c5b5ed1fa31f923fab02fc0127dbf3"
+    GIT_COMMIT_HASH = "281a3cd3e53b5ec4eb60efac36c59da35b3880bd"
 
     #BEGIN_CLASS_HEADER
+
+
+# class ServerContext(object):
+#     'Provides functions only the server can'
+#     def __init__(self, uwsgi_avail):
+#         self.uwsgi_available = uwsgi_avail
+        
+#     def send_message(self, msg):
+#         if self.uwsgi_available:
+#             uwsgi.mule_msg(msg)
+#         else:
+#             print('warning: uwsgi not available')
+
+#     def is_uwsgi_available(self):
+#         return self.uwsgi_available
+
     #END_CLASS_HEADER
 
     # config contains contents of config file in a hash or None if it couldn't
@@ -48,53 +70,13 @@ class jgi_gateway_eap:
         # config would be used.
         # TODO: it is cleaner to do it here, but not sure how well
         # it plays with module lifecycle.
-        self.config = config
-        self.user = None
-        self.passwd = None
+        self.context = ServerContext()
 
-        # Import and validate the jgi host
-        if 'jgi-search-base-url' not in config:
-            raise(ValueError('"jgi-search-base-url" configuration property not provided'))
-        # The host must be secure, and be reasonably valid:
-        # https://a.b
-        if (not re.match("^https://.+?\\..+$", config['jgi-search-base-url'])):
-            raise(ValueError('"jgi-host" configuration property not a valid url base'))
+        self.config = utils.validate_config(config)
+       
+        self.staging_jobs_manager = StagingJobsManager(self.config)
 
-        self.jgi_search_base_url = config['jgi-search-base-url']
-
-        # print("Using jgi base url: %s" % (self.jgi_search_base_url))
-
-
-        # Import and validate the jgi token
-        if 'jgi-token' not in config:
-            raise(ValueError('"jgi-token" configuration property not provided'))
-
-        token = config['jgi-token'].split(':')
-        if (len(token) != 2):
-            raise(ValueError('"jgi-token" configuration property is invalid'))
-
-        (user, passwd) = token
-
-        # Given a string which can split, the worst we can have is an empty
-        # part, since we are ensured to get at least a 0-length string
-        if ((len(user) == 0) or (len(passwd) == 0)):
-            raise(ValueError('"jgi-token" configuration property is invalid'))
-
-        self.user = user
-        self.passwd = passwd
-
-        # Import and validate the connection timeout
-        if 'connection-timeout' not in config:
-            raise(ValueError('"connection-timeout" configuration property not provided'))
-        try:
-            connection_timeout = int(config['connection-timeout'])
-        except ValueError as ex:
-            raise(ValueError('"connection-timeout" configuration property is not a float: ' + str(ex)))
-        if not (config['connection-timeout'] > 0):
-            raise(ValueError('"connection-timeout" configuration property must be > 0'))
-
-        self.connection_timeout = float(connection_timeout) /float(1000)
-        print('connection timeout %f sec' % (self.connection_timeout) )
+        self.context.send_message('start-job-monitoring')
 
         #END_CONSTRUCTOR
         pass
@@ -113,9 +95,11 @@ class jgi_gateway_eap:
            of type "SearchFilter" (SearchFilter The jgi back end takes a map
            of either string, integer, or array of integer. I don't think the
            type compiler supports union types, so unspecified it is.) ->
-           mapping from String to unspecified object, parameter "limit" of
-           Long, parameter "page" of Long, parameter "include_private" of
-           type "bool" (a bool defined as int)
+           mapping from String to unspecified object, parameter "sort" of
+           list of type "SortSpec" -> structure: parameter "field" of String,
+           parameter "descending" of Long, parameter "limit" of Long,
+           parameter "page" of Long, parameter "include_private" of type
+           "bool" (a bool defined as int)
         :returns: multiple set - (1) parameter "result" of type
            "SearchResult" -> structure: parameter "search_result" of type
            "SearchQueryResult" (SearchQueryResult The top level search object
@@ -146,9 +130,9 @@ class jgi_gateway_eap:
         #BEGIN search
 
         # BASIC config
-        error = utils.validateCallConfig(self);
-        if error:
-            return [None, error, None]
+        # error = utils.validateCallConfig(self);
+        # if error:
+        #     return [None, error, None]
 
 
         # INPUT
@@ -161,10 +145,10 @@ class jgi_gateway_eap:
         # PREPARE REQUEST
         responsejson, error, stats = utils.sendRequest('query', query, {
             'method': 'post',
-            'connection_timeout': self.connection_timeout,
-            'url': self.jgi_search_base_url,
-            'user': self.user,
-            'password': self.passwd
+            'connection_timeout': self.config['jgi']['connection-timeout'],
+            'url': self.config['jgi']['base-url'],
+            'user': self.config['jgi']['user'],
+            'password': self.config['jgi']['password'],
         })
 
         if responsejson:
@@ -185,10 +169,6 @@ class jgi_gateway_eap:
             result = None
 
         return [result, error, stats]
-
-
-        # resp.raise_for_status()
-
 
         # We need to transform the result into a form that is acceptable to
         # KIDL.
@@ -212,8 +192,9 @@ class jgi_gateway_eap:
     def stage(self, ctx, parameter):
         """
         :param parameter: instance of type "StageInput" -> structure:
-           parameter "files" of list of type "FileRequest" (STAGE) ->
-           structure: parameter "id" of String, parameter "filename" of String
+           parameter "file" of type "StageRequest" (STAGE) -> structure:
+           parameter "id" of String, parameter "filename" of String,
+           parameter "username" of String
         :returns: multiple set - (1) parameter "result" of type
            "StagingResult" (StagingResult returns a map entry for each id
            submitted in the stage request. The map key is the _id property
@@ -233,21 +214,24 @@ class jgi_gateway_eap:
         # return variables are: result, error, stats
         #BEGIN stage
 
-        error = utils.validateCallConfig(self);
-        if error:
-            return [None, error, None]
+        # error = utils.validateCallConfig(self);
+        # if error:
+        #     return [None, error, None]
 
         # INPUT
         request, error = utils.validateFetchParameter(parameter, ctx)
         if error:
             return [None, error, None]
 
+        # Create the job record in advance of the actual request... good idea?
+        record_id = self.staging_jobs_manager.add_job(parameter['file']['username'], parameter['file']['id'], parameter['file']['filename'])
+
         responsejson, error, stats = utils.sendRequest('fetch', request,  {
             'method': 'post',
-            'connection_timeout': self.connection_timeout,
-            'url': self.jgi_search_base_url,
-            'user': self.user,
-            'password': self.passwd
+            'connection_timeout': self.config['jgi']['connection-timeout'],
+            'url': self.config['jgi']['base-url'],
+            'user': self.config['jgi']['user'],
+            'password': self.config['jgi']['password'],
         })
 
         if responsejson:
@@ -256,14 +240,23 @@ class jgi_gateway_eap:
             # of the number of ids in the copy request.
             #
             job_id = responsejson['id']
+    
+            # Update the job record to indicate that it has been submitted.
+            # The monitor will update the status from the jgi service
+            # itself.
+            self.staging_jobs_manager.job_submitted(record_id, job_id)
+
+            print('putting start message in monitor queue...')
+            self.context.send_message('start-job-monitoring')
 
             result = {'job_id': job_id}
+        # elif error TODO: handle error here
         else:
             result = None
 
         return [result, None, stats]
 
-        # NOTE: we are already returne d here, the code below is dead.
+        # NOTE: we are already returned here, the code below is dead.
 
         #END stage
 
@@ -298,9 +291,9 @@ class jgi_gateway_eap:
         # return variables are: result, error, stats
         #BEGIN stage_status
 
-        error = utils.validateCallConfig(self);
-        if error:
-            return [None, error, None]
+        # error = utils.validateCallConfig(self);
+        # if error:
+        #     return [None, error, None]
 
 
         # INPUT
@@ -310,10 +303,10 @@ class jgi_gateway_eap:
 
         response, error, stats = utils.sendRequest('status', request,  {
             'method': 'get',
-            'connection_timeout': self.connection_timeout,
-            'url': self.jgi_search_base_url,
-            'user': self.user,
-            'password': self.passwd,
+            'connection_timeout': self.config['jgi']['connection-timeout'],
+            'url': self.config['jgi']['base-url'],
+            'user': self.config['jgi']['user'],
+            'password': self.config['jgi']['password'],
             'type': 'text'
         })
 
@@ -334,6 +327,70 @@ class jgi_gateway_eap:
         #                      'stats is not type dict as required.')
         # # return the results
         # return [result, error, stats]
+
+    def staging_jobs(self, ctx, parameter):
+        """
+        Fetch all file staging jobs for the current user
+        :param parameter: instance of type "StagingJobsInput" -> structure:
+           parameter "filter" of type "StagingJobsFilter" -> structure:
+           parameter "created_from" of type "timestamp", parameter
+           "created_to" of type "timestamp", parameter "updated_from" of type
+           "timestamp", parameter "updated_to" of type "timestamp", parameter
+           "status" of String, parameter "jamo_id" of String, parameter
+           "job_ids" of list of String, parameter "filename" of String,
+           parameter "range" of type "StagingJobsRange" -> structure:
+           parameter "start" of Long, parameter "limit" of Long, parameter
+           "sort" of list of type "SortSpec" -> structure: parameter "field"
+           of String, parameter "descending" of Long
+        :returns: multiple set - (1) parameter "result" of type
+           "StagingJobsResult" -> structure: parameter "staging_jobs" of list
+           of type "StagingJob" -> structure: parameter "jamo_id" of String,
+           parameter "filename" of String, parameter "username" of String,
+           parameter "job_id" of String, parameter "status_code" of String,
+           parameter "status_raw" of String, parameter "created" of type
+           "timestamp", parameter "updated" of type "timestamp", parameter
+           "total_matched" of Long, parameter "total_jobs" of Long, (2)
+           parameter "error" of type "Error" -> structure: parameter
+           "message" of String, parameter "type" of String, parameter "code"
+           of String, parameter "info" of unspecified object, (3) parameter
+           "stats" of type "CallStats" (Call performance measurement) ->
+           structure: parameter "request_elapsed_time" of Long
+        """
+        # ctx is the context object
+        # return variables are: result, error, stats
+        #BEGIN staging_jobs
+        # error = utils.validateCallConfig(self);
+        # if error:
+        #     return [None, error, None]
+
+
+        # INPUT
+        # error = utils.validateCallConfig(self);
+        # if error:
+        #     return [None, error, None]
+
+        # INPUT
+        request, error = utils.validate_staging_jobs_parameter(parameter, ctx)
+        if error:
+            return [None, error, None]
+
+        response = self.staging_jobs_manager.staging_jobs_for_user(request)
+
+        return [response, None, None]
+        #END staging_jobs
+
+        # At some point might do deeper type checking...
+        # if not isinstance(result, dict):
+        #     raise ValueError('Method staging_jobs return value ' +
+        #                      'result is not type dict as required.')
+        # if not isinstance(error, dict):
+        #     raise ValueError('Method staging_jobs return value ' +
+        #                      'error is not type dict as required.')
+        # if not isinstance(stats, dict):
+        #     raise ValueError('Method staging_jobs return value ' +
+        #                      'stats is not type dict as required.')
+        # # return the results
+        # return [result, error, stats]
     def status(self, ctx):
         #BEGIN_STATUS
 
@@ -347,4 +404,4 @@ class jgi_gateway_eap:
 
         return [result, None, None]
         #END_STATUS
-        # return [returnVal]
+        return [returnVal]

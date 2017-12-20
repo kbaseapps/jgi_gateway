@@ -12,54 +12,51 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
- * <p>Original spec-file type: StageInput</p>
+ * <p>Original spec-file type: StagingJobsRange</p>
  * 
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
-    "file"
+    "start",
+    "limit"
 })
-public class StageInput {
+public class StagingJobsRange {
 
-    /**
-     * <p>Original spec-file type: StageRequest</p>
-     * <pre>
-     * STAGE
-     * </pre>
-     * 
-     */
-    @JsonProperty("file")
-    private StageRequest file;
+    @JsonProperty("start")
+    private Long start;
+    @JsonProperty("limit")
+    private Long limit;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    /**
-     * <p>Original spec-file type: StageRequest</p>
-     * <pre>
-     * STAGE
-     * </pre>
-     * 
-     */
-    @JsonProperty("file")
-    public StageRequest getFile() {
-        return file;
+    @JsonProperty("start")
+    public Long getStart() {
+        return start;
     }
 
-    /**
-     * <p>Original spec-file type: StageRequest</p>
-     * <pre>
-     * STAGE
-     * </pre>
-     * 
-     */
-    @JsonProperty("file")
-    public void setFile(StageRequest file) {
-        this.file = file;
+    @JsonProperty("start")
+    public void setStart(Long start) {
+        this.start = start;
     }
 
-    public StageInput withFile(StageRequest file) {
-        this.file = file;
+    public StagingJobsRange withStart(Long start) {
+        this.start = start;
+        return this;
+    }
+
+    @JsonProperty("limit")
+    public Long getLimit() {
+        return limit;
+    }
+
+    @JsonProperty("limit")
+    public void setLimit(Long limit) {
+        this.limit = limit;
+    }
+
+    public StagingJobsRange withLimit(Long limit) {
+        this.limit = limit;
         return this;
     }
 
@@ -75,7 +72,7 @@ public class StageInput {
 
     @Override
     public String toString() {
-        return ((((("StageInput"+" [file=")+ file)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((("StagingJobsRange"+" [start=")+ start)+", limit=")+ limit)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

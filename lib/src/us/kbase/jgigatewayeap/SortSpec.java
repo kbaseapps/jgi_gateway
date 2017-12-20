@@ -12,54 +12,51 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
- * <p>Original spec-file type: StageInput</p>
+ * <p>Original spec-file type: SortSpec</p>
  * 
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
-    "file"
+    "field",
+    "descending"
 })
-public class StageInput {
+public class SortSpec {
 
-    /**
-     * <p>Original spec-file type: StageRequest</p>
-     * <pre>
-     * STAGE
-     * </pre>
-     * 
-     */
-    @JsonProperty("file")
-    private StageRequest file;
+    @JsonProperty("field")
+    private String field;
+    @JsonProperty("descending")
+    private Long descending;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    /**
-     * <p>Original spec-file type: StageRequest</p>
-     * <pre>
-     * STAGE
-     * </pre>
-     * 
-     */
-    @JsonProperty("file")
-    public StageRequest getFile() {
-        return file;
+    @JsonProperty("field")
+    public String getField() {
+        return field;
     }
 
-    /**
-     * <p>Original spec-file type: StageRequest</p>
-     * <pre>
-     * STAGE
-     * </pre>
-     * 
-     */
-    @JsonProperty("file")
-    public void setFile(StageRequest file) {
-        this.file = file;
+    @JsonProperty("field")
+    public void setField(String field) {
+        this.field = field;
     }
 
-    public StageInput withFile(StageRequest file) {
-        this.file = file;
+    public SortSpec withField(String field) {
+        this.field = field;
+        return this;
+    }
+
+    @JsonProperty("descending")
+    public Long getDescending() {
+        return descending;
+    }
+
+    @JsonProperty("descending")
+    public void setDescending(Long descending) {
+        this.descending = descending;
+    }
+
+    public SortSpec withDescending(Long descending) {
+        this.descending = descending;
         return this;
     }
 
@@ -75,7 +72,7 @@ public class StageInput {
 
     @Override
     public String toString() {
-        return ((((("StageInput"+" [file=")+ file)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((("SortSpec"+" [field=")+ field)+", descending=")+ descending)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

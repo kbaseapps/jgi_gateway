@@ -46,9 +46,11 @@ class jgi_gateway_eap(object):
            of type "SearchFilter" (SearchFilter The jgi back end takes a map
            of either string, integer, or array of integer. I don't think the
            type compiler supports union types, so unspecified it is.) ->
-           mapping from String to unspecified object, parameter "limit" of
-           Long, parameter "page" of Long, parameter "include_private" of
-           type "bool" (a bool defined as int)
+           mapping from String to unspecified object, parameter "sort" of
+           list of type "SortSpec" -> structure: parameter "field" of String,
+           parameter "descending" of Long, parameter "limit" of Long,
+           parameter "page" of Long, parameter "include_private" of type
+           "bool" (a bool defined as int)
         :returns: multiple set - (1) parameter "result" of type
            "SearchResult" -> structure: parameter "search_result" of type
            "SearchQueryResult" (SearchQueryResult The top level search object
@@ -81,8 +83,9 @@ class jgi_gateway_eap(object):
     def stage(self, parameter, context=None):
         """
         :param parameter: instance of type "StageInput" -> structure:
-           parameter "files" of list of type "FileRequest" (STAGE) ->
-           structure: parameter "id" of String, parameter "filename" of String
+           parameter "file" of type "StageRequest" (STAGE) -> structure:
+           parameter "id" of String, parameter "filename" of String,
+           parameter "username" of String
         :returns: multiple set - (1) parameter "result" of type
            "StagingResult" (StagingResult returns a map entry for each id
            submitted in the stage request. The map key is the _id property
@@ -118,6 +121,38 @@ class jgi_gateway_eap(object):
         """
         return self._client.call_method(
             'jgi_gateway_eap.stage_status',
+            [parameter], self._service_ver, context)
+
+    def staging_jobs(self, parameter, context=None):
+        """
+        Fetch all file staging jobs for the current user
+        :param parameter: instance of type "StagingJobsInput" -> structure:
+           parameter "filter" of type "StagingJobsFilter" -> structure:
+           parameter "created_from" of type "timestamp", parameter
+           "created_to" of type "timestamp", parameter "updated_from" of type
+           "timestamp", parameter "updated_to" of type "timestamp", parameter
+           "status" of String, parameter "jamo_id" of String, parameter
+           "job_ids" of list of String, parameter "filename" of String,
+           parameter "range" of type "StagingJobsRange" -> structure:
+           parameter "start" of Long, parameter "limit" of Long, parameter
+           "sort" of list of type "SortSpec" -> structure: parameter "field"
+           of String, parameter "descending" of Long
+        :returns: multiple set - (1) parameter "result" of type
+           "StagingJobsResult" -> structure: parameter "staging_jobs" of list
+           of type "StagingJob" -> structure: parameter "jamo_id" of String,
+           parameter "filename" of String, parameter "username" of String,
+           parameter "job_id" of String, parameter "status_code" of String,
+           parameter "status_raw" of String, parameter "created" of type
+           "timestamp", parameter "updated" of type "timestamp", parameter
+           "total_matched" of Long, parameter "total_jobs" of Long, (2)
+           parameter "error" of type "Error" -> structure: parameter
+           "message" of String, parameter "type" of String, parameter "code"
+           of String, parameter "info" of unspecified object, (3) parameter
+           "stats" of type "CallStats" (Call performance measurement) ->
+           structure: parameter "request_elapsed_time" of Long
+        """
+        return self._client.call_method(
+            'jgi_gateway_eap.staging_jobs',
             [parameter], self._service_ver, context)
 
     def status(self, context=None):
