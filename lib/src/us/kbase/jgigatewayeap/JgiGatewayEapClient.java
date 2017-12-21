@@ -236,6 +236,24 @@ public class JgiGatewayEapClient {
         return res;
     }
 
+    /**
+     * <p>Original spec-file function name: staging_jobs_summary</p>
+     * <pre>
+     * Fetch the # of transfers in each state
+     * </pre>
+     * @param   parameter   instance of type {@link us.kbase.jgigatewayeap.StagingJobsSummaryInput StagingJobsSummaryInput}
+     * @return   multiple set: (1) parameter "result" of type {@link us.kbase.jgigatewayeap.StagingJobsSummaryResult StagingJobsSummaryResult}, (2) parameter "error" of type {@link us.kbase.jgigatewayeap.Error Error}, (3) parameter "stats" of type {@link us.kbase.jgigatewayeap.CallStats CallStats}
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public Tuple3<StagingJobsSummaryResult, Error, CallStats> stagingJobsSummary(StagingJobsSummaryInput parameter, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        List<Object> args = new ArrayList<Object>();
+        args.add(parameter);
+        TypeReference<Tuple3<StagingJobsSummaryResult, Error, CallStats>> retType = new TypeReference<Tuple3<StagingJobsSummaryResult, Error, CallStats>>() {};
+        Tuple3<StagingJobsSummaryResult, Error, CallStats> res = caller.jsonrpcCall("jgi_gateway_eap.staging_jobs_summary", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        return res;
+    }
+
     public Map<String, Object> status(RpcContext... jsonRpcContext) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
         TypeReference<List<Map<String, Object>>> retType = new TypeReference<List<Map<String, Object>>>() {};

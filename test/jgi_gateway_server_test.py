@@ -147,9 +147,9 @@ class jgi_gatewayTest(unittest.TestCase):
         ]
         for query, msg in tests:
             ret, err, status = self.getImpl().search(self.getContext(), query)
-            if err:
-                print('test search input validation')
-                print(err)
+            # if err:
+            #     print('test search input validation')
+            #     print(err)
             self.assertIsNotNone(ret, 'return is not none: ' + msg)
             self.assertIsNone(err, 'err is none: ' + msg)
             self.assertIsNotNone(status, 'status is not none: ' + msg)
@@ -445,9 +445,6 @@ class jgi_gatewayTest(unittest.TestCase):
             }
         }
         ret, error, status = self.getImpl().staging_jobs(self.getContext(), req2)
-        print('test staging jobs')
-        print(ret)
-        print(error)
         self.assertIsNotNone(ret)
         self.assertIsNone(error)
         self.assertIsInstance(ret, dict)
@@ -512,9 +509,9 @@ class jgi_gatewayTest(unittest.TestCase):
             }
         }
         ret, error, status = self.getImpl().stage(self.getContext(), req1a)
-        if error != None:
-            print('jobs2')
-            print(error)
+        # if error != None:
+        #     print('jobs2')
+        #     print(error)
         self.assertIsNotNone(ret)
         self.assertIsInstance(ret, dict)
         self.assertIn('job_id', ret)
@@ -648,9 +645,9 @@ class jgi_gatewayTest(unittest.TestCase):
         # ]
         for message, expected_status in reqs:
             status, error = self.getImpl().staging_jobs_manager.translate_job_status(message)
-            if error != None:
-                print(message)
-                print(error)
+            # if error != None:
+            #     print(message)
+            #     print(error)
             self.assertIsNotNone(status)
             self.assertIsInstance(status, basestring)
             self.assertEqual(status, expected_status)
@@ -682,3 +679,25 @@ class jgi_gatewayTest(unittest.TestCase):
     #     print(instance.job_checks)
     #     # wait 15 seconds
     #     # count  should be 1
+
+    def test_staging_jobs_summary(self):
+        req = {
+            'username': self.getContext()['user_id']
+        }
+        ret = self.getImpl().staging_jobs_manager.get_jobs_summary_for_user(req)
+        self.assertIsNotNone(ret)
+        self.assertIsInstance(ret, dict)
+
+    def test_staging_jobs_summary_happy(self):
+        params = {
+            'username': self.getContext()['user_id']
+        }
+
+        ret, error, status = self.getImpl().staging_jobs_summary(self.getContext(), params)
+        self.assertIsNotNone(ret)
+        self.assertIsNone(error)
+        self.assertIsInstance(ret, dict)
+        self.assertIn('state', ret)
+        state = ret['state']
+        self.assertIsInstance(state, dict)
+        

@@ -8,6 +8,7 @@ import threading
 import json 
 from bson import json_util
 from requests_futures.sessions import FuturesSession
+import urllib
 
 class StagingJobsManager:
     def __init__(self, config):
@@ -28,7 +29,9 @@ class StagingJobsManager:
         self.mongo_pwd = config['mongo']['password']
 
         self.mongo = pymongo.MongoClient(self.mongo_host, self.mongo_port)
+
         self.db = self.mongo[self.mongo_db]
+        self.db.authenticate(self.mongo_user, urllib.quote_plus(self.mongo_pwd))
 
         self.regexes = {
             'queued': re.compile(r'^In_Queue$'),
@@ -73,7 +76,7 @@ class StagingJobsManager:
 
     def staging_jobs_for_user(self, req):
         'For a give request spec, return the staging jobs for the given user'
-        collection = self.mongo[self.mongo_db].staging_jobs
+        collection = self.db.staging_jobs
 
         # Filter
 
@@ -135,15 +138,55 @@ class StagingJobsManager:
             'total_available': total_available
         }
 
+    def get_jobs_summary_for_user(self, req):
+        'For a give request spec, return the summary of staging jobs in each state for the given user'
+        collection = self.db.staging_jobs
+
+        # Filter
+
+        # Username is always used, and is not part of the filter condition.
+        match_stage = {
+            'username': req['username']
+        }
+
+        group_stage = {
+            '_id': '$status_code',
+            'count': {'$sum': 1}
+        }
+
+        pipeline_expression = [
+            {'$match': match_stage},
+            {'$group': group_stage}
+        ]
+
+        cursor = collection.aggregate(pipeline_expression, cursor={})
+
+        result = {}
+        for doc in cursor:
+            result[doc['_id']] = doc['count']
+
+        states = ['sent', 'submitted', 'queued', 'restoring', 'copying', 'completed', 'error']
+        state_summary = {}
+        for state_name in states:
+            if state_name in result:
+                state = result[state_name]
+            else:
+                state = 0
+            state_summary[state_name] = state
+
+        return {
+            'state': state_summary
+        }
+
     def add_job(self, username, jamo_id, filename):
         'add a job to the jobs database'
-        collection = self.mongo[self.mongo_db].staging_jobs
+        collection = self.db.staging_jobs
         record_id = collection.insert(utils.make_job(username, jamo_id, filename))
         return record_id
 
     def job_submitted(self, record_id, job_id):
         'set the state for this job to "submitted"'
-        collection = self.mongo[self.mongo_db].staging_jobs
+        collection = self.db.staging_jobs
         collection.update(
             {'_id': record_id},
             {'$set': {
@@ -183,7 +226,7 @@ class StagingJobsManager:
         }, None]
 
     def update_job_status(self, job_id, status_code, status_raw):
-        self.mongo[self.mongo_db].staging_jobs.update(
+        self.db.staging_jobs.update(
                 {'job_id': job_id},
                 {'$set': {
                     'updated': calendar.timegm(time.gmtime()), 

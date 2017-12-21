@@ -646,6 +646,120 @@ Fetch all file staging jobs for the current user
     }
 }
  
+
+
+=head2 staging_jobs_summary
+
+  $result, $error, $stats = $obj->staging_jobs_summary($parameter)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$parameter is a jgi_gateway_eap.StagingJobsSummaryInput
+$result is a jgi_gateway_eap.StagingJobsSummaryResult
+$error is a jgi_gateway_eap.Error
+$stats is a jgi_gateway_eap.CallStats
+StagingJobsSummaryInput is a reference to a hash where the following keys are defined:
+	username has a value which is a string
+StagingJobsSummaryResult is a reference to a hash where the following keys are defined:
+	state has a value which is a reference to a hash where the key is a string and the value is a jgi_gateway_eap.StagingJobsSummary
+StagingJobsSummary is a reference to a hash where the following keys are defined:
+	label has a value which is a string
+	count has a value which is an int
+Error is a reference to a hash where the following keys are defined:
+	message has a value which is a string
+	type has a value which is a string
+	code has a value which is a string
+	info has a value which is an UnspecifiedObject, which can hold any non-null object
+CallStats is a reference to a hash where the following keys are defined:
+	request_elapsed_time has a value which is an int
+
+</pre>
+
+=end html
+
+=begin text
+
+$parameter is a jgi_gateway_eap.StagingJobsSummaryInput
+$result is a jgi_gateway_eap.StagingJobsSummaryResult
+$error is a jgi_gateway_eap.Error
+$stats is a jgi_gateway_eap.CallStats
+StagingJobsSummaryInput is a reference to a hash where the following keys are defined:
+	username has a value which is a string
+StagingJobsSummaryResult is a reference to a hash where the following keys are defined:
+	state has a value which is a reference to a hash where the key is a string and the value is a jgi_gateway_eap.StagingJobsSummary
+StagingJobsSummary is a reference to a hash where the following keys are defined:
+	label has a value which is a string
+	count has a value which is an int
+Error is a reference to a hash where the following keys are defined:
+	message has a value which is a string
+	type has a value which is a string
+	code has a value which is a string
+	info has a value which is an UnspecifiedObject, which can hold any non-null object
+CallStats is a reference to a hash where the following keys are defined:
+	request_elapsed_time has a value which is an int
+
+
+=end text
+
+=item Description
+
+Fetch the # of transfers in each state
+
+=back
+
+=cut
+
+ sub staging_jobs_summary
+{
+    my($self, @args) = @_;
+
+# Authentication: required
+
+    if ((my $n = @args) != 1)
+    {
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
+							       "Invalid argument count for function staging_jobs_summary (received $n, expecting 1)");
+    }
+    {
+	my($parameter) = @args;
+
+	my @_bad_arguments;
+        (ref($parameter) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"parameter\" (value was \"$parameter\")");
+        if (@_bad_arguments) {
+	    my $msg = "Invalid arguments passed to staging_jobs_summary:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+								   method_name => 'staging_jobs_summary');
+	}
+    }
+
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "jgi_gateway_eap.staging_jobs_summary",
+	    params => \@args,
+    });
+    if ($result) {
+	if ($result->is_error) {
+	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
+					       code => $result->content->{error}->{code},
+					       method_name => 'staging_jobs_summary',
+					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
+					      );
+	} else {
+	    return wantarray ? @{$result->result} : $result->result->[0];
+	}
+    } else {
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method staging_jobs_summary",
+					    status_line => $self->{client}->status_line,
+					    method_name => 'staging_jobs_summary',
+				       );
+    }
+}
+ 
   
 sub status
 {
@@ -689,16 +803,16 @@ sub version {
             Bio::KBase::Exceptions::JSONRPC->throw(
                 error => $result->error_message,
                 code => $result->content->{code},
-                method_name => 'staging_jobs',
+                method_name => 'staging_jobs_summary',
             );
         } else {
             return wantarray ? @{$result->result} : $result->result->[0];
         }
     } else {
         Bio::KBase::Exceptions::HTTP->throw(
-            error => "Error invoking method staging_jobs",
+            error => "Error invoking method staging_jobs_summary",
             status_line => $self->{client}->status_line,
-            method_name => 'staging_jobs',
+            method_name => 'staging_jobs_summary',
         );
     }
 }
@@ -1508,6 +1622,98 @@ a reference to a hash where the following keys are defined:
 staging_jobs has a value which is a reference to a list where each element is a jgi_gateway_eap.StagingJob
 total_matched has a value which is an int
 total_jobs has a value which is an int
+
+
+=end text
+
+=back
+
+
+
+=head2 StagingJobsSummaryInput
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+username has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+username has a value which is a string
+
+
+=end text
+
+=back
+
+
+
+=head2 StagingJobsSummary
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+label has a value which is a string
+count has a value which is an int
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+label has a value which is a string
+count has a value which is an int
+
+
+=end text
+
+=back
+
+
+
+=head2 StagingJobsSummaryResult
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+state has a value which is a reference to a hash where the key is a string and the value is a jgi_gateway_eap.StagingJobsSummary
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+state has a value which is a reference to a hash where the key is a string and the value is a jgi_gateway_eap.StagingJobsSummary
 
 
 =end text

@@ -213,4 +213,23 @@ module jgi_gateway_eap {
         returns (StagingJobsResult result, Error error, CallStats stats)
         authentication required;
 
+    typedef structure {
+        string username;
+    } StagingJobsSummaryInput;
+
+    typedef structure {
+        string label;
+        int count;
+    } StagingJobsSummary;
+
+    typedef structure {
+        mapping<string, StagingJobsSummary> state;
+    } StagingJobsSummaryResult;
+
+
+    /* Fetch the # of transfers in each state */
+    funcdef staging_jobs_summary(StagingJobsSummaryInput parameter)
+        returns (StagingJobsSummaryResult result, Error error, CallStats stats)
+        authentication required;
+
 };

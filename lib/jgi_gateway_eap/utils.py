@@ -719,6 +719,26 @@ def validate_staging_jobs_parameter(parameter, ctx):
         'sort': search_sort
     }, None]
 
+def validate_staging_jobs_summary_parameter(parameter, ctx):
+    username, error = check_param(parameter, 'username', True, basestring)
+    if error is not None:
+        return None, error
+
+    if username != ctx['user_id']:
+        error = {
+            'message': "the 'username' parameter must match the current authorized user",
+            'type': 'input',
+            'code': 'invalid',
+            'info': {
+                'key': 'username'
+            }
+        }
+        return [None, error]
+
+    return [{
+        'username': username
+    }, None]
+
 def make_job(username, jamo_id, filename):
     return {
         'username': username,

@@ -37,7 +37,7 @@ class jgi_gateway_eap:
     ######################################### noqa
     VERSION = "0.2.0"
     GIT_URL = "ssh://git@github.com/eapearson/jgi_gateway"
-    GIT_COMMIT_HASH = "281a3cd3e53b5ec4eb60efac36c59da35b3880bd"
+    GIT_COMMIT_HASH = "36c365bfd83f2d7839934bc6a2caf1fbf6b312bd"
 
     #BEGIN_CLASS_HEADER
 
@@ -391,6 +391,46 @@ class jgi_gateway_eap:
         #                      'stats is not type dict as required.')
         # # return the results
         # return [result, error, stats]
+
+    def staging_jobs_summary(self, ctx, parameter):
+        """
+        Fetch the # of transfers in each state
+        :param parameter: instance of type "StagingJobsSummaryInput" ->
+           structure: parameter "username" of String
+        :returns: multiple set - (1) parameter "result" of type
+           "StagingJobsSummaryResult" -> structure: parameter "state" of
+           mapping from String to type "StagingJobsSummary" -> structure:
+           parameter "label" of String, parameter "count" of Long, (2)
+           parameter "error" of type "Error" -> structure: parameter
+           "message" of String, parameter "type" of String, parameter "code"
+           of String, parameter "info" of unspecified object, (3) parameter
+           "stats" of type "CallStats" (Call performance measurement) ->
+           structure: parameter "request_elapsed_time" of Long
+        """
+        # ctx is the context object
+        # return variables are: result, error, stats
+        #BEGIN staging_jobs_summary
+        request, error = utils.validate_staging_jobs_summary_parameter(parameter, ctx)
+        if error:
+            return [None, error, None]
+
+        response = self.staging_jobs_manager.get_jobs_summary_for_user(request)
+
+        return [response, None, None]
+        #END staging_jobs_summary
+
+        # At some point might do deeper type checking...
+        # if not isinstance(result, dict):
+        #     raise ValueError('Method staging_jobs_summary return value ' +
+        #                      'result is not type dict as required.')
+        # if not isinstance(error, dict):
+        #     raise ValueError('Method staging_jobs_summary return value ' +
+        #                      'error is not type dict as required.')
+        # if not isinstance(stats, dict):
+        #     raise ValueError('Method staging_jobs_summary return value ' +
+        #                      'stats is not type dict as required.')
+        # # return the results
+        # return [result, error, stats]
     def status(self, ctx):
         #BEGIN_STATUS
 
@@ -404,4 +444,4 @@ class jgi_gateway_eap:
 
         return [result, None, None]
         #END_STATUS
-        return [returnVal]
+        # return [returnVal]

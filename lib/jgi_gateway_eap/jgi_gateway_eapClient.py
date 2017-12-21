@@ -155,6 +155,25 @@ class jgi_gateway_eap(object):
             'jgi_gateway_eap.staging_jobs',
             [parameter], self._service_ver, context)
 
+    def staging_jobs_summary(self, parameter, context=None):
+        """
+        Fetch the # of transfers in each state
+        :param parameter: instance of type "StagingJobsSummaryInput" ->
+           structure: parameter "username" of String
+        :returns: multiple set - (1) parameter "result" of type
+           "StagingJobsSummaryResult" -> structure: parameter "state" of
+           mapping from String to type "StagingJobsSummary" -> structure:
+           parameter "label" of String, parameter "count" of Long, (2)
+           parameter "error" of type "Error" -> structure: parameter
+           "message" of String, parameter "type" of String, parameter "code"
+           of String, parameter "info" of unspecified object, (3) parameter
+           "stats" of type "CallStats" (Call performance measurement) ->
+           structure: parameter "request_elapsed_time" of Long
+        """
+        return self._client.call_method(
+            'jgi_gateway_eap.staging_jobs_summary',
+            [parameter], self._service_ver, context)
+
     def status(self, context=None):
         return self._client.call_method('jgi_gateway_eap.status',
                                         [], self._service_ver, context)
