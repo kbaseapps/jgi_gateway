@@ -384,14 +384,26 @@ def sendRequest(path, data, ctx):
         error = {
             'message': 'jgi search service unavailable due to gateway error',
             'type': 'upstream-service',
-            'code': 'gateway-error'
+            'code': 'gateway-error',
+            'info': {
+                'status': resp.status_code,
+                # TODO: convert tojson
+                'body': resp.text,
+                'query_sent': data
+            }
         }
         return [None, error, stats]
     elif resp.status_code == 503:
         error = {
-            'message': 'jgi search service unavailable',
+            'message': 'jgi search service reports that it is unavailable',
             'type': 'upstream-service',
-            'code': 'service-unavailable'
+            'code': 'service-unavailable',
+            'info': {
+                'status': resp.status_code,
+                # TODO: convert tojson
+                'body': resp.text,
+                'query_sent': data
+            }
         }
         return [None, error, stats]
     else:
@@ -400,7 +412,10 @@ def sendRequest(path, data, ctx):
             'type': 'upstream-service',
             'code': 'unknown-error',
             'info': {
-                'text': resp.text
+                'status': resp.status_code,
+                # TODO: convert tojson
+                'body': resp.text,
+                'query_sent': data
             }
         }
         return [None, error, stats]
@@ -753,14 +768,14 @@ def make_job(username, jamo_id, filename):
 
 def validate_config(config):
      # Import and validate the jgi host
-    if 'jgi-search-base-url' not in config:
-        raise(ValueError('"jgi-search-base-url" configuration property not provided'))
+    if 'jgi-base-url' not in config:
+        raise(ValueError('"jgi-base-url" configuration property not provided'))
     # The host must be secure, and be reasonably valid:
     # https://a.b
-    if (not re.match("^https://.+?\\..+$", config['jgi-search-base-url'])):
-        raise(ValueError('"jgi-host" configuration property not a valid url base'))
+    if (not re.match("^https://.+?\\..+$", config['jgi-base-url'])):
+        raise(ValueError('"jgi-base-url" configuration property not a valid url base'))
 
-    jgi_search_base_url = config['jgi-search-base-url']
+    jgi_search_base_url = config['jgi-base-url']
 
 
     # Import and validate the jgi token
@@ -779,14 +794,14 @@ def validate_config(config):
         raise(ValueError('"jgi-token" configuration property is invalid'))
 
     # Import and validate the connection timeout
-    if 'connection-timeout' not in config:
-        raise(ValueError('"connection-timeout" configuration property not provided'))
+    if 'jgi-connection-timeout' not in config:
+        raise(ValueError('"jgi-connection-timeout" configuration property not provided'))
     try:
-        connection_timeout = int(config['connection-timeout'])
+        connection_timeout = int(config['jgi-connection-timeout'])
     except ValueError as ex:
-        raise(ValueError('"connection-timeout" configuration property is not a float: ' + str(ex)))
-    if not (config['connection-timeout'] > 0):
-        raise(ValueError('"connection-timeout" configuration property must be > 0'))
+        raise(ValueError('"jgi-connection-timeout" configuration property is not a float: ' + str(ex)))
+    if not (config['jgi-connection-timeout'] > 0):
+        raise(ValueError('"jgi-connection-timeout" configuration property must be > 0'))
 
     connection_timeout = float(connection_timeout) /float(1000)
     print('connection timeout %f sec' % (connection_timeout) )
