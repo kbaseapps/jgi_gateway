@@ -561,7 +561,7 @@ class jgi_gatewayTest(unittest.TestCase):
         # TODO: Arrange jobs in various states ... tricky!
 
         req = [
-            ['JOB_50', 'completed'],
+            ['JOB_8', 'completed'],
             ['JOB_XXX', 'notfound']
         ]
         for job_id, expected_status in req:
@@ -595,7 +595,7 @@ class jgi_gatewayTest(unittest.TestCase):
     def test_staging_jobs_status_happy(self):
         # TODO: First stage a file.
 
-        req = ['JOB_50', 'JOB_51', 'JOB_52', 'JOB_53']
+        req = ['JOB_8', 'JOB_9', 'JOB_10', 'JOB_11']
         ret = self.getImpl().staging_jobs_manager.get_jobs_status(req)
         self.assertIsNotNone(ret)
         self.assertIsInstance(ret, list)
@@ -690,14 +690,16 @@ class jgi_gatewayTest(unittest.TestCase):
 
     def test_staging_jobs_summary_happy(self):
         params = {
-            'username': self.getContext()['user_id']
+            'username': self.getContext()['user_id'],
+            'job_monitoring_ids': []
         }
 
         ret, error, status = self.getImpl().staging_jobs_summary(self.getContext(), params)
+
         self.assertIsNotNone(ret)
         self.assertIsNone(error)
         self.assertIsInstance(ret, dict)
-        self.assertIn('state', ret)
-        state = ret['state']
+        self.assertIn('states', ret)
+        state = ret['states']
         self.assertIsInstance(state, dict)
         

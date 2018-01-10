@@ -128,7 +128,7 @@ class StagingJobsManager:
         jobs_json = []
         for job in jobs:
             job_json = json.loads(json_util.dumps(job))
-            job_monitoring_id = job_json['_id']['$oid']
+            job_monitoring_id = str(job_json['_id'])
             job_json['job_monitoring_id'] = job_monitoring_id
             jobs_json.append(job_json)
 
@@ -353,7 +353,7 @@ class StagingJobsManager:
                 # only update the status if it changed. This keeps the update
                 # date meaningful.
                 if awaiting_job['status_code'] != result['code']:
-                    self.update_job_status(str(awaiting_job['job_id']['_id']), result['code'], result['raw'])
+                    self.update_job_status(str(awaiting_job['_id']), result['code'], result['raw'])
             else:
                 print('ERROR getting job stats')
                 print(error)
