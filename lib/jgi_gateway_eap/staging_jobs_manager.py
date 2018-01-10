@@ -7,6 +7,7 @@ import calendar
 import threading
 import json 
 from bson import json_util
+from bson import ObjectId
 from requests_futures.sessions import FuturesSession
 import urllib
 
@@ -126,7 +127,10 @@ class StagingJobsManager:
         jobs = collection.find(spec=find_filter, skip=skip, limit=limit, sort=find_sort)
         jobs_json = []
         for job in jobs:
-            jobs_json.append(json.loads(json_util.dumps(job)))
+            job_json = json.loads(json_util.dumps(job))
+            job_monitoring_id = job_json['_id']['$oid']
+            job_json['job_monitoring_id'] = job_monitoring_id
+            jobs_json.append(job_json)
 
         total_matched = collection.find(spec=find_filter).count()
 
@@ -174,15 +178,62 @@ class StagingJobsManager:
                 state = 0
             state_summary[state_name] = state
 
-        return {
-            'state': state_summary
+        return state_summary
+
+    def get_jobs_summary_for_ids(self, req):
+        'For a give request spec, return the summary of staging jobs in each state for the given user'
+        collection = self.db.staging_jobs
+
+        # Filter
+
+        # Username is always used, and is not part of the filter condition.
+        match_stage = {
+            'username': req['username'],
+            'jamo_id': {'$in': req['job_monitoring_ids']}
         }
+
+        group_stage = {
+            '_id': {'jamo_id': '$jamo_id', 'status_code': '$status_code'},
+            'count': {'$sum': 1}
+        }
+
+        pipeline_expression = [
+            {'$match': match_stage},
+            {'$group': group_stage}
+        ]
+
+        cursor = collection.aggregate(pipeline_expression, cursor={})
+
+        result = {}
+        for doc in cursor:
+            result[doc['_id']] = doc['count']
+
+        # states = ['sent', 'submitted', 'queued', 'restoring', 'copying', 'completed', 'error']
+        ids_summary = {}
+        for job_monitoring_id in req['job_monitoring_ids']:
+            ids_summary[job_monitoring_id] = {}
+
+        for doc in result:
+            job_monitoring_id = doc['_id']['status_code']
+            state_name = doc['_id']['status_code']
+            ids_summary[job_monitoring_id][state_name] = doc['count']
+            
+        return ids_summary      
 
     def add_job(self, username, jamo_id, filename):
         'add a job to the jobs database'
         collection = self.db.staging_jobs
         record_id = collection.insert(utils.make_job(username, jamo_id, filename))
         return record_id
+
+    def remove_job(self, req):
+        'remove a job from the jobs database'
+        collection = self.db.staging_jobs
+
+        result = collection.find_and_modify(query={'username': req['username'], '_id': ObjectId(req['job_monitoring_id'])}, remove=True)
+        json_result = {'job_monitoring_id': json.loads(json_util.dumps(result))}
+        return [json_result, None]
+    
 
     def job_submitted(self, record_id, job_id):
         'set the state for this job to "submitted"'
@@ -225,9 +276,9 @@ class StagingJobsManager:
             'raw': response
         }, None]
 
-    def update_job_status(self, job_id, status_code, status_raw):
+    def update_job_status(self, job_monitoring_id, status_code, status_raw):
         self.db.staging_jobs.update(
-                {'job_id': job_id},
+                {'_id': ObjectId(job_monitoring_id)},
                 {'$set': {
                     'updated': calendar.timegm(time.gmtime()), 
                     'status_code': status_code, 
@@ -302,7 +353,7 @@ class StagingJobsManager:
                 # only update the status if it changed. This keeps the update
                 # date meaningful.
                 if awaiting_job['status_code'] != result['code']:
-                    self.update_job_status(result['job_id'], result['code'], result['raw'])
+                    self.update_job_status(str(awaiting_job['job_id']['_id']), result['code'], result['raw'])
             else:
                 print('ERROR getting job stats')
                 print(error)

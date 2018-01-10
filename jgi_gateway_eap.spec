@@ -8,6 +8,7 @@ module jgi_gateway_eap {
         a bool defined as int
     */
     typedef int bool;
+    typedef string JamoID;
 
     /*
         Call performance measurement
@@ -88,7 +89,7 @@ module jgi_gateway_eap {
         SearchDocument source;
         string index;
         string score;
-        string id;
+        string JamoID;
     } SearchResultItem;
 
     /*
@@ -125,7 +126,7 @@ module jgi_gateway_eap {
     /* STAGE */
 
     typedef structure {
-        string id;
+        JamoID id;
         string filename;
         string username;
     } StageRequest;
@@ -144,6 +145,7 @@ module jgi_gateway_eap {
     
     typedef structure {
         string job_id;
+        string job_monitoring_id;
     } StagingResult;
 
     funcdef stage(StageInput parameter) 
@@ -151,7 +153,7 @@ module jgi_gateway_eap {
             authentication required;
 
    typedef structure {
-       string job_id;
+       string job_monitoring_id;
    } StagingStatusInput;
 
     typedef structure {
@@ -168,7 +170,7 @@ module jgi_gateway_eap {
 
     typedef structure {
         /* from request */
-        string jamo_id;
+        JamoID id;
         string filename;
         string username;
         /* from jgi service */
@@ -176,6 +178,7 @@ module jgi_gateway_eap {
         string status_code;
         string status_raw;        
         /* ours */
+        string job_monitoring_id;
         timestamp created;
         timestamp updated;
     } StagingJob;
@@ -186,8 +189,9 @@ module jgi_gateway_eap {
         timestamp updated_from;
         timestamp updated_to;
         string status;
-        string jamo_id;
+        JamoID id;
         list<string> job_ids;
+        list<string> job_monitoring_ids;
         string filename;
     } StagingJobsFilter;
 
@@ -215,6 +219,7 @@ module jgi_gateway_eap {
 
     typedef structure {
         string username;
+        list<string> job_monitoring_ids;
     } StagingJobsSummaryInput;
 
     typedef structure {
@@ -223,13 +228,31 @@ module jgi_gateway_eap {
     } StagingJobsSummary;
 
     typedef structure {
-        mapping<string, StagingJobsSummary> state;
+        mapping<string, StagingJobsSummary> states;
+        mapping<string, mapping<JamoID, StagingJobsSummary>> ids_states;
     } StagingJobsSummaryResult;
 
 
-    /* Fetch the # of transfers in each state */
+    /* Fetch the # of transfers in each state, and the summary of states for each id passed in 
+       This supports knowing whether there are pending transfers overall, and also for any
+       search results currently being considered (e.g. in a search results window) */
     funcdef staging_jobs_summary(StagingJobsSummaryInput parameter)
         returns (StagingJobsSummaryResult result, Error error, CallStats stats)
+        authentication required;
+
+
+    typedef structure {
+        string username;
+        string job_monitoring_id;
+    } RemoveStagingJobInput;
+
+    typedef structure {
+        string job_monitoring_id;
+    } RemoveStagingJobResult;
+
+
+    funcdef remove_staging_job(RemoveStagingJobInput parameter)
+        returns (RemoveStagingJobResult result, Error error, CallStats stats)
         authentication required;
 
 };

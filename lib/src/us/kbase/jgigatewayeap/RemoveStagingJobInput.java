@@ -12,20 +12,38 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
- * <p>Original spec-file type: StagingStatusInput</p>
+ * <p>Original spec-file type: RemoveStagingJobInput</p>
  * 
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
+    "username",
     "job_monitoring_id"
 })
-public class StagingStatusInput {
+public class RemoveStagingJobInput {
 
+    @JsonProperty("username")
+    private String username;
     @JsonProperty("job_monitoring_id")
     private String jobMonitoringId;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+
+    @JsonProperty("username")
+    public String getUsername() {
+        return username;
+    }
+
+    @JsonProperty("username")
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public RemoveStagingJobInput withUsername(String username) {
+        this.username = username;
+        return this;
+    }
 
     @JsonProperty("job_monitoring_id")
     public String getJobMonitoringId() {
@@ -37,7 +55,7 @@ public class StagingStatusInput {
         this.jobMonitoringId = jobMonitoringId;
     }
 
-    public StagingStatusInput withJobMonitoringId(String jobMonitoringId) {
+    public RemoveStagingJobInput withJobMonitoringId(String jobMonitoringId) {
         this.jobMonitoringId = jobMonitoringId;
         return this;
     }
@@ -54,7 +72,7 @@ public class StagingStatusInput {
 
     @Override
     public String toString() {
-        return ((((("StagingStatusInput"+" [jobMonitoringId=")+ jobMonitoringId)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((("RemoveStagingJobInput"+" [username=")+ username)+", jobMonitoringId=")+ jobMonitoringId)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

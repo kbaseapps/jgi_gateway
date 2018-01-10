@@ -750,8 +750,40 @@ def validate_staging_jobs_summary_parameter(parameter, ctx):
         }
         return [None, error]
 
+    ids, error = check_param(parameter, 'job_monitoring_ids', True, list)
+    if error is not None:
+        return None, error
+    
+    # TODO: check liste items in check_param call...???
+
     return [{
-        'username': username
+        'username': username,
+        'job_monitoring_ids': ids
+    }, None]
+
+def validate_remove_staging_job_parameter(parameter, ctx):
+    job_monitoring_id, error = check_param(parameter, 'job_monitoring_id', True, basestring)
+    if error is not None:
+        return None, EnvironmentError
+
+    username, error = check_param(parameter, 'username', True, basestring)
+    if error is not None:
+        return None, error
+
+    if username != ctx['user_id']:
+        error = {
+            'message': "the 'username' parameter must match the current authorized user",
+            'type': 'input',
+            'code': 'invalid',
+            'info': {
+                'key': 'username'
+            }
+        }
+        return [None, error]
+
+    return [{
+        'username': username,
+        'job_monitoring_id': job_monitoring_id
     }, None]
 
 def make_job(username, jamo_id, filename):

@@ -26,7 +26,7 @@ import us.kbase.common.service.UObject;
     "source",
     "index",
     "score",
-    "id"
+    "JamoID"
 })
 public class SearchResultItem {
 
@@ -36,8 +36,8 @@ public class SearchResultItem {
     private String index;
     @JsonProperty("score")
     private String score;
-    @JsonProperty("id")
-    private String id;
+    @JsonProperty("JamoID")
+    private String JamoID;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     @JsonProperty("source")
@@ -85,18 +85,18 @@ public class SearchResultItem {
         return this;
     }
 
-    @JsonProperty("id")
-    public String getId() {
-        return id;
+    @JsonProperty("JamoID")
+    public String getJamoID() {
+        return JamoID;
     }
 
-    @JsonProperty("id")
-    public void setId(String id) {
-        this.id = id;
+    @JsonProperty("JamoID")
+    public void setJamoID(String JamoID) {
+        this.JamoID = JamoID;
     }
 
-    public SearchResultItem withId(String id) {
-        this.id = id;
+    public SearchResultItem withJamoID(String JamoID) {
+        this.JamoID = JamoID;
         return this;
     }
 
@@ -112,7 +112,7 @@ public class SearchResultItem {
 
     @Override
     public String toString() {
-        return ((((((((((("SearchResultItem"+" [source=")+ source)+", index=")+ index)+", score=")+ score)+", id=")+ id)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((((((("SearchResultItem"+" [source=")+ source)+", index=")+ index)+", score=")+ score)+", JamoID=")+ JamoID)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

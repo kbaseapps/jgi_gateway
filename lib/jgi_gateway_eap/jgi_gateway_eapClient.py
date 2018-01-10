@@ -69,12 +69,12 @@ class jgi_gateway_eap(object):
            data obtained by the search as well as the source of the index. It
            is the entire metadata JAMO record.) -> unspecified object,
            parameter "index" of String, parameter "score" of String,
-           parameter "id" of String, parameter "total" of Long, (2) parameter
-           "error" of type "Error" -> structure: parameter "message" of
-           String, parameter "type" of String, parameter "code" of String,
-           parameter "info" of unspecified object, (3) parameter "stats" of
-           type "CallStats" (Call performance measurement) -> structure:
-           parameter "request_elapsed_time" of Long
+           parameter "JamoID" of String, parameter "total" of Long, (2)
+           parameter "error" of type "Error" -> structure: parameter
+           "message" of String, parameter "type" of String, parameter "code"
+           of String, parameter "info" of unspecified object, (3) parameter
+           "stats" of type "CallStats" (Call performance measurement) ->
+           structure: parameter "request_elapsed_time" of Long
         """
         return self._client.call_method(
             'jgi_gateway_eap.search',
@@ -84,7 +84,7 @@ class jgi_gateway_eap(object):
         """
         :param parameter: instance of type "StageInput" -> structure:
            parameter "file" of type "StageRequest" (STAGE) -> structure:
-           parameter "id" of String, parameter "filename" of String,
+           parameter "id" of type "JamoID", parameter "filename" of String,
            parameter "username" of String
         :returns: multiple set - (1) parameter "result" of type
            "StagingResult" (StagingResult returns a map entry for each id
@@ -94,12 +94,13 @@ class jgi_gateway_eap(object):
            staging request. At time of writing, the value is always "staging"
            since the request to the jgi gateway jgi service and the call to
            stage in the jgi gateway kbase service are in different
-           processes.) -> structure: parameter "job_id" of String, (2)
-           parameter "error" of type "Error" -> structure: parameter
-           "message" of String, parameter "type" of String, parameter "code"
-           of String, parameter "info" of unspecified object, (3) parameter
-           "stats" of type "CallStats" (Call performance measurement) ->
-           structure: parameter "request_elapsed_time" of Long
+           processes.) -> structure: parameter "job_id" of String, parameter
+           "job_monitoring_id" of String, (2) parameter "error" of type
+           "Error" -> structure: parameter "message" of String, parameter
+           "type" of String, parameter "code" of String, parameter "info" of
+           unspecified object, (3) parameter "stats" of type "CallStats"
+           (Call performance measurement) -> structure: parameter
+           "request_elapsed_time" of Long
         """
         return self._client.call_method(
             'jgi_gateway_eap.stage',
@@ -110,7 +111,7 @@ class jgi_gateway_eap(object):
         Fetch the current status of the given staging fetch request as 
         identified by its job id
         :param parameter: instance of type "StagingStatusInput" -> structure:
-           parameter "job_id" of String
+           parameter "job_monitoring_id" of String
         :returns: multiple set - (1) parameter "result" of type
            "StagingStatusResult" -> structure: parameter "message" of String,
            (2) parameter "error" of type "Error" -> structure: parameter
@@ -131,18 +132,20 @@ class jgi_gateway_eap(object):
            parameter "created_from" of type "timestamp", parameter
            "created_to" of type "timestamp", parameter "updated_from" of type
            "timestamp", parameter "updated_to" of type "timestamp", parameter
-           "status" of String, parameter "jamo_id" of String, parameter
-           "job_ids" of list of String, parameter "filename" of String,
-           parameter "range" of type "StagingJobsRange" -> structure:
-           parameter "start" of Long, parameter "limit" of Long, parameter
-           "sort" of list of type "SortSpec" -> structure: parameter "field"
-           of String, parameter "descending" of Long
+           "status" of String, parameter "id" of type "JamoID", parameter
+           "job_ids" of list of String, parameter "job_monitoring_ids" of
+           list of String, parameter "filename" of String, parameter "range"
+           of type "StagingJobsRange" -> structure: parameter "start" of
+           Long, parameter "limit" of Long, parameter "sort" of list of type
+           "SortSpec" -> structure: parameter "field" of String, parameter
+           "descending" of Long
         :returns: multiple set - (1) parameter "result" of type
            "StagingJobsResult" -> structure: parameter "staging_jobs" of list
-           of type "StagingJob" -> structure: parameter "jamo_id" of String,
-           parameter "filename" of String, parameter "username" of String,
-           parameter "job_id" of String, parameter "status_code" of String,
-           parameter "status_raw" of String, parameter "created" of type
+           of type "StagingJob" -> structure: parameter "id" of type
+           "JamoID", parameter "filename" of String, parameter "username" of
+           String, parameter "job_id" of String, parameter "status_code" of
+           String, parameter "status_raw" of String, parameter
+           "job_monitoring_id" of String, parameter "created" of type
            "timestamp", parameter "updated" of type "timestamp", parameter
            "total_matched" of Long, parameter "total_jobs" of Long, (2)
            parameter "error" of type "Error" -> structure: parameter
@@ -157,21 +160,45 @@ class jgi_gateway_eap(object):
 
     def staging_jobs_summary(self, parameter, context=None):
         """
-        Fetch the # of transfers in each state
+        Fetch the # of transfers in each state, and the summary of states for each id passed in 
+        This supports knowing whether there are pending transfers overall, and also for any
+        search results currently being considered (e.g. in a search results window)
         :param parameter: instance of type "StagingJobsSummaryInput" ->
-           structure: parameter "username" of String
+           structure: parameter "username" of String, parameter
+           "job_monitoring_ids" of list of String
         :returns: multiple set - (1) parameter "result" of type
-           "StagingJobsSummaryResult" -> structure: parameter "state" of
+           "StagingJobsSummaryResult" -> structure: parameter "states" of
            mapping from String to type "StagingJobsSummary" -> structure:
-           parameter "label" of String, parameter "count" of Long, (2)
-           parameter "error" of type "Error" -> structure: parameter
-           "message" of String, parameter "type" of String, parameter "code"
-           of String, parameter "info" of unspecified object, (3) parameter
-           "stats" of type "CallStats" (Call performance measurement) ->
-           structure: parameter "request_elapsed_time" of Long
+           parameter "label" of String, parameter "count" of Long, parameter
+           "ids_states" of mapping from String to mapping from type "JamoID"
+           to type "StagingJobsSummary" -> structure: parameter "label" of
+           String, parameter "count" of Long, (2) parameter "error" of type
+           "Error" -> structure: parameter "message" of String, parameter
+           "type" of String, parameter "code" of String, parameter "info" of
+           unspecified object, (3) parameter "stats" of type "CallStats"
+           (Call performance measurement) -> structure: parameter
+           "request_elapsed_time" of Long
         """
         return self._client.call_method(
             'jgi_gateway_eap.staging_jobs_summary',
+            [parameter], self._service_ver, context)
+
+    def remove_staging_job(self, parameter, context=None):
+        """
+        :param parameter: instance of type "RemoveStagingJobInput" ->
+           structure: parameter "username" of String, parameter
+           "job_monitoring_id" of String
+        :returns: multiple set - (1) parameter "result" of type
+           "RemoveStagingJobResult" -> structure: parameter
+           "job_monitoring_id" of String, (2) parameter "error" of type
+           "Error" -> structure: parameter "message" of String, parameter
+           "type" of String, parameter "code" of String, parameter "info" of
+           unspecified object, (3) parameter "stats" of type "CallStats"
+           (Call performance measurement) -> structure: parameter
+           "request_elapsed_time" of Long
+        """
+        return self._client.call_method(
+            'jgi_gateway_eap.remove_staging_job',
             [parameter], self._service_ver, context)
 
     def status(self, context=None):

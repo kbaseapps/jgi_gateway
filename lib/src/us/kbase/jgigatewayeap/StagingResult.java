@@ -25,12 +25,15 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
-    "job_id"
+    "job_id",
+    "job_monitoring_id"
 })
 public class StagingResult {
 
     @JsonProperty("job_id")
     private String jobId;
+    @JsonProperty("job_monitoring_id")
+    private String jobMonitoringId;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     @JsonProperty("job_id")
@@ -48,6 +51,21 @@ public class StagingResult {
         return this;
     }
 
+    @JsonProperty("job_monitoring_id")
+    public String getJobMonitoringId() {
+        return jobMonitoringId;
+    }
+
+    @JsonProperty("job_monitoring_id")
+    public void setJobMonitoringId(String jobMonitoringId) {
+        this.jobMonitoringId = jobMonitoringId;
+    }
+
+    public StagingResult withJobMonitoringId(String jobMonitoringId) {
+        this.jobMonitoringId = jobMonitoringId;
+        return this;
+    }
+
     @JsonAnyGetter
     public Map<String, Object> getAdditionalProperties() {
         return this.additionalProperties;
@@ -60,7 +78,7 @@ public class StagingResult {
 
     @Override
     public String toString() {
-        return ((((("StagingResult"+" [jobId=")+ jobId)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((("StagingResult"+" [jobId=")+ jobId)+", jobMonitoringId=")+ jobMonitoringId)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

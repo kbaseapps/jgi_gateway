@@ -145,7 +145,7 @@ SearchResultItem is a reference to a hash where the following keys are defined:
 	source has a value which is a jgi_gateway_eap.SearchDocument
 	index has a value which is a string
 	score has a value which is a string
-	id has a value which is a string
+	JamoID has a value which is a string
 SearchDocument is an UnspecifiedObject, which can hold any non-null object
 Error is a reference to a hash where the following keys are defined:
 	message has a value which is a string
@@ -187,7 +187,7 @@ SearchResultItem is a reference to a hash where the following keys are defined:
 	source has a value which is a jgi_gateway_eap.SearchDocument
 	index has a value which is a string
 	score has a value which is a string
-	id has a value which is a string
+	JamoID has a value which is a string
 SearchDocument is an UnspecifiedObject, which can hold any non-null object
 Error is a reference to a hash where the following keys are defined:
 	message has a value which is a string
@@ -275,11 +275,13 @@ $stats is a jgi_gateway_eap.CallStats
 StageInput is a reference to a hash where the following keys are defined:
 	file has a value which is a jgi_gateway_eap.StageRequest
 StageRequest is a reference to a hash where the following keys are defined:
-	id has a value which is a string
+	id has a value which is a jgi_gateway_eap.JamoID
 	filename has a value which is a string
 	username has a value which is a string
+JamoID is a string
 StagingResult is a reference to a hash where the following keys are defined:
 	job_id has a value which is a string
+	job_monitoring_id has a value which is a string
 Error is a reference to a hash where the following keys are defined:
 	message has a value which is a string
 	type has a value which is a string
@@ -301,11 +303,13 @@ $stats is a jgi_gateway_eap.CallStats
 StageInput is a reference to a hash where the following keys are defined:
 	file has a value which is a jgi_gateway_eap.StageRequest
 StageRequest is a reference to a hash where the following keys are defined:
-	id has a value which is a string
+	id has a value which is a jgi_gateway_eap.JamoID
 	filename has a value which is a string
 	username has a value which is a string
+JamoID is a string
 StagingResult is a reference to a hash where the following keys are defined:
 	job_id has a value which is a string
+	job_monitoring_id has a value which is a string
 Error is a reference to a hash where the following keys are defined:
 	message has a value which is a string
 	type has a value which is a string
@@ -389,7 +393,7 @@ $result is a jgi_gateway_eap.StagingStatusResult
 $error is a jgi_gateway_eap.Error
 $stats is a jgi_gateway_eap.CallStats
 StagingStatusInput is a reference to a hash where the following keys are defined:
-	job_id has a value which is a string
+	job_monitoring_id has a value which is a string
 StagingStatusResult is a reference to a hash where the following keys are defined:
 	message has a value which is a string
 Error is a reference to a hash where the following keys are defined:
@@ -411,7 +415,7 @@ $result is a jgi_gateway_eap.StagingStatusResult
 $error is a jgi_gateway_eap.Error
 $stats is a jgi_gateway_eap.CallStats
 StagingStatusInput is a reference to a hash where the following keys are defined:
-	job_id has a value which is a string
+	job_monitoring_id has a value which is a string
 StagingStatusResult is a reference to a hash where the following keys are defined:
 	message has a value which is a string
 Error is a reference to a hash where the following keys are defined:
@@ -507,10 +511,12 @@ StagingJobsFilter is a reference to a hash where the following keys are defined:
 	updated_from has a value which is a jgi_gateway_eap.timestamp
 	updated_to has a value which is a jgi_gateway_eap.timestamp
 	status has a value which is a string
-	jamo_id has a value which is a string
+	id has a value which is a jgi_gateway_eap.JamoID
 	job_ids has a value which is a reference to a list where each element is a string
+	job_monitoring_ids has a value which is a reference to a list where each element is a string
 	filename has a value which is a string
 timestamp is an int
+JamoID is a string
 StagingJobsRange is a reference to a hash where the following keys are defined:
 	start has a value which is an int
 	limit has a value which is an int
@@ -522,12 +528,13 @@ StagingJobsResult is a reference to a hash where the following keys are defined:
 	total_matched has a value which is an int
 	total_jobs has a value which is an int
 StagingJob is a reference to a hash where the following keys are defined:
-	jamo_id has a value which is a string
+	id has a value which is a jgi_gateway_eap.JamoID
 	filename has a value which is a string
 	username has a value which is a string
 	job_id has a value which is a string
 	status_code has a value which is a string
 	status_raw has a value which is a string
+	job_monitoring_id has a value which is a string
 	created has a value which is a jgi_gateway_eap.timestamp
 	updated has a value which is a jgi_gateway_eap.timestamp
 Error is a reference to a hash where the following keys are defined:
@@ -558,10 +565,12 @@ StagingJobsFilter is a reference to a hash where the following keys are defined:
 	updated_from has a value which is a jgi_gateway_eap.timestamp
 	updated_to has a value which is a jgi_gateway_eap.timestamp
 	status has a value which is a string
-	jamo_id has a value which is a string
+	id has a value which is a jgi_gateway_eap.JamoID
 	job_ids has a value which is a reference to a list where each element is a string
+	job_monitoring_ids has a value which is a reference to a list where each element is a string
 	filename has a value which is a string
 timestamp is an int
+JamoID is a string
 StagingJobsRange is a reference to a hash where the following keys are defined:
 	start has a value which is an int
 	limit has a value which is an int
@@ -573,12 +582,13 @@ StagingJobsResult is a reference to a hash where the following keys are defined:
 	total_matched has a value which is an int
 	total_jobs has a value which is an int
 StagingJob is a reference to a hash where the following keys are defined:
-	jamo_id has a value which is a string
+	id has a value which is a jgi_gateway_eap.JamoID
 	filename has a value which is a string
 	username has a value which is a string
 	job_id has a value which is a string
 	status_code has a value which is a string
 	status_raw has a value which is a string
+	job_monitoring_id has a value which is a string
 	created has a value which is a jgi_gateway_eap.timestamp
 	updated has a value which is a jgi_gateway_eap.timestamp
 Error is a reference to a hash where the following keys are defined:
@@ -665,11 +675,14 @@ $error is a jgi_gateway_eap.Error
 $stats is a jgi_gateway_eap.CallStats
 StagingJobsSummaryInput is a reference to a hash where the following keys are defined:
 	username has a value which is a string
+	job_monitoring_ids has a value which is a reference to a list where each element is a string
 StagingJobsSummaryResult is a reference to a hash where the following keys are defined:
-	state has a value which is a reference to a hash where the key is a string and the value is a jgi_gateway_eap.StagingJobsSummary
+	states has a value which is a reference to a hash where the key is a string and the value is a jgi_gateway_eap.StagingJobsSummary
+	ids_states has a value which is a reference to a hash where the key is a string and the value is a reference to a hash where the key is a jgi_gateway_eap.JamoID and the value is a jgi_gateway_eap.StagingJobsSummary
 StagingJobsSummary is a reference to a hash where the following keys are defined:
 	label has a value which is a string
 	count has a value which is an int
+JamoID is a string
 Error is a reference to a hash where the following keys are defined:
 	message has a value which is a string
 	type has a value which is a string
@@ -690,11 +703,14 @@ $error is a jgi_gateway_eap.Error
 $stats is a jgi_gateway_eap.CallStats
 StagingJobsSummaryInput is a reference to a hash where the following keys are defined:
 	username has a value which is a string
+	job_monitoring_ids has a value which is a reference to a list where each element is a string
 StagingJobsSummaryResult is a reference to a hash where the following keys are defined:
-	state has a value which is a reference to a hash where the key is a string and the value is a jgi_gateway_eap.StagingJobsSummary
+	states has a value which is a reference to a hash where the key is a string and the value is a jgi_gateway_eap.StagingJobsSummary
+	ids_states has a value which is a reference to a hash where the key is a string and the value is a reference to a hash where the key is a jgi_gateway_eap.JamoID and the value is a jgi_gateway_eap.StagingJobsSummary
 StagingJobsSummary is a reference to a hash where the following keys are defined:
 	label has a value which is a string
 	count has a value which is an int
+JamoID is a string
 Error is a reference to a hash where the following keys are defined:
 	message has a value which is a string
 	type has a value which is a string
@@ -708,7 +724,9 @@ CallStats is a reference to a hash where the following keys are defined:
 
 =item Description
 
-Fetch the # of transfers in each state
+Fetch the # of transfers in each state, and the summary of states for each id passed in 
+This supports knowing whether there are pending transfers overall, and also for any
+search results currently being considered (e.g. in a search results window)
 
 =back
 
@@ -760,6 +778,116 @@ Fetch the # of transfers in each state
     }
 }
  
+
+
+=head2 remove_staging_job
+
+  $result, $error, $stats = $obj->remove_staging_job($parameter)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$parameter is a jgi_gateway_eap.RemoveStagingJobInput
+$result is a jgi_gateway_eap.RemoveStagingJobResult
+$error is a jgi_gateway_eap.Error
+$stats is a jgi_gateway_eap.CallStats
+RemoveStagingJobInput is a reference to a hash where the following keys are defined:
+	username has a value which is a string
+	job_monitoring_id has a value which is a string
+RemoveStagingJobResult is a reference to a hash where the following keys are defined:
+	job_monitoring_id has a value which is a string
+Error is a reference to a hash where the following keys are defined:
+	message has a value which is a string
+	type has a value which is a string
+	code has a value which is a string
+	info has a value which is an UnspecifiedObject, which can hold any non-null object
+CallStats is a reference to a hash where the following keys are defined:
+	request_elapsed_time has a value which is an int
+
+</pre>
+
+=end html
+
+=begin text
+
+$parameter is a jgi_gateway_eap.RemoveStagingJobInput
+$result is a jgi_gateway_eap.RemoveStagingJobResult
+$error is a jgi_gateway_eap.Error
+$stats is a jgi_gateway_eap.CallStats
+RemoveStagingJobInput is a reference to a hash where the following keys are defined:
+	username has a value which is a string
+	job_monitoring_id has a value which is a string
+RemoveStagingJobResult is a reference to a hash where the following keys are defined:
+	job_monitoring_id has a value which is a string
+Error is a reference to a hash where the following keys are defined:
+	message has a value which is a string
+	type has a value which is a string
+	code has a value which is a string
+	info has a value which is an UnspecifiedObject, which can hold any non-null object
+CallStats is a reference to a hash where the following keys are defined:
+	request_elapsed_time has a value which is an int
+
+
+=end text
+
+=item Description
+
+
+
+=back
+
+=cut
+
+ sub remove_staging_job
+{
+    my($self, @args) = @_;
+
+# Authentication: required
+
+    if ((my $n = @args) != 1)
+    {
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
+							       "Invalid argument count for function remove_staging_job (received $n, expecting 1)");
+    }
+    {
+	my($parameter) = @args;
+
+	my @_bad_arguments;
+        (ref($parameter) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"parameter\" (value was \"$parameter\")");
+        if (@_bad_arguments) {
+	    my $msg = "Invalid arguments passed to remove_staging_job:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+								   method_name => 'remove_staging_job');
+	}
+    }
+
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "jgi_gateway_eap.remove_staging_job",
+	    params => \@args,
+    });
+    if ($result) {
+	if ($result->is_error) {
+	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
+					       code => $result->content->{error}->{code},
+					       method_name => 'remove_staging_job',
+					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
+					      );
+	} else {
+	    return wantarray ? @{$result->result} : $result->result->[0];
+	}
+    } else {
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method remove_staging_job",
+					    status_line => $self->{client}->status_line,
+					    method_name => 'remove_staging_job',
+				       );
+    }
+}
+ 
   
 sub status
 {
@@ -803,16 +931,16 @@ sub version {
             Bio::KBase::Exceptions::JSONRPC->throw(
                 error => $result->error_message,
                 code => $result->content->{code},
-                method_name => 'staging_jobs_summary',
+                method_name => 'remove_staging_job',
             );
         } else {
             return wantarray ? @{$result->result} : $result->result->[0];
         }
     } else {
         Bio::KBase::Exceptions::HTTP->throw(
-            error => "Error invoking method staging_jobs_summary",
+            error => "Error invoking method remove_staging_job",
             status_line => $self->{client}->status_line,
-            method_name => 'staging_jobs_summary',
+            method_name => 'remove_staging_job',
         );
     }
 }
@@ -873,6 +1001,32 @@ an int
 =begin text
 
 an int
+
+=end text
+
+=back
+
+
+
+=head2 JamoID
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a string
+</pre>
+
+=end html
+
+=begin text
+
+a string
 
 =end text
 
@@ -1151,7 +1305,7 @@ a reference to a hash where the following keys are defined:
 source has a value which is a jgi_gateway_eap.SearchDocument
 index has a value which is a string
 score has a value which is a string
-id has a value which is a string
+JamoID has a value which is a string
 
 </pre>
 
@@ -1163,7 +1317,7 @@ a reference to a hash where the following keys are defined:
 source has a value which is a jgi_gateway_eap.SearchDocument
 index has a value which is a string
 score has a value which is a string
-id has a value which is a string
+JamoID has a value which is a string
 
 
 =end text
@@ -1265,7 +1419,7 @@ STAGE
 
 <pre>
 a reference to a hash where the following keys are defined:
-id has a value which is a string
+id has a value which is a jgi_gateway_eap.JamoID
 filename has a value which is a string
 username has a value which is a string
 
@@ -1276,7 +1430,7 @@ username has a value which is a string
 =begin text
 
 a reference to a hash where the following keys are defined:
-id has a value which is a string
+id has a value which is a jgi_gateway_eap.JamoID
 filename has a value which is a string
 username has a value which is a string
 
@@ -1339,6 +1493,7 @@ and the call to stage in the jgi gateway kbase service are in different processe
 <pre>
 a reference to a hash where the following keys are defined:
 job_id has a value which is a string
+job_monitoring_id has a value which is a string
 
 </pre>
 
@@ -1348,6 +1503,7 @@ job_id has a value which is a string
 
 a reference to a hash where the following keys are defined:
 job_id has a value which is a string
+job_monitoring_id has a value which is a string
 
 
 =end text
@@ -1368,7 +1524,7 @@ job_id has a value which is a string
 
 <pre>
 a reference to a hash where the following keys are defined:
-job_id has a value which is a string
+job_monitoring_id has a value which is a string
 
 </pre>
 
@@ -1377,7 +1533,7 @@ job_id has a value which is a string
 =begin text
 
 a reference to a hash where the following keys are defined:
-job_id has a value which is a string
+job_monitoring_id has a value which is a string
 
 
 =end text
@@ -1454,12 +1610,13 @@ an int
 
 <pre>
 a reference to a hash where the following keys are defined:
-jamo_id has a value which is a string
+id has a value which is a jgi_gateway_eap.JamoID
 filename has a value which is a string
 username has a value which is a string
 job_id has a value which is a string
 status_code has a value which is a string
 status_raw has a value which is a string
+job_monitoring_id has a value which is a string
 created has a value which is a jgi_gateway_eap.timestamp
 updated has a value which is a jgi_gateway_eap.timestamp
 
@@ -1470,12 +1627,13 @@ updated has a value which is a jgi_gateway_eap.timestamp
 =begin text
 
 a reference to a hash where the following keys are defined:
-jamo_id has a value which is a string
+id has a value which is a jgi_gateway_eap.JamoID
 filename has a value which is a string
 username has a value which is a string
 job_id has a value which is a string
 status_code has a value which is a string
 status_raw has a value which is a string
+job_monitoring_id has a value which is a string
 created has a value which is a jgi_gateway_eap.timestamp
 updated has a value which is a jgi_gateway_eap.timestamp
 
@@ -1503,8 +1661,9 @@ created_to has a value which is a jgi_gateway_eap.timestamp
 updated_from has a value which is a jgi_gateway_eap.timestamp
 updated_to has a value which is a jgi_gateway_eap.timestamp
 status has a value which is a string
-jamo_id has a value which is a string
+id has a value which is a jgi_gateway_eap.JamoID
 job_ids has a value which is a reference to a list where each element is a string
+job_monitoring_ids has a value which is a reference to a list where each element is a string
 filename has a value which is a string
 
 </pre>
@@ -1519,8 +1678,9 @@ created_to has a value which is a jgi_gateway_eap.timestamp
 updated_from has a value which is a jgi_gateway_eap.timestamp
 updated_to has a value which is a jgi_gateway_eap.timestamp
 status has a value which is a string
-jamo_id has a value which is a string
+id has a value which is a jgi_gateway_eap.JamoID
 job_ids has a value which is a reference to a list where each element is a string
+job_monitoring_ids has a value which is a reference to a list where each element is a string
 filename has a value which is a string
 
 
@@ -1643,6 +1803,7 @@ total_jobs has a value which is an int
 <pre>
 a reference to a hash where the following keys are defined:
 username has a value which is a string
+job_monitoring_ids has a value which is a reference to a list where each element is a string
 
 </pre>
 
@@ -1652,6 +1813,7 @@ username has a value which is a string
 
 a reference to a hash where the following keys are defined:
 username has a value which is a string
+job_monitoring_ids has a value which is a reference to a list where each element is a string
 
 
 =end text
@@ -1704,7 +1866,8 @@ count has a value which is an int
 
 <pre>
 a reference to a hash where the following keys are defined:
-state has a value which is a reference to a hash where the key is a string and the value is a jgi_gateway_eap.StagingJobsSummary
+states has a value which is a reference to a hash where the key is a string and the value is a jgi_gateway_eap.StagingJobsSummary
+ids_states has a value which is a reference to a hash where the key is a string and the value is a reference to a hash where the key is a jgi_gateway_eap.JamoID and the value is a jgi_gateway_eap.StagingJobsSummary
 
 </pre>
 
@@ -1713,7 +1876,70 @@ state has a value which is a reference to a hash where the key is a string and t
 =begin text
 
 a reference to a hash where the following keys are defined:
-state has a value which is a reference to a hash where the key is a string and the value is a jgi_gateway_eap.StagingJobsSummary
+states has a value which is a reference to a hash where the key is a string and the value is a jgi_gateway_eap.StagingJobsSummary
+ids_states has a value which is a reference to a hash where the key is a string and the value is a reference to a hash where the key is a jgi_gateway_eap.JamoID and the value is a jgi_gateway_eap.StagingJobsSummary
+
+
+=end text
+
+=back
+
+
+
+=head2 RemoveStagingJobInput
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+username has a value which is a string
+job_monitoring_id has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+username has a value which is a string
+job_monitoring_id has a value which is a string
+
+
+=end text
+
+=back
+
+
+
+=head2 RemoveStagingJobResult
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+job_monitoring_id has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+job_monitoring_id has a value which is a string
 
 
 =end text

@@ -25,8 +25,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "updated_from",
     "updated_to",
     "status",
-    "jamo_id",
+    "id",
     "job_ids",
+    "job_monitoring_ids",
     "filename"
 })
 public class StagingJobsFilter {
@@ -41,10 +42,12 @@ public class StagingJobsFilter {
     private Long updatedTo;
     @JsonProperty("status")
     private java.lang.String status;
-    @JsonProperty("jamo_id")
-    private java.lang.String jamoId;
+    @JsonProperty("id")
+    private java.lang.String id;
     @JsonProperty("job_ids")
     private List<String> jobIds;
+    @JsonProperty("job_monitoring_ids")
+    private List<String> jobMonitoringIds;
     @JsonProperty("filename")
     private java.lang.String filename;
     private Map<java.lang.String, Object> additionalProperties = new HashMap<java.lang.String, Object>();
@@ -124,18 +127,18 @@ public class StagingJobsFilter {
         return this;
     }
 
-    @JsonProperty("jamo_id")
-    public java.lang.String getJamoId() {
-        return jamoId;
+    @JsonProperty("id")
+    public java.lang.String getId() {
+        return id;
     }
 
-    @JsonProperty("jamo_id")
-    public void setJamoId(java.lang.String jamoId) {
-        this.jamoId = jamoId;
+    @JsonProperty("id")
+    public void setId(java.lang.String id) {
+        this.id = id;
     }
 
-    public StagingJobsFilter withJamoId(java.lang.String jamoId) {
-        this.jamoId = jamoId;
+    public StagingJobsFilter withId(java.lang.String id) {
+        this.id = id;
         return this;
     }
 
@@ -151,6 +154,21 @@ public class StagingJobsFilter {
 
     public StagingJobsFilter withJobIds(List<String> jobIds) {
         this.jobIds = jobIds;
+        return this;
+    }
+
+    @JsonProperty("job_monitoring_ids")
+    public List<String> getJobMonitoringIds() {
+        return jobMonitoringIds;
+    }
+
+    @JsonProperty("job_monitoring_ids")
+    public void setJobMonitoringIds(List<String> jobMonitoringIds) {
+        this.jobMonitoringIds = jobMonitoringIds;
+    }
+
+    public StagingJobsFilter withJobMonitoringIds(List<String> jobMonitoringIds) {
+        this.jobMonitoringIds = jobMonitoringIds;
         return this;
     }
 
@@ -181,7 +199,7 @@ public class StagingJobsFilter {
 
     @Override
     public java.lang.String toString() {
-        return ((((((((((((((((((("StagingJobsFilter"+" [createdFrom=")+ createdFrom)+", createdTo=")+ createdTo)+", updatedFrom=")+ updatedFrom)+", updatedTo=")+ updatedTo)+", status=")+ status)+", jamoId=")+ jamoId)+", jobIds=")+ jobIds)+", filename=")+ filename)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((((((((((((((((("StagingJobsFilter"+" [createdFrom=")+ createdFrom)+", createdTo=")+ createdTo)+", updatedFrom=")+ updatedFrom)+", updatedTo=")+ updatedTo)+", status=")+ status)+", id=")+ id)+", jobIds=")+ jobIds)+", jobMonitoringIds=")+ jobMonitoringIds)+", filename=")+ filename)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

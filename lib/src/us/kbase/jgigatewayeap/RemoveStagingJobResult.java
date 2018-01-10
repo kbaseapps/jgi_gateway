@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
- * <p>Original spec-file type: StagingStatusInput</p>
+ * <p>Original spec-file type: RemoveStagingJobResult</p>
  * 
  * 
  */
@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({
     "job_monitoring_id"
 })
-public class StagingStatusInput {
+public class RemoveStagingJobResult {
 
     @JsonProperty("job_monitoring_id")
     private String jobMonitoringId;
@@ -37,7 +37,7 @@ public class StagingStatusInput {
         this.jobMonitoringId = jobMonitoringId;
     }
 
-    public StagingStatusInput withJobMonitoringId(String jobMonitoringId) {
+    public RemoveStagingJobResult withJobMonitoringId(String jobMonitoringId) {
         this.jobMonitoringId = jobMonitoringId;
         return this;
     }
@@ -54,7 +54,7 @@ public class StagingStatusInput {
 
     @Override
     public String toString() {
-        return ((((("StagingStatusInput"+" [jobMonitoringId=")+ jobMonitoringId)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((("RemoveStagingJobResult"+" [jobMonitoringId=")+ jobMonitoringId)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

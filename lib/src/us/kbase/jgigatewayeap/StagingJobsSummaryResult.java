@@ -19,26 +19,44 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
-    "state"
+    "states",
+    "ids_states"
 })
 public class StagingJobsSummaryResult {
 
-    @JsonProperty("state")
-    private Map<String, StagingJobsSummary> state;
+    @JsonProperty("states")
+    private Map<String, us.kbase.jgigatewayeap.StagingJobsSummary> states;
+    @JsonProperty("ids_states")
+    private Map<String, Map<String, us.kbase.jgigatewayeap.StagingJobsSummary>> idsStates;
     private Map<java.lang.String, Object> additionalProperties = new HashMap<java.lang.String, Object>();
 
-    @JsonProperty("state")
-    public Map<String, StagingJobsSummary> getState() {
-        return state;
+    @JsonProperty("states")
+    public Map<String, us.kbase.jgigatewayeap.StagingJobsSummary> getStates() {
+        return states;
     }
 
-    @JsonProperty("state")
-    public void setState(Map<String, StagingJobsSummary> state) {
-        this.state = state;
+    @JsonProperty("states")
+    public void setStates(Map<String, us.kbase.jgigatewayeap.StagingJobsSummary> states) {
+        this.states = states;
     }
 
-    public StagingJobsSummaryResult withState(Map<String, StagingJobsSummary> state) {
-        this.state = state;
+    public StagingJobsSummaryResult withStates(Map<String, us.kbase.jgigatewayeap.StagingJobsSummary> states) {
+        this.states = states;
+        return this;
+    }
+
+    @JsonProperty("ids_states")
+    public Map<String, Map<String, us.kbase.jgigatewayeap.StagingJobsSummary>> getIdsStates() {
+        return idsStates;
+    }
+
+    @JsonProperty("ids_states")
+    public void setIdsStates(Map<String, Map<String, us.kbase.jgigatewayeap.StagingJobsSummary>> idsStates) {
+        this.idsStates = idsStates;
+    }
+
+    public StagingJobsSummaryResult withIdsStates(Map<String, Map<String, us.kbase.jgigatewayeap.StagingJobsSummary>> idsStates) {
+        this.idsStates = idsStates;
         return this;
     }
 
@@ -54,7 +72,7 @@ public class StagingJobsSummaryResult {
 
     @Override
     public java.lang.String toString() {
-        return ((((("StagingJobsSummaryResult"+" [state=")+ state)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((("StagingJobsSummaryResult"+" [states=")+ states)+", idsStates=")+ idsStates)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

@@ -19,19 +19,20 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
-    "jamo_id",
+    "id",
     "filename",
     "username",
     "job_id",
     "status_code",
     "status_raw",
+    "job_monitoring_id",
     "created",
     "updated"
 })
 public class StagingJob {
 
-    @JsonProperty("jamo_id")
-    private String jamoId;
+    @JsonProperty("id")
+    private String id;
     @JsonProperty("filename")
     private String filename;
     @JsonProperty("username")
@@ -42,24 +43,26 @@ public class StagingJob {
     private String statusCode;
     @JsonProperty("status_raw")
     private String statusRaw;
+    @JsonProperty("job_monitoring_id")
+    private String jobMonitoringId;
     @JsonProperty("created")
     private Long created;
     @JsonProperty("updated")
     private Long updated;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    @JsonProperty("jamo_id")
-    public String getJamoId() {
-        return jamoId;
+    @JsonProperty("id")
+    public String getId() {
+        return id;
     }
 
-    @JsonProperty("jamo_id")
-    public void setJamoId(String jamoId) {
-        this.jamoId = jamoId;
+    @JsonProperty("id")
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public StagingJob withJamoId(String jamoId) {
-        this.jamoId = jamoId;
+    public StagingJob withId(String id) {
+        this.id = id;
         return this;
     }
 
@@ -138,6 +141,21 @@ public class StagingJob {
         return this;
     }
 
+    @JsonProperty("job_monitoring_id")
+    public String getJobMonitoringId() {
+        return jobMonitoringId;
+    }
+
+    @JsonProperty("job_monitoring_id")
+    public void setJobMonitoringId(String jobMonitoringId) {
+        this.jobMonitoringId = jobMonitoringId;
+    }
+
+    public StagingJob withJobMonitoringId(String jobMonitoringId) {
+        this.jobMonitoringId = jobMonitoringId;
+        return this;
+    }
+
     @JsonProperty("created")
     public Long getCreated() {
         return created;
@@ -180,7 +198,7 @@ public class StagingJob {
 
     @Override
     public String toString() {
-        return ((((((((((((((((((("StagingJob"+" [jamoId=")+ jamoId)+", filename=")+ filename)+", username=")+ username)+", jobId=")+ jobId)+", statusCode=")+ statusCode)+", statusRaw=")+ statusRaw)+", created=")+ created)+", updated=")+ updated)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((((((((((((((((("StagingJob"+" [id=")+ id)+", filename=")+ filename)+", username=")+ username)+", jobId=")+ jobId)+", statusCode=")+ statusCode)+", statusRaw=")+ statusRaw)+", jobMonitoringId=")+ jobMonitoringId)+", created=")+ created)+", updated=")+ updated)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }
