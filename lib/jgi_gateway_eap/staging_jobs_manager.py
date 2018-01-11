@@ -128,7 +128,8 @@ class StagingJobsManager:
         jobs_json = []
         for job in jobs:
             job_json = json.loads(json_util.dumps(job))
-            job_monitoring_id = str(job_json['_id'])
+            # we use the document object id as the primary id for the job record
+            job_monitoring_id = job_json['_id']['$oid']
             job_json['job_monitoring_id'] = job_monitoring_id
             jobs_json.append(job_json)
 
