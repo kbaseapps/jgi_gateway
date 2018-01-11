@@ -224,7 +224,7 @@ class StagingJobsManager:
     def add_job(self, username, jamo_id, filename):
         'add a job to the jobs database'
         collection = self.db.staging_jobs
-        record_id = collection.insert(utils.make_job(username, jamo_id, filename))
+        record_id = str(collection.insert(utils.make_job(username, jamo_id, filename)))
         return record_id
 
     def remove_job(self, req):
@@ -240,7 +240,7 @@ class StagingJobsManager:
         'set the state for this job to "submitted"'
         collection = self.db.staging_jobs
         collection.update(
-            {'_id': record_id},
+            {'_id': ObjectId(record_id)},
             {'$set': {
                 'updated': calendar.timegm(time.gmtime()), 
                 'job_id': job_id, 
