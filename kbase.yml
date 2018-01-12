@@ -11,7 +11,7 @@ module-version:
     0.2.0
 
 owners:
-    [scanon,eapearson]
+    [scanon, eapearson]
 
 service-config:
     dynamic-service: true
