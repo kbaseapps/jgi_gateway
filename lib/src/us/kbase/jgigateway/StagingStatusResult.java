@@ -12,54 +12,33 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
- * <p>Original spec-file type: StageInput</p>
+ * <p>Original spec-file type: StagingStatusResult</p>
  * 
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
-    "file"
+    "message"
 })
-public class StageInput {
+public class StagingStatusResult {
 
-    /**
-     * <p>Original spec-file type: StageRequest</p>
-     * <pre>
-     * STAGE
-     * </pre>
-     * 
-     */
-    @JsonProperty("file")
-    private StageRequest file;
+    @JsonProperty("message")
+    private String message;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    /**
-     * <p>Original spec-file type: StageRequest</p>
-     * <pre>
-     * STAGE
-     * </pre>
-     * 
-     */
-    @JsonProperty("file")
-    public StageRequest getFile() {
-        return file;
+    @JsonProperty("message")
+    public String getMessage() {
+        return message;
     }
 
-    /**
-     * <p>Original spec-file type: StageRequest</p>
-     * <pre>
-     * STAGE
-     * </pre>
-     * 
-     */
-    @JsonProperty("file")
-    public void setFile(StageRequest file) {
-        this.file = file;
+    @JsonProperty("message")
+    public void setMessage(String message) {
+        this.message = message;
     }
 
-    public StageInput withFile(StageRequest file) {
-        this.file = file;
+    public StagingStatusResult withMessage(String message) {
+        this.message = message;
         return this;
     }
 
@@ -75,7 +54,7 @@ public class StageInput {
 
     @Override
     public String toString() {
-        return ((((("StageInput"+" [file=")+ file)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((("StagingStatusResult"+" [message=")+ message)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

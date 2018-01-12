@@ -1,3 +1,8 @@
-This directory should contain any documentation you want to include about the
-workings of your module that do not fit in either the root README.md or 
-commentary in your code. 
+# JGI Gateway
+
+A dynamic service interface to the JGI JAMO Search Service
+
+- API
+- (JGI API)[jgi-search-api.md]
+
+

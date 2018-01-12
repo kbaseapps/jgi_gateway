@@ -12,54 +12,35 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
- * <p>Original spec-file type: StageInput</p>
- * 
+ * <p>Original spec-file type: CallStats</p>
+ * <pre>
+ * Call performance measurement
+ * </pre>
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
-    "file"
+    "request_elapsed_time"
 })
-public class StageInput {
+public class CallStats {
 
-    /**
-     * <p>Original spec-file type: StageRequest</p>
-     * <pre>
-     * STAGE
-     * </pre>
-     * 
-     */
-    @JsonProperty("file")
-    private StageRequest file;
+    @JsonProperty("request_elapsed_time")
+    private Long requestElapsedTime;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    /**
-     * <p>Original spec-file type: StageRequest</p>
-     * <pre>
-     * STAGE
-     * </pre>
-     * 
-     */
-    @JsonProperty("file")
-    public StageRequest getFile() {
-        return file;
+    @JsonProperty("request_elapsed_time")
+    public Long getRequestElapsedTime() {
+        return requestElapsedTime;
     }
 
-    /**
-     * <p>Original spec-file type: StageRequest</p>
-     * <pre>
-     * STAGE
-     * </pre>
-     * 
-     */
-    @JsonProperty("file")
-    public void setFile(StageRequest file) {
-        this.file = file;
+    @JsonProperty("request_elapsed_time")
+    public void setRequestElapsedTime(Long requestElapsedTime) {
+        this.requestElapsedTime = requestElapsedTime;
     }
 
-    public StageInput withFile(StageRequest file) {
-        this.file = file;
+    public CallStats withRequestElapsedTime(Long requestElapsedTime) {
+        this.requestElapsedTime = requestElapsedTime;
         return this;
     }
 
@@ -75,7 +56,7 @@ public class StageInput {
 
     @Override
     public String toString() {
-        return ((((("StageInput"+" [file=")+ file)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((("CallStats"+" [requestElapsedTime=")+ requestElapsedTime)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

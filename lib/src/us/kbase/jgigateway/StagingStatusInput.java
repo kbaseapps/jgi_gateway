@@ -12,54 +12,33 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
- * <p>Original spec-file type: StageInput</p>
+ * <p>Original spec-file type: StagingStatusInput</p>
  * 
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
-    "file"
+    "job_monitoring_id"
 })
-public class StageInput {
+public class StagingStatusInput {
 
-    /**
-     * <p>Original spec-file type: StageRequest</p>
-     * <pre>
-     * STAGE
-     * </pre>
-     * 
-     */
-    @JsonProperty("file")
-    private StageRequest file;
+    @JsonProperty("job_monitoring_id")
+    private String jobMonitoringId;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    /**
-     * <p>Original spec-file type: StageRequest</p>
-     * <pre>
-     * STAGE
-     * </pre>
-     * 
-     */
-    @JsonProperty("file")
-    public StageRequest getFile() {
-        return file;
+    @JsonProperty("job_monitoring_id")
+    public String getJobMonitoringId() {
+        return jobMonitoringId;
     }
 
-    /**
-     * <p>Original spec-file type: StageRequest</p>
-     * <pre>
-     * STAGE
-     * </pre>
-     * 
-     */
-    @JsonProperty("file")
-    public void setFile(StageRequest file) {
-        this.file = file;
+    @JsonProperty("job_monitoring_id")
+    public void setJobMonitoringId(String jobMonitoringId) {
+        this.jobMonitoringId = jobMonitoringId;
     }
 
-    public StageInput withFile(StageRequest file) {
-        this.file = file;
+    public StagingStatusInput withJobMonitoringId(String jobMonitoringId) {
+        this.jobMonitoringId = jobMonitoringId;
         return this;
     }
 
@@ -75,7 +54,7 @@ public class StageInput {
 
     @Override
     public String toString() {
-        return ((((("StageInput"+" [file=")+ file)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((("StagingStatusInput"+" [jobMonitoringId=")+ jobMonitoringId)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

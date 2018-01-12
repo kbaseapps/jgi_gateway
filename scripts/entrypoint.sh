@@ -4,6 +4,8 @@
 
 python ./scripts/prepare_deploy_cfg.py ./deploy.cfg ./work/config.properties
 
+# service mongod start
+
 if [ -f ./work/token ] ; then
   export KB_AUTH_TOKEN=$(<./work/token)
 fi

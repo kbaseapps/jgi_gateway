@@ -20,7 +20,7 @@ from jgi_gateway.authclient import KBaseAuth as _KBaseAuth
 
 DEPLOY = 'KB_DEPLOYMENT_CONFIG'
 SERVICE = 'KB_SERVICE_NAME'
-AUTH = 'auth-server-url'
+AUTH = 'auth-service-url'
 
 # Note that the error fields do not match the 2.0 JSONRPC spec
 
@@ -333,14 +333,30 @@ class Application(object):
         self.serverlog.set_log_level(6)
         self.rpc_service = JSONRPCServiceCustom()
         self.method_authentication = dict()
-        self.rpc_service.add(impl_jgi_gateway.search_jgi,
-                             name='jgi_gateway.search_jgi',
+        self.rpc_service.add(impl_jgi_gateway.search,
+                             name='jgi_gateway.search',
                              types=[dict])
-        self.method_authentication['jgi_gateway.search_jgi'] = 'required'  # noqa
-        self.rpc_service.add(impl_jgi_gateway.stage_objects,
-                             name='jgi_gateway.stage_objects',
+        self.method_authentication['jgi_gateway.search'] = 'required'  # noqa
+        self.rpc_service.add(impl_jgi_gateway.stage,
+                             name='jgi_gateway.stage',
                              types=[dict])
-        self.method_authentication['jgi_gateway.stage_objects'] = 'required'  # noqa
+        self.method_authentication['jgi_gateway.stage'] = 'required'  # noqa
+        self.rpc_service.add(impl_jgi_gateway.stage_status,
+                             name='jgi_gateway.stage_status',
+                             types=[dict])
+        self.method_authentication['jgi_gateway.stage_status'] = 'required'  # noqa
+        self.rpc_service.add(impl_jgi_gateway.staging_jobs,
+                             name='jgi_gateway.staging_jobs',
+                             types=[dict])
+        self.method_authentication['jgi_gateway.staging_jobs'] = 'required'  # noqa
+        self.rpc_service.add(impl_jgi_gateway.staging_jobs_summary,
+                             name='jgi_gateway.staging_jobs_summary',
+                             types=[dict])
+        self.method_authentication['jgi_gateway.staging_jobs_summary'] = 'required'  # noqa
+        self.rpc_service.add(impl_jgi_gateway.remove_staging_job,
+                             name='jgi_gateway.remove_staging_job',
+                             types=[dict])
+        self.method_authentication['jgi_gateway.remove_staging_job'] = 'required'  # noqa
         self.rpc_service.add(impl_jgi_gateway.status,
                              name='jgi_gateway.status',
                              types=[dict])

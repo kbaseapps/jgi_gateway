@@ -1,1 +1,4 @@
 test_local
+.vscode
+*.bak-*
+.DS_Store

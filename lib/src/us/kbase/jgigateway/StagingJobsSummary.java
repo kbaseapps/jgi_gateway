@@ -12,54 +12,51 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
- * <p>Original spec-file type: StageInput</p>
+ * <p>Original spec-file type: StagingJobsSummary</p>
  * 
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
-    "file"
+    "label",
+    "count"
 })
-public class StageInput {
+public class StagingJobsSummary {
 
-    /**
-     * <p>Original spec-file type: StageRequest</p>
-     * <pre>
-     * STAGE
-     * </pre>
-     * 
-     */
-    @JsonProperty("file")
-    private StageRequest file;
+    @JsonProperty("label")
+    private String label;
+    @JsonProperty("count")
+    private Long count;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    /**
-     * <p>Original spec-file type: StageRequest</p>
-     * <pre>
-     * STAGE
-     * </pre>
-     * 
-     */
-    @JsonProperty("file")
-    public StageRequest getFile() {
-        return file;
+    @JsonProperty("label")
+    public String getLabel() {
+        return label;
     }
 
-    /**
-     * <p>Original spec-file type: StageRequest</p>
-     * <pre>
-     * STAGE
-     * </pre>
-     * 
-     */
-    @JsonProperty("file")
-    public void setFile(StageRequest file) {
-        this.file = file;
+    @JsonProperty("label")
+    public void setLabel(String label) {
+        this.label = label;
     }
 
-    public StageInput withFile(StageRequest file) {
-        this.file = file;
+    public StagingJobsSummary withLabel(String label) {
+        this.label = label;
+        return this;
+    }
+
+    @JsonProperty("count")
+    public Long getCount() {
+        return count;
+    }
+
+    @JsonProperty("count")
+    public void setCount(Long count) {
+        this.count = count;
+    }
+
+    public StagingJobsSummary withCount(Long count) {
+        this.count = count;
         return this;
     }
 
@@ -75,7 +72,7 @@ public class StageInput {
 
     @Override
     public String toString() {
-        return ((((("StageInput"+" [file=")+ file)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((("StagingJobsSummary"+" [label=")+ label)+", count=")+ count)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }
