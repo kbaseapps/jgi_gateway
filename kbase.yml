@@ -1,5 +1,5 @@
 module-name:
-    jgi_gateway_eap
+    jgi_gateway
 
 module-description:
     Gateway service to JGI search and staging service

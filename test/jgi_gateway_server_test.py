@@ -16,9 +16,9 @@ except:
 from pprint import pprint  # noqa: F401
 
 from biokbase.workspace.client import Workspace as workspaceService
-from jgi_gateway_eap.jgi_gateway_eapImpl import jgi_gateway_eap
-from jgi_gateway_eap.jgi_gateway_eapServer import MethodContext
-from jgi_gateway_eap.jgi_gateway_eapServerContext import ServerContext
+from jgi_gateway.jgi_gatewayImpl import jgi_gateway
+from jgi_gateway.jgi_gatewayServer import MethodContext
+from jgi_gateway.jgi_gatewayServerContext import ServerContext
 
 
 class jgi_gatewayTest(unittest.TestCase):
@@ -39,7 +39,7 @@ class jgi_gatewayTest(unittest.TestCase):
         cls.ctx.update({'token': token,
                         'user_id': user_id,
                         'provenance': [
-                            {'service': 'jgi_gateway_eap',
+                            {'service': 'jgi_gateway',
                              'method': 'please_never_use_it_in_production',
                              'method_params': []
                              }],
@@ -48,12 +48,12 @@ class jgi_gatewayTest(unittest.TestCase):
         cls.cfg = {}
         config = ConfigParser()
         config.read(config_file)
-        for nameval in config.items('jgi_gateway_eap'):
+        for nameval in config.items('jgi_gateway'):
             cls.cfg[nameval[0]] = nameval[1]
         cls.wsURL = cls.cfg['workspace-url']
         cls.wsClient = workspaceService(cls.wsURL)
         # context = ServerContext()
-        cls.serviceImpl = jgi_gateway_eap(cls.cfg)
+        cls.serviceImpl = jgi_gateway(cls.cfg)
         cls.scratch = cls.cfg['scratch']
         cls.callback_url = os.environ['SDK_CALLBACK_URL']
 
@@ -70,7 +70,7 @@ class jgi_gatewayTest(unittest.TestCase):
         if hasattr(self.__class__, 'wsName'):
             return self.__class__.wsName
         suffix = int(time.time() * 1000)
-        wsName = 'test_jgi_gateway_eap_' + str(suffix)
+        wsName = 'test_jgi_gateway_' + str(suffix)
         ret = self.getWsClient().create_workspace({'workspace': wsName})  # noqa
         self.__class__.wsName = wsName
         return wsName
