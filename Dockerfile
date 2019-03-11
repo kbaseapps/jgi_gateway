@@ -1,4 +1,4 @@
-FROM kbase/kbase:sdkbase.latest
+FROM kbase/sdkbase2:latest
 MAINTAINER KBase Developer
 # -----------------------------------------
 # In this section, you can install any system dependencies required
@@ -6,22 +6,16 @@ MAINTAINER KBase Developer
 # install line here, a git checkout to download code, or run any other
 # installation scripts.
 
-# RUN apt-get update
-
-# Here we install a python coverage tool and an
-# https library that is out of date in the base image.
-
-RUN pip install --upgrade pip; pip install coverage
-
-# update security libraries in the base image
-RUN pip install cffi --upgrade \
-    && pip install --upgrade pip \
-    && pip install pyopenssl --upgrade \
-    && pip install ndg-httpsclient --upgrade \
-    && pip install pyasn1 --upgrade \
+RUN pip install pymongo \
     && pip install requests --upgrade \
     && pip install requests-futures --upgrade \
     && pip install 'requests[security]' --upgrade
+
+# install mongodb
+RUN sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10 \
+    && echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | tee /etc/apt/sources.list.d/mongodb.list  \
+    && sudo apt-get update \
+    && sudo apt-get install -y mongodb
 
 # -----------------------------------------
 

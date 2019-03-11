@@ -19,6 +19,7 @@ from biokbase.workspace.client import Workspace as workspaceService
 from jgi_gateway.jgi_gatewayImpl import jgi_gateway
 from jgi_gateway.jgi_gatewayServer import MethodContext
 from jgi_gateway.jgi_gatewayServerContext import ServerContext
+from jgi_gateway.authclient import KBaseAuth as _KBaseAuth
 
 
 class jgi_gatewayTest(unittest.TestCase):
@@ -28,11 +29,16 @@ class jgi_gatewayTest(unittest.TestCase):
         token = environ.get('KB_AUTH_TOKEN', None)
         if not isinstance(token, str):
             raise(ValueError('invalid or missing token'))
-
-        header = {'Authorization': token}
-        endpoint = 'https://ci.kbase.us/services/auth/api/V2/token'
-        result = requests.get(endpoint, headers=header).json()
-        user_id = result['user']
+        config_file = environ.get('KB_DEPLOYMENT_CONFIG', None)
+        cls.cfg = {}
+        config = ConfigParser()
+        config.read(config_file)
+        for nameval in config.items('jgi_gateway'):
+            cls.cfg[nameval[0]] = nameval[1]
+        # Getting username from Auth profile for token
+        authServiceUrl = cls.cfg['auth-service-url']
+        auth_client = _KBaseAuth(authServiceUrl)
+        user_id = auth_client.get_user(token)
         # WARNING: don't call any logging methods on the context object,
         # it'll result in a NoneType error
         cls.ctx = MethodContext(None)
@@ -44,18 +50,18 @@ class jgi_gatewayTest(unittest.TestCase):
                              'method_params': []
                              }],
                         'authenticated': 1})
-        config_file = environ.get('KB_DEPLOYMENT_CONFIG', None)
-        cls.cfg = {}
-        config = ConfigParser()
-        config.read(config_file)
-        for nameval in config.items('jgi_gateway'):
-            cls.cfg[nameval[0]] = nameval[1]
+
         cls.wsURL = cls.cfg['workspace-url']
         cls.wsClient = workspaceService(cls.wsURL)
         # context = ServerContext()
         cls.serviceImpl = jgi_gateway(cls.cfg)
         cls.scratch = cls.cfg['scratch']
         cls.callback_url = os.environ['SDK_CALLBACK_URL']
+        print('starting to build local mongoDB')
+        os.system("sudo service mongodb start")
+        os.system("mongod --version")
+        os.system("cat /var/log/mongodb/mongodb.log "
+                  "| grep 'waiting for connections on port 27017'")
 
     @classmethod
     def tearDownClass(cls):
@@ -295,7 +301,7 @@ class jgi_gatewayTest(unittest.TestCase):
         #         'id': '5786eec57ded5e34bd91fa63',
         #         'filename': 'file3'
         #     }]}
-        username = self.getContext()['user_id']
+        username = self.ctx['user_id']
         req = {
             'file': {
                 'id': '5786eec57ded5e34bd91fa63',
@@ -424,7 +430,7 @@ class jgi_gatewayTest(unittest.TestCase):
         req1 = {'file': {
                 'id': '51d4fa27067c014cd6ed1a90', 
                 'filename': 'file1',
-                'username': 'eapearson'
+                'username': self.ctx['user_id']
             }}
         ret, error, status = self.getImpl().stage(self.getContext(), req1)
         self.assertIsNotNone(ret)
@@ -435,7 +441,7 @@ class jgi_gatewayTest(unittest.TestCase):
 
         # Now fetch the staging job
         req2 = {
-            'username': 'eapearson',
+            'username': self.ctx['user_id'],
             'filter': {
                 'job_ids': [job_id]
             },
@@ -458,6 +464,7 @@ class jgi_gatewayTest(unittest.TestCase):
         filename = job['filename']
         self.assertEqual(filename, 'file1')
 
+    @unittest.skip("Only eric can run this test ATM")
     def test_staging_jobs2(self):
         # TODO: set up various staging jobs...
         reqs = [
@@ -491,7 +498,7 @@ class jgi_gatewayTest(unittest.TestCase):
 
         for req in reqs:
             ret, error, status = self.getImpl().staging_jobs(self.getContext(), req['params'])
-            self.assertIsNotNone(ret)
+            self.assertIsNotNone(ret, error)
             self.assertIsNone(error)
             self.assertIsInstance(ret, dict)
             self.assertIn('jobs', ret)
@@ -499,20 +506,16 @@ class jgi_gatewayTest(unittest.TestCase):
             self.assertIsInstance(jobs, list)
             self.assertEqual(len(jobs), req['expected'])
 
-
-    def test_staging_jobs2(self):
+    def test_staging_jobs3(self):
         # First stage a file.
         req1a = {'file': {
                 'id': '51d4fa27067c014cd6ed1a90', 
                 'filename': 'file1a',
-                'username': 'eapearson'
+                'username': self.ctx['user_id']
             }
         }
         ret, error, status = self.getImpl().stage(self.getContext(), req1a)
-        # if error != None:
-        #     print('jobs2')
-        #     print(error)
-        self.assertIsNotNone(ret)
+        self.assertIsNotNone(ret, error)
         self.assertIsInstance(ret, dict)
         self.assertIn('job_id', ret)
         job_id_1a= ret['job_id']
@@ -521,11 +524,11 @@ class jgi_gatewayTest(unittest.TestCase):
         req1b = {'file': {
                 'id': '51d4fa27067c014cd6ed1a90', 
                 'filename': 'file1b',
-                'username': 'eapearson'
+                'username': self.ctx['user_id']
             }
         }
         ret, error, status = self.getImpl().stage(self.getContext(), req1b)
-        self.assertIsNotNone(ret)
+        self.assertIsNotNone(ret, error)
         self.assertIsInstance(ret, dict)
         self.assertIn('job_id', ret)
         job_id_1b = ret['job_id']
@@ -533,7 +536,7 @@ class jgi_gatewayTest(unittest.TestCase):
 
         # Now fetch the staging job
         req2 = {
-            'username': 'eapearson',
+            'username': self.ctx['user_id'],
             'filter': {
                 'job_ids': [job_id_1a, job_id_1b]
             },
@@ -543,7 +546,7 @@ class jgi_gatewayTest(unittest.TestCase):
             }
         }
         ret, error, status = self.getImpl().staging_jobs(self.getContext(), req2)
-        self.assertIsNotNone(ret)
+        self.assertIsNotNone(ret, error)
         self.assertIsNone(error)
         self.assertIsInstance(ret, dict)
         self.assertIn('jobs', ret)

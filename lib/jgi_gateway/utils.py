@@ -816,7 +816,7 @@ def validate_config(config):
 
     token = config['jgi-token'].split(':')
     if (len(token) != 2):
-        raise(ValueError('"jgi-token" configuration property is invalid'))
+        raise(ValueError('"jgi-token": %s configuration property is invalid' % token))
 
     (user, password) = token
 
