@@ -1,9 +1,8 @@
-import time
 import threading
-import sys
 from os import environ
-from ConfigParser import ConfigParser
+
 import uwsgi
+from configparser import ConfigParser
 
 if __name__ == '__main__' and __package__ is None:
     from os import sys, path
@@ -18,11 +17,14 @@ DEPLOY = 'KB_DEPLOYMENT_CONFIG'
 SERVICE = 'KB_SERVICE_NAME'
 AUTH = 'auth-service-url'
 
+
 def get_config_file():
     return environ.get(DEPLOY, None)
 
+
 def get_service_name():
     return environ.get(SERVICE, None) 
+
 
 def get_config():
     if not get_config_file():
@@ -34,7 +36,9 @@ def get_config():
         retconfig[nameval[0]] = nameval[1]
     return retconfig
 
+
 app_config = utils.validate_config(get_config())
+
 
 class Looper:
     def __init__(self, config):
@@ -56,7 +60,6 @@ class Looper:
         else:
             self.in_loop = False
 
-        
 
 def mule_loop():
     looper = Looper(app_config)
@@ -71,6 +74,7 @@ def mule_loop():
 # this_thread = threading.Thread(target=mule_loop)
 # this_thread.daemon = True
 # this_thread.start()
+
 
 if __name__ == '__main__':
     # threading.Thread(target=mule_loop, deamon=True).start()

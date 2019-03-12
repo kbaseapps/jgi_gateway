@@ -5,6 +5,7 @@ try:
 except ImportError:
     uwsgi_available = False
 
+
 class ServerContext(object):
     'Provides functions only the server can'
     def __init__(self):

@@ -1,4 +1,4 @@
-FROM kbase/sdkbase2:latest
+FROM kbase/sdkbase2:python
 MAINTAINER KBase Developer
 # -----------------------------------------
 # In this section, you can install any system dependencies required
@@ -8,8 +8,7 @@ MAINTAINER KBase Developer
 
 RUN pip install pymongo \
     && pip install requests --upgrade \
-    && pip install requests-futures --upgrade \
-    && pip install 'requests[security]' --upgrade
+    && pip install requests-futures --upgrade
 
 # install mongodb
 RUN sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10 \

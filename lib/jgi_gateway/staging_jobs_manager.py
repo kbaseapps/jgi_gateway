@@ -1,15 +1,16 @@
-import pymongo
-import time
-from . import utils
-import sched
-import re
 import calendar
-import threading
-import json 
-from bson import json_util
+import json
+import re
+import time
+import urllib.request, urllib.parse, urllib.error
+
+import pymongo
 from bson import ObjectId
+from bson import json_util
 from requests_futures.sessions import FuturesSession
-import urllib
+
+from . import utils
+
 
 class StagingJobsManager:
     def __init__(self, config):
@@ -33,7 +34,7 @@ class StagingJobsManager:
 
         self.db = self.mongo[self.mongo_db]
         if self.mongo_user and self.mongo_pwd:
-            self.db.authenticate(self.mongo_user, urllib.quote_plus(self.mongo_pwd))
+            self.db.authenticate(self.mongo_user, urllib.parse.quote_plus(self.mongo_pwd))
 
         self.regexes = {
             'queued': re.compile(r'^In_Queue$'),
@@ -312,7 +313,7 @@ class StagingJobsManager:
         # This implies that this entire method blocks, which is ok
         # since we are running the monitor in its own thread 
 
-        job_status_requests = map(lambda job_id: [job_id, utils.sendFRequest(session, 'status', {'id': job_id}, ctx)], job_ids)
+        job_status_requests = [[job_id, utils.sendFRequest(session, 'status', {'id': job_id}, ctx)] for job_id in job_ids]
 
         result = []
         for job_id, request in job_status_requests:

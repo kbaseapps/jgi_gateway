@@ -1,10 +1,11 @@
-import math
-import json
-import time
 import calendar
+import json
+import math
 import re
+import time
+
 import requests
-from requests_futures.sessions import FuturesSession
+
 
 def validateCallConfig(impl):
     if impl.user is None:
@@ -39,7 +40,6 @@ def validateCallConfig(impl):
         }
     return None
 
-# def validateConfig(impl):
 
 def check_param(params, name, required, param_type):
 
@@ -127,7 +127,7 @@ def validateSearchParameter(parameter, ctx):
             }
             return [None, error]
         
-        field, error = check_param(sort_spec, 'field', True, basestring)
+        field, error = check_param(sort_spec, 'field', True, str)
         if error is not None:
             return [None, error]
 
@@ -186,7 +186,6 @@ def validateSearchParameter(parameter, ctx):
             }
             return [None, error]
         param['fields'] = parameter['fields']
-
 
     if 'limit' in parameter and parameter['limit'] is not None:
         if not isinstance(parameter['limit'], int):
@@ -434,6 +433,7 @@ def sendFRequest(session, path, data, ctx):
                                 timeout=timeout,
                                 headers=header)
 
+
 def processFRequest(request):
     try:
         resp = request.result()
@@ -557,7 +557,7 @@ def validateFetchParameter(parameter, ctx):
         }
         return [None, error]
 
-    if not isinstance(requested_file['id'], basestring):
+    if not isinstance(requested_file['id'], str):
         error = {
             'message': "an 'id' parameter item must be a string",
             'type': 'input',
@@ -579,7 +579,7 @@ def validateFetchParameter(parameter, ctx):
         }
         return [None, error]     
 
-    if not isinstance(requested_file['filename'], basestring):
+    if not isinstance(requested_file['filename'], str):
         error = {
             'message': "a 'filename' parameter item must be a string",
             'type': 'input',
@@ -601,7 +601,7 @@ def validateFetchParameter(parameter, ctx):
         }
         return [None, error]     
 
-    if not isinstance(requested_file['username'], basestring):
+    if not isinstance(requested_file['username'], str):
         error = {
             'message': "a 'username' parameter item must be a string",
             'type': 'input',
@@ -656,7 +656,7 @@ def validateStageStatusParameter(parameter, ctx):
         }
         return [None, error]
 
-    if not isinstance(parameter['job_id'], basestring):
+    if not isinstance(parameter['job_id'], str):
         error = {
             'message': "the 'job_id' parameter must be a string",
             'type': 'input',
@@ -687,7 +687,7 @@ def validateStageStatusParameter(parameter, ctx):
     # } StagingJobsInput;
 
 def validate_staging_jobs_parameter(parameter, ctx):
-    'validates the parameters for the staging_jobs method and return a normalized object'
+    """validates the parameters for the staging_jobs method and return a normalized object"""
     if not isinstance(parameter, dict):
         error = {
             'message': "the parameter must be a dict",
@@ -699,7 +699,7 @@ def validate_staging_jobs_parameter(parameter, ctx):
         }
         return [None, error]
 
-    username, error = check_param(parameter, 'username', True, basestring)
+    username, error = check_param(parameter, 'username', True, str)
     if error is not None:
         return None, error
 
@@ -734,8 +734,9 @@ def validate_staging_jobs_parameter(parameter, ctx):
         'sort': search_sort
     }, None]
 
+
 def validate_staging_jobs_summary_parameter(parameter, ctx):
-    username, error = check_param(parameter, 'username', True, basestring)
+    username, error = check_param(parameter, 'username', True, str)
     if error is not None:
         return None, error
 
@@ -761,12 +762,13 @@ def validate_staging_jobs_summary_parameter(parameter, ctx):
         'job_monitoring_ids': ids
     }, None]
 
+
 def validate_remove_staging_job_parameter(parameter, ctx):
-    job_monitoring_id, error = check_param(parameter, 'job_monitoring_id', True, basestring)
+    job_monitoring_id, error = check_param(parameter, 'job_monitoring_id', True, str)
     if error is not None:
         return None, EnvironmentError
 
-    username, error = check_param(parameter, 'username', True, basestring)
+    username, error = check_param(parameter, 'username', True, str)
     if error is not None:
         return None, error
 
@@ -786,6 +788,7 @@ def validate_remove_staging_job_parameter(parameter, ctx):
         'job_monitoring_id': job_monitoring_id
     }, None]
 
+
 def make_job(username, jamo_id, filename):
     return {
         'username': username,
@@ -798,65 +801,66 @@ def make_job(username, jamo_id, filename):
         'status_raw': 'sent'
     }
 
+
 def validate_config(config):
      # Import and validate the jgi host
     if 'jgi-base-url' not in config:
-        raise(ValueError('"jgi-base-url" configuration property not provided'))
+        raise ValueError
     # The host must be secure, and be reasonably valid:
     # https://a.b
     if (not re.match("^https://.+?\\..+$", config['jgi-base-url'])):
-        raise(ValueError('"jgi-base-url" configuration property not a valid url base'))
+        raise ValueError
 
     jgi_search_base_url = config['jgi-base-url']
 
 
     # Import and validate the jgi token
     if 'jgi-token' not in config:
-        raise(ValueError('"jgi-token" configuration property not provided'))
+        raise ValueError
 
     token = config['jgi-token'].split(':')
-    if (len(token) != 2):
-        raise(ValueError('"jgi-token": %s configuration property is invalid' % token))
+    if len(token) != 2:
+        raise ValueError
 
     (user, password) = token
 
     # Given a string which can split, the worst we can have is an empty
     # part, since we are ensured to get at least a 0-length string
-    if ((len(user) == 0) or (len(password) == 0)):
-        raise(ValueError('"jgi-token" configuration property is invalid'))
+    if (len(user) == 0) or (len(password) == 0):
+        raise ValueError
 
     # Import and validate the connection timeout
     if 'jgi-connection-timeout' not in config:
-        raise(ValueError('"jgi-connection-timeout" configuration property not provided'))
+        raise ValueError
     try:
         connection_timeout = int(config['jgi-connection-timeout'])
     except ValueError as ex:
-        raise(ValueError('"jgi-connection-timeout" configuration property is not a float: ' + str(ex)))
-    if not (config['jgi-connection-timeout'] > 0):
-        raise(ValueError('"jgi-connection-timeout" configuration property must be > 0'))
+        raise ValueError
+    if not connection_timeout > 0:
+        raise ValueError
 
     connection_timeout = float(connection_timeout) /float(1000)
-    print('connection timeout %f sec' % (connection_timeout) )
+    print(f'connection timeout {connection_timeout:f} sec')
 
     # Import and validate the mongo db settings
     if 'mongo-host' not in config:
-        raise(ValueError('"mongo-host" configuration property not provided')) 
+        raise ValueError 
     mongo_host = config['mongo-host']
 
     if 'mongo-port' not in config:
-        raise(ValueError('"mongo-port" configuration property not provided')) 
+        raise ValueError 
     mongo_port = int(config['mongo-port'])
 
     if 'mongo-db' not in config:
-        raise(ValueError('"mongo-db" configuration property not provided'))
+        raise ValueError
     mongo_db = config['mongo-db']
 
     if 'mongo-user' not in config:
-        raise(ValueError('"mongo-user" configuration property not provided'))
+        raise ValueError
     mongo_user = config['mongo-user']
 
     if 'mongo-pwd' not in config:
-        raise(ValueError('"mongo-pwd" configuration property not provided'))
+        raise ValueError
     mongo_pwd = config['mongo-pwd']
 
     return {

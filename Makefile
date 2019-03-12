@@ -15,16 +15,11 @@ TEST_SCRIPT_NAME = run_tests.sh
 
 default: compile
 
-all:  build build-startup-script build-executable-script build-test-script
+all: compile build build-startup-script build-executable-script build-test-script
 
 compile:
 	kb-sdk compile $(SPEC_FILE) \
 		--out $(LIB_DIR) \
-		--plclname $(SERVICE_CAPS)::$(SERVICE_CAPS)Client \
-		--jsclname javascript/Client \
-		--pyclname $(SERVICE_CAPS).$(SERVICE_CAPS)Client \
-		--javasrc src \
-		--java \
 		--pysrvname $(SERVICE_CAPS).$(SERVICE_CAPS)Server \
 		--pyimplname $(SERVICE_CAPS).$(SERVICE_CAPS)Impl;
 
