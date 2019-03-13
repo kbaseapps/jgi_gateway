@@ -3,3 +3,4 @@ test_local
 *.bak-*
 .DS_Store
 sdk.cfg
+*.pyc
