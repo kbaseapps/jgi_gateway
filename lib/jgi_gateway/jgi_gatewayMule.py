@@ -65,7 +65,7 @@ def mule_loop():
     looper = Looper(app_config)
     while True:
         message = uwsgi.mule_get_msg()
-        if message == 'start-job-monitoring':
+        if message == b'start-job-monitoring':
             looper.start_job_check_loop()
         else:
             print('unknown message:')
