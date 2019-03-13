@@ -17,7 +17,7 @@ from jsonrpcbase import JSONRPCService, InvalidParamsError, KeywordError, \
 from jsonrpcbase import ServerError as JSONServerError
 
 from biokbase import log
-from jgi_gateway.authclient import KBaseAuth as _KBaseAuth
+from installed_clients.authclient import KBaseAuth as _KBaseAuth
 
 try:
     from ConfigParser import ConfigParser
@@ -544,7 +544,7 @@ _proc = None
 def start_server(host='localhost', port=0, newprocess=False):
     '''
     By default, will start the server on localhost on a system assigned port
-    in the main thread. Excecution of the main thread will stay in the server
+    in the main thread. Execution of the main thread will stay in the server
     main loop until interrupted. To run the server in a separate process, and
     thus allow the stop_server method to be called, set newprocess = True. This
     will also allow returning of the port number.'''
