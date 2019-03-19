@@ -2,3 +2,5 @@ test_local
 .vscode
 *.bak-*
 .DS_Store
+sdk.cfg
+*.pyc

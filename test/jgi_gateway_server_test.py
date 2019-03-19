@@ -1,24 +1,14 @@
 # -*- coding: utf-8 -*-
-import unittest
 import os  # noqa: F401
-import json  # noqa: F401
 import time
-import requests
-import pkgutil
-import importlib
-
+import unittest
+from configparser import ConfigParser  # py3
 from os import environ
-try:
-    from ConfigParser import ConfigParser  # py2
-except:
-    from configparser import ConfigParser  # py3
 
-from pprint import pprint  # noqa: F401
-
-from biokbase.workspace.client import Workspace as workspaceService
+from installed_clients.WorkspaceClient import Workspace as workspaceService
+from jgi_gateway.authclient import KBaseAuth as _KBaseAuth
 from jgi_gateway.jgi_gatewayImpl import jgi_gateway
 from jgi_gateway.jgi_gatewayServer import MethodContext
-from jgi_gateway.jgi_gatewayServerContext import ServerContext
 
 
 class jgi_gatewayTest(unittest.TestCase):
@@ -27,12 +17,17 @@ class jgi_gatewayTest(unittest.TestCase):
     def setUpClass(cls):
         token = environ.get('KB_AUTH_TOKEN', None)
         if not isinstance(token, str):
-            raise(ValueError('invalid or missing token'))
-
-        header = {'Authorization': token}
-        endpoint = 'https://ci.kbase.us/services/auth/api/V2/token'
-        result = requests.get(endpoint, headers=header).json()
-        user_id = result['user']
+            raise ValueError
+        config_file = environ.get('KB_DEPLOYMENT_CONFIG', None)
+        cls.cfg = {}
+        config = ConfigParser()
+        config.read(config_file)
+        for nameval in config.items('jgi_gateway'):
+            cls.cfg[nameval[0]] = nameval[1]
+        # Getting username from Auth profile for token
+        authServiceUrl = cls.cfg['auth-service-url']
+        auth_client = _KBaseAuth(authServiceUrl)
+        user_id = auth_client.get_user(token)
         # WARNING: don't call any logging methods on the context object,
         # it'll result in a NoneType error
         cls.ctx = MethodContext(None)
@@ -44,18 +39,18 @@ class jgi_gatewayTest(unittest.TestCase):
                              'method_params': []
                              }],
                         'authenticated': 1})
-        config_file = environ.get('KB_DEPLOYMENT_CONFIG', None)
-        cls.cfg = {}
-        config = ConfigParser()
-        config.read(config_file)
-        for nameval in config.items('jgi_gateway'):
-            cls.cfg[nameval[0]] = nameval[1]
+
         cls.wsURL = cls.cfg['workspace-url']
         cls.wsClient = workspaceService(cls.wsURL)
         # context = ServerContext()
         cls.serviceImpl = jgi_gateway(cls.cfg)
         cls.scratch = cls.cfg['scratch']
         cls.callback_url = os.environ['SDK_CALLBACK_URL']
+        print('starting to build local mongoDB')
+        os.system("sudo service mongodb start")
+        os.system("mongod --version")
+        os.system("cat /var/log/mongodb/mongodb.log "
+                  "| grep 'waiting for connections on port 27017'")
 
     @classmethod
     def tearDownClass(cls):
@@ -97,21 +92,21 @@ class jgi_gatewayTest(unittest.TestCase):
         ret, err, stats = self.getImpl().search(self.getContext(), query)
         self.assertIsNotNone(ret)
         self.assertIn('hits', ret)
-        self.assertEquals(len(ret['hits']), 10)
+        self.assertEqual(len(ret['hits']), 10)
 
         # Test an explicit limit of 20, still for wildcard
         query = {'query': {'_all': '*'}, 'sort': sort, 'limit': 20}
         ret, err, stats = self.getImpl().search(self.getContext(), query)
         self.assertIsNotNone(ret)
         self.assertIn('hits', ret)
-        self.assertEquals(len(ret['hits']), 20)
+        self.assertEqual(len(ret['hits']), 20)
 
         # Test the same query, this time fetching the second page of hits
         query = {'query': {'_all': '*'}, 'sort': sort, 'limit': 20, 'page': 1}
         ret, err, stats = self.getImpl().search(self.getContext(), query)
         self.assertIsNotNone(ret)
         self.assertIn('hits', ret)
-        self.assertEquals(len(ret['hits']), 20)
+        self.assertEqual(len(ret['hits']), 20)
 
     # Input values good and at the edges
     # For now just test that error is None and result is not None.
@@ -166,7 +161,7 @@ class jgi_gatewayTest(unittest.TestCase):
         ret, err, stats = self.getImpl().search(self.getContext(), query)
         self.assertIsNotNone(ret, err)
         self.assertIn('hits', ret)
-        self.assertEquals(len(ret['hits']), 20)            
+        self.assertEqual(len(ret['hits']), 20)            
 
     # Stats
     def test_search_timing_stats(self):
@@ -187,7 +182,6 @@ class jgi_gatewayTest(unittest.TestCase):
             self.assertIn('request_elapsed_time', status)
             req_elapsed = status['request_elapsed_time']
             self.assertIsInstance(req_elapsed, int)
-
 
     # Trigger input validation errors
     def test_search_input_validation_errors(self):
@@ -217,13 +211,11 @@ class jgi_gatewayTest(unittest.TestCase):
             self.assertIsNone(ret)
             self.assertIsNone(status)
             self.assertIsInstance(err, dict)
-            self.assertEquals(err['type'], 'input')
-            self.assertEquals(err['code'], error_code)
-            self.assertEquals(err['info']['key'], error_key)
-
+            self.assertEqual(err['type'], 'input')
+            self.assertEqual(err['code'], error_code)
+            self.assertEqual(err['info']['key'], error_key)
 
     # Test control parameters at, just under, just over the limits.
-
     # Test the return structure using the simplest query and all default
     # control parameters.
     def test_search_return_structure(self):
@@ -239,7 +231,7 @@ class jgi_gatewayTest(unittest.TestCase):
         self.assertIn('hits', ret)
         hits = ret['hits']
         self.assertIsInstance(hits, list)
-        self.assertEquals(len(hits), 10)
+        self.assertEqual(len(hits), 10)
         a_hit = hits[0]
         self.assertIsInstance(a_hit, dict)
         self.assertIn('total', ret)
@@ -250,23 +242,21 @@ class jgi_gatewayTest(unittest.TestCase):
         source = a_hit['source']
         self.assertIsInstance(source, dict)
         index = a_hit['index']
-        self.assertIsInstance(index, basestring)
+        self.assertIsInstance(index, str)
         # Note that score is None when sorting.
         # Hmm, maybe we do want to be able to turn sorting off?
         score = a_hit['score']
         # self.assertIsInstance(score, float)
         self.assertIsNone(score)
         hitid = a_hit['id']
-        self.assertIsInstance(hitid, basestring)
+        self.assertIsInstance(hitid, str)
 
     # Test the error structure.
     # Use a
     # def test_search_error_structure(self):
     #     query = {}
 
-
     # Test staging
-
     def test_stage(self):
         # req = {'files': [{
         #         'id': '51d4fa27067c014cd6ed1a90', 
@@ -288,14 +278,14 @@ class jgi_gatewayTest(unittest.TestCase):
         self.assertIsInstance(ret, dict)
         self.assertIn('job_id', ret)
         job_id = ret['job_id']
-        self.assertIsInstance(job_id, basestring)
+        self.assertIsInstance(job_id, str)
 
     def test_stage_and_status(self):
         # req = {'files': [{
         #         'id': '5786eec57ded5e34bd91fa63',
         #         'filename': 'file3'
         #     }]}
-        username = self.getContext()['user_id']
+        username = self.ctx['user_id']
         req = {
             'file': {
                 'id': '5786eec57ded5e34bd91fa63',
@@ -310,12 +300,12 @@ class jgi_gatewayTest(unittest.TestCase):
         self.assertIsInstance(ret, dict)
         self.assertIn('job_id', ret)
         job_id = ret['job_id']
-        self.assertIsInstance(job_id, basestring)
+        self.assertIsInstance(job_id, str)
         req = {'job_id': job_id}
         ret, error, status = self.getImpl().stage_status(self.getContext(), req)
         self.assertIsNotNone(ret)
         self.assertIsNone(error)
-        self.assertIsInstance(ret, basestring)
+        self.assertIsInstance(ret, str)
 
     # Test staging validation errors
 
@@ -347,9 +337,9 @@ class jgi_gatewayTest(unittest.TestCase):
             self.assertIsNone(ret)
             self.assertIsNone(status)
             self.assertIsInstance(err, dict)
-            self.assertEquals(err['type'], 'input')
-            self.assertEquals(err['code'], error_code)
-            self.assertEquals(err['info']['key'], error_key)
+            self.assertEqual(err['type'], 'input')
+            self.assertEqual(err['code'], error_code)
+            self.assertEqual(err['info']['key'], error_key)
 
     def test_stage_status_input_validation(self):
         tests = [
@@ -362,13 +352,13 @@ class jgi_gatewayTest(unittest.TestCase):
             self.assertIsNone(ret)
             self.assertIsNone(status)
             self.assertIsInstance(err, dict)
-            self.assertEquals(err['type'], 'input')
-            self.assertEquals(err['code'], error_code)
-            self.assertEquals(err['info']['key'], error_key)
+            self.assertEqual(err['type'], 'input')
+            self.assertEqual(err['code'], error_code)
+            self.assertEqual(err['info']['key'], error_key)
 
     def test_status(self):
         ret, err, status = self.getImpl().status(self.getContext())
-        self.assertEquals(ret['state'], 'OK')
+        self.assertEqual(ret['state'], 'OK')
 
     # # These tests cover the simple cases of the control parameters.
     def test_search_timeout(self):
@@ -388,9 +378,9 @@ class jgi_gatewayTest(unittest.TestCase):
         ret, err, stats = self.getImpl().search(self.getContext(), query)
         self.assertIsNone(ret)
         self.assertIsNotNone(err)
-        self.assertEquals(err['info']['timeout'], test_timeout)
-        self.assertEquals(err['type'], 'network')
-        self.assertEquals(err['code'], 'connection-timeout')
+        self.assertEqual(err['info']['timeout'], test_timeout)
+        self.assertEqual(err['type'], 'network')
+        self.assertEqual(err['code'], 'connection-timeout')
         impl.config['jgi']['connection-timeout'] = original_timeout
 
     # This test may need to be commented out sometimes; it is possible
@@ -415,8 +405,8 @@ class jgi_gatewayTest(unittest.TestCase):
         self.assertIsNone(ret)
         self.assertIsNotNone(err)
         # self.assertEquals(err['info']['timeout'], test_timeout)
-        self.assertEquals(err['type'], 'network')
-        self.assertEquals(err['code'], 'connection-error')
+        self.assertEqual(err['type'], 'network')
+        self.assertEqual(err['code'], 'connection-error')
         impl.config['jgi']['base-url'] = original_url
 
     def test_staging_jobs(self):
@@ -424,18 +414,18 @@ class jgi_gatewayTest(unittest.TestCase):
         req1 = {'file': {
                 'id': '51d4fa27067c014cd6ed1a90', 
                 'filename': 'file1',
-                'username': 'eapearson'
+                'username': self.ctx['user_id']
             }}
         ret, error, status = self.getImpl().stage(self.getContext(), req1)
         self.assertIsNotNone(ret)
         self.assertIsInstance(ret, dict)
         self.assertIn('job_id', ret)
         job_id = ret['job_id']
-        self.assertIsInstance(job_id, basestring)
+        self.assertIsInstance(job_id, str)
 
         # Now fetch the staging job
         req2 = {
-            'username': 'eapearson',
+            'username': self.ctx['user_id'],
             'filter': {
                 'job_ids': [job_id]
             },
@@ -458,6 +448,7 @@ class jgi_gatewayTest(unittest.TestCase):
         filename = job['filename']
         self.assertEqual(filename, 'file1')
 
+    @unittest.skip("Only eric can run this test ATM")
     def test_staging_jobs2(self):
         # TODO: set up various staging jobs...
         reqs = [
@@ -491,7 +482,7 @@ class jgi_gatewayTest(unittest.TestCase):
 
         for req in reqs:
             ret, error, status = self.getImpl().staging_jobs(self.getContext(), req['params'])
-            self.assertIsNotNone(ret)
+            self.assertIsNotNone(ret, error)
             self.assertIsNone(error)
             self.assertIsInstance(ret, dict)
             self.assertIn('jobs', ret)
@@ -499,41 +490,37 @@ class jgi_gatewayTest(unittest.TestCase):
             self.assertIsInstance(jobs, list)
             self.assertEqual(len(jobs), req['expected'])
 
-
-    def test_staging_jobs2(self):
+    def test_staging_jobs3(self):
         # First stage a file.
         req1a = {'file': {
                 'id': '51d4fa27067c014cd6ed1a90', 
                 'filename': 'file1a',
-                'username': 'eapearson'
+                'username': self.ctx['user_id']
             }
         }
         ret, error, status = self.getImpl().stage(self.getContext(), req1a)
-        # if error != None:
-        #     print('jobs2')
-        #     print(error)
-        self.assertIsNotNone(ret)
+        self.assertIsNotNone(ret, error)
         self.assertIsInstance(ret, dict)
         self.assertIn('job_id', ret)
         job_id_1a= ret['job_id']
-        self.assertIsInstance(job_id_1a, basestring)
+        self.assertIsInstance(job_id_1a, str)
 
         req1b = {'file': {
                 'id': '51d4fa27067c014cd6ed1a90', 
                 'filename': 'file1b',
-                'username': 'eapearson'
+                'username': self.ctx['user_id']
             }
         }
         ret, error, status = self.getImpl().stage(self.getContext(), req1b)
-        self.assertIsNotNone(ret)
+        self.assertIsNotNone(ret, error)
         self.assertIsInstance(ret, dict)
         self.assertIn('job_id', ret)
         job_id_1b = ret['job_id']
-        self.assertIsInstance(job_id_1b, basestring)
+        self.assertIsInstance(job_id_1b, str)
 
         # Now fetch the staging job
         req2 = {
-            'username': 'eapearson',
+            'username': self.ctx['user_id'],
             'filter': {
                 'job_ids': [job_id_1a, job_id_1b]
             },
@@ -543,7 +530,7 @@ class jgi_gatewayTest(unittest.TestCase):
             }
         }
         ret, error, status = self.getImpl().staging_jobs(self.getContext(), req2)
-        self.assertIsNotNone(ret)
+        self.assertIsNotNone(ret, error)
         self.assertIsNone(error)
         self.assertIsInstance(ret, dict)
         self.assertIn('jobs', ret)
@@ -570,10 +557,10 @@ class jgi_gatewayTest(unittest.TestCase):
             self.assertIsInstance(ret, dict)
             self.assertIn('job_id', ret)
             job_id = ret['job_id']
-            self.assertIsInstance(job_id, basestring)
+            self.assertIsInstance(job_id, str)
             self.assertIn('code', ret)
             status = ret['code']
-            self.assertIsInstance(status, basestring)
+            self.assertIsInstance(status, str)
             self.assertEqual(status, expected_status)
             
     def test_sync_active_jobs(self):
@@ -649,10 +636,9 @@ class jgi_gatewayTest(unittest.TestCase):
             #     print(message)
             #     print(error)
             self.assertIsNotNone(status)
-            self.assertIsInstance(status, basestring)
+            self.assertIsInstance(status, str)
             self.assertEqual(status, expected_status)
-        
-        
+
     def test_status_parsing_sad(self):
         reqs = [
             [
@@ -663,7 +649,7 @@ class jgi_gatewayTest(unittest.TestCase):
         for message, expected_status in reqs:
             status, error = self.getImpl().staging_jobs_manager.translate_job_status(message)
             self.assertIsNotNone(error)
-            self.assertIsInstance(error, basestring)
+            self.assertIsInstance(error, str)
 
     # def test_monitoring_happy(self):
     #     print('monitoring happy story')
@@ -702,4 +688,3 @@ class jgi_gatewayTest(unittest.TestCase):
         self.assertIn('states', ret)
         state = ret['states']
         self.assertIsInstance(state, dict)
-        

@@ -1,15 +1,16 @@
-import pymongo
-import time
-from . import utils
-import sched
-import re
 import calendar
-import threading
-import json 
-from bson import json_util
+import json
+import re
+import time
+import urllib.request, urllib.parse, urllib.error
+
+import pymongo
 from bson import ObjectId
+from bson import json_util
 from requests_futures.sessions import FuturesSession
-import urllib
+
+from . import utils
+
 
 class StagingJobsManager:
     def __init__(self, config):
@@ -25,14 +26,15 @@ class StagingJobsManager:
 
         self.mongo_db = config['mongo']['db']
 
-        self.mongo_user = config['mongo']['user']
+        self.mongo_user = config['mongo'].get('user')
 
-        self.mongo_pwd = config['mongo']['password']
+        self.mongo_pwd = config['mongo'].get('password')
 
         self.mongo = pymongo.MongoClient(self.mongo_host, self.mongo_port)
 
         self.db = self.mongo[self.mongo_db]
-        self.db.authenticate(self.mongo_user, urllib.quote_plus(self.mongo_pwd))
+        if self.mongo_user and self.mongo_pwd:
+            self.db.authenticate(self.mongo_user, urllib.parse.quote_plus(self.mongo_pwd))
 
         self.regexes = {
             'queued': re.compile(r'^In_Queue$'),
@@ -124,7 +126,7 @@ class StagingJobsManager:
                     direction = pymongo.ASCENDING
                 find_sort.append((sort_spec['field'], direction))
 
-        jobs = collection.find(spec=find_filter, skip=skip, limit=limit, sort=find_sort)
+        jobs = collection.find(find_filter, skip=skip, limit=limit, sort=find_sort)
         jobs_json = []
         for job in jobs:
             job_json = json.loads(json_util.dumps(job))
@@ -133,9 +135,9 @@ class StagingJobsManager:
             job_json['job_monitoring_id'] = job_monitoring_id
             jobs_json.append(job_json)
 
-        total_matched = collection.find(spec=find_filter).count()
+        total_matched = collection.find(find_filter).count()
 
-        total_available = collection.find(spec={'username': req['username']}).count()
+        total_available = collection.find({'username': req['username']}).count()
 
         return {
             'jobs': jobs_json,
@@ -311,7 +313,7 @@ class StagingJobsManager:
         # This implies that this entire method blocks, which is ok
         # since we are running the monitor in its own thread 
 
-        job_status_requests = map(lambda job_id: [job_id, utils.sendFRequest(session, 'status', {'id': job_id}, ctx)], job_ids)
+        job_status_requests = [[job_id, utils.sendFRequest(session, 'status', {'id': job_id}, ctx)] for job_id in job_ids]
 
         result = []
         for job_id, request in job_status_requests:

@@ -4,18 +4,12 @@
 JGI Gateway Service
 """
 
-import os
-import json
-import sys
 import time
-import calendar
-import re
-import utils
-# from pymongo import MongoClient
-# from bson.json_util import dumps
-from bson import json_util
-from .staging_jobs_manager import StagingJobsManager
+
+from . import utils
 from .jgi_gatewayServerContext import ServerContext
+from .staging_jobs_manager import StagingJobsManager
+
 
 #END_HEADER
 
@@ -36,8 +30,8 @@ class jgi_gateway:
     # the latter method is running.
     ######################################### noqa
     VERSION = "0.2.0"
-    GIT_URL = "ssh://git@github.com/eapearson/jgi_gateway"
-    GIT_COMMIT_HASH = "563cb0212eb6d45cdb5c0729b7006bc8f75f31a8"
+    GIT_URL = "https://github.com/kbaseapps/jgi_gateway.git"
+    GIT_COMMIT_HASH = "c4c3b83b36e5ae878ecd73c00b29a43300c32039"
 
     #BEGIN_CLASS_HEADER
 
@@ -176,18 +170,18 @@ class jgi_gateway:
 
         #END search
 
-        # # At some point might do deeper type checking...
-        # if not isinstance(result, dict):
-        #     raise ValueError('Method search return value ' +
-        #                      'result is not type dict as required.')
-        # if not isinstance(error, dict):
-        #     raise ValueError('Method search return value ' +
-        #                      'error is not type dict as required.')
-        # if not isinstance(stats, dict):
-        #     raise ValueError('Method search return value ' +
-        #                      'stats is not type dict as required.')
-        # # return the results
-        # return [result, error, stats]
+        # At some point might do deeper type checking...
+        if not isinstance(result, dict):
+            raise ValueError('Method search return value ' +
+                             'result is not type dict as required.')
+        if not isinstance(error, dict):
+            raise ValueError('Method search return value ' +
+                             'error is not type dict as required.')
+        if not isinstance(stats, dict):
+            raise ValueError('Method search return value ' +
+                             'stats is not type dict as required.')
+        # return the results
+        return [result, error, stats]
 
     def stage(self, ctx, parameter):
         """
@@ -276,18 +270,18 @@ class jgi_gateway:
 
         #END stage
 
-        # # At some point might do deeper type checking...
-        # if not isinstance(result, dict):
-        #     raise ValueError('Method stage return value ' +
-        #                      'result is not type dict as required.')
-        # if not isinstance(error, dict):
-        #     raise ValueError('Method stage return value ' +
-        #                      'error is not type dict as required.')
-        # if not isinstance(stats, dict):
-        #     raise ValueError('Method stage return value ' +
-        #                      'stats is not type dict as required.')
-        # # return the results
-        # return [result, error, stats]
+        # At some point might do deeper type checking...
+        if not isinstance(result, dict):
+            raise ValueError('Method stage return value ' +
+                             'result is not type dict as required.')
+        if not isinstance(error, dict):
+            raise ValueError('Method stage return value ' +
+                             'error is not type dict as required.')
+        if not isinstance(stats, dict):
+            raise ValueError('Method stage return value ' +
+                             'stats is not type dict as required.')
+        # return the results
+        return [result, error, stats]
 
     def stage_status(self, ctx, parameter):
         """
@@ -331,18 +325,18 @@ class jgi_gateway:
         # NOTE: we are already returned here, the code below is dead.
         #END stage_status
 
-        # # At some point might do deeper type checking...
-        # if not isinstance(result, dict):
-        #     raise ValueError('Method stage_status return value ' +
-        #                      'result is not type dict as required.')
-        # if not isinstance(error, dict):
-        #     raise ValueError('Method stage_status return value ' +
-        #                      'error is not type dict as required.')
-        # if not isinstance(stats, dict):
-        #     raise ValueError('Method stage_status return value ' +
-        #                      'stats is not type dict as required.')
-        # # return the results
-        # return [result, error, stats]
+        # At some point might do deeper type checking...
+        if not isinstance(result, dict):
+            raise ValueError('Method stage_status return value ' +
+                             'result is not type dict as required.')
+        if not isinstance(error, dict):
+            raise ValueError('Method stage_status return value ' +
+                             'error is not type dict as required.')
+        if not isinstance(stats, dict):
+            raise ValueError('Method stage_status return value ' +
+                             'stats is not type dict as required.')
+        # return the results
+        return [result, error, stats]
 
     def staging_jobs(self, ctx, parameter):
         """
@@ -405,17 +399,17 @@ class jgi_gateway:
         #END staging_jobs
 
         # At some point might do deeper type checking...
-        # if not isinstance(result, dict):
-        #     raise ValueError('Method staging_jobs return value ' +
-        #                      'result is not type dict as required.')
-        # if not isinstance(error, dict):
-        #     raise ValueError('Method staging_jobs return value ' +
-        #                      'error is not type dict as required.')
-        # if not isinstance(stats, dict):
-        #     raise ValueError('Method staging_jobs return value ' +
-        #                      'stats is not type dict as required.')
-        # # return the results
-        # return [result, error, stats]
+        if not isinstance(result, dict):
+            raise ValueError('Method staging_jobs return value ' +
+                             'result is not type dict as required.')
+        if not isinstance(error, dict):
+            raise ValueError('Method staging_jobs return value ' +
+                             'error is not type dict as required.')
+        if not isinstance(stats, dict):
+            raise ValueError('Method staging_jobs return value ' +
+                             'stats is not type dict as required.')
+        # return the results
+        return [result, error, stats]
 
     def staging_jobs_summary(self, ctx, parameter):
         """
@@ -463,17 +457,17 @@ class jgi_gateway:
         #END staging_jobs_summary
 
         # At some point might do deeper type checking...
-        # if not isinstance(result, dict):
-        #     raise ValueError('Method staging_jobs_summary return value ' +
-        #                      'result is not type dict as required.')
-        # if not isinstance(error, dict):
-        #     raise ValueError('Method staging_jobs_summary return value ' +
-        #                      'error is not type dict as required.')
-        # if not isinstance(stats, dict):
-        #     raise ValueError('Method staging_jobs_summary return value ' +
-        #                      'stats is not type dict as required.')
-        # # return the results
-        # return [result, error, stats]
+        if not isinstance(result, dict):
+            raise ValueError('Method staging_jobs_summary return value ' +
+                             'result is not type dict as required.')
+        if not isinstance(error, dict):
+            raise ValueError('Method staging_jobs_summary return value ' +
+                             'error is not type dict as required.')
+        if not isinstance(stats, dict):
+            raise ValueError('Method staging_jobs_summary return value ' +
+                             'stats is not type dict as required.')
+        # return the results
+        return [result, error, stats]
 
     def remove_staging_job(self, ctx, parameter):
         """
@@ -513,17 +507,17 @@ class jgi_gateway:
         #END remove_staging_job
 
         # At some point might do deeper type checking...
-        # if not isinstance(result, dict):
-        #     raise ValueError('Method remove_staging_job return value ' +
-        #                      'result is not type dict as required.')
-        # if not isinstance(error, dict):
-        #     raise ValueError('Method remove_staging_job return value ' +
-        #                      'error is not type dict as required.')
-        # if not isinstance(stats, dict):
-        #     raise ValueError('Method remove_staging_job return value ' +
-        #                      'stats is not type dict as required.')
-        # # return the results
-        # return [result, error, stats]
+        if not isinstance(result, dict):
+            raise ValueError('Method remove_staging_job return value ' +
+                             'result is not type dict as required.')
+        if not isinstance(error, dict):
+            raise ValueError('Method remove_staging_job return value ' +
+                             'error is not type dict as required.')
+        if not isinstance(stats, dict):
+            raise ValueError('Method remove_staging_job return value ' +
+                             'stats is not type dict as required.')
+        # return the results
+        return [result, error, stats]
     def status(self, ctx):
         #BEGIN_STATUS
 
@@ -537,4 +531,4 @@ class jgi_gateway:
 
         return [result, None, None]
         #END_STATUS
-        # return [returnVal]
+        return [returnVal]

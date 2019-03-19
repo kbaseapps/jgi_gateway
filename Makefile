@@ -15,16 +15,11 @@ TEST_SCRIPT_NAME = run_tests.sh
 
 default: compile
 
-all:  build build-startup-script build-executable-script build-test-script
+all: compile build build-startup-script build-executable-script build-test-script
 
 compile:
 	kb-sdk compile $(SPEC_FILE) \
 		--out $(LIB_DIR) \
-		--plclname $(SERVICE_CAPS)::$(SERVICE_CAPS)Client \
-		--jsclname javascript/Client \
-		--pyclname $(SERVICE_CAPS).$(SERVICE_CAPS)Client \
-		--javasrc src \
-		--java \
 		--pysrvname $(SERVICE_CAPS).$(SERVICE_CAPS)Server \
 		--pyimplname $(SERVICE_CAPS).$(SERVICE_CAPS)Impl;
 
@@ -57,6 +52,15 @@ build-test-script:
 	echo 'cd $$script_dir/../$(TEST_DIR)' >> $(TEST_DIR)/$(TEST_SCRIPT_NAME)
 	echo 'python -m nose --with-coverage --cover-package=$(SERVICE_CAPS) --cover-html --cover-html-dir=/kb/module/work/test_coverage --nocapture  --nologcapture .' >> $(TEST_DIR)/$(TEST_SCRIPT_NAME)
 	chmod +x $(TEST_DIR)/$(TEST_SCRIPT_NAME)
+
+docker-image-dev:
+	@echo "> Creating local image for development or testing"
+	@bash scripts/build-docker-image-dev.sh	
+
+run-docker-image-dev:
+	@echo "> Running the already-built docker image"
+	@bash scripts/run-docker-image-dev.sh	
+
 
 test:
 	@if [ ! -f /kb/module/work/token ]; then echo -e '\nOutside a docker container please run "kb-sdk test" rather than "make test"\n' && exit 1; fi
